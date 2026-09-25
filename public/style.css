@@ -1,0 +1,148 @@
+:root {
+  --bg: #f3f0e8;
+  --panel: #fffdf8;
+  --ink: #1f1f1f;
+  --muted: #6b6b6b;
+  --line: #ddd6c8;
+  --box: #3a3a3a;
+  --accent: #0f766e;
+  --ok: #15803d;
+  --warn: #b45309;
+  --new: #fde68a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+
+.logo { font-weight: 800; font-size: 20px; color: var(--accent); text-decoration: none; }
+#status { margin-left: auto; color: var(--warn); font-size: 14px; }
+
+button {
+  font: inherit;
+  padding: 6px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+button:disabled { opacity: .5; cursor: default; }
+button.alt { background: transparent; color: var(--accent); }
+
+input {
+  font: inherit;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+}
+
+#home { max-width: 520px; margin: 80px auto; padding: 0 16px; text-align: center; }
+#home form { display: flex; gap: 8px; justify-content: center; }
+
+#game {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 20px;
+  padding: 20px;
+  align-items: start;
+}
+
+aside, #bar, #page {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+aside { padding: 14px; position: sticky; top: 20px; }
+aside h3 { margin: 12px 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+#timers { font-variant-numeric: tabular-nums; }
+
+#players { list-style: none; margin: 0; padding: 0; }
+#players li { display: flex; align-items: center; gap: 6px; padding: 3px 0; }
+#players li.off { opacity: .5; }
+#players li.me .pname { font-weight: 700; }
+.score { margin-left: auto; font-variant-numeric: tabular-nums; }
+.tag { font-size: 11px; padding: 1px 6px; border-radius: 10px; background: var(--line); }
+.tag.meneur { background: var(--new); }
+.tag.ok { background: #bbf7d0; }
+
+#bar { padding: 14px; margin-bottom: 12px; }
+#bar:empty { display: none; }
+#bar h2 { margin: 0 0 8px; font-size: 20px; }
+#bar p { margin: 0 0 8px; }
+.row { display: flex; gap: 8px; }
+.row input { flex: 1; }
+
+#msg { min-height: 24px; margin: 0 4px 8px; color: var(--muted); }
+#msg.err { color: #b91c1c; }
+
+#page { padding: 20px 28px; font-size: 17px; line-height: 2; }
+#page:empty { display: none; }
+.title { font-size: 30px; line-height: 1.6; margin: 0 0 12px; }
+
+.w {
+  display: inline-block;
+  min-width: calc(var(--n) * 0.62em);
+  height: 1.35em;
+  padding: 0 3px;
+  vertical-align: -0.3em;
+  border-radius: 3px;
+  background: var(--box);
+  color: rgb(255 255 255 / calc(0.45 + var(--h) * 0.55));
+  font: 0.85em/1.35em ui-monospace, Consolas, monospace;
+  text-align: center;
+  white-space: nowrap;
+}
+.w.hot { font-weight: 700; }
+.ok.new { border-radius: 3px; animation: fade 2.5s forwards; }
+@keyframes fade { from { background: var(--new); } to { background: transparent; } }
+
+.mw { cursor: pointer; border-radius: 3px; }
+.mw:hover { background: var(--new); }
+.mw.hinted { background: #bbf7d0; cursor: default; }
+.src { font-size: 15px; }
+
+.suggest { list-style: none; margin: 8px 0 0; padding: 0; }
+.suggest li { padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+.suggest li:hover { background: var(--bg); }
+.suggest li.off { opacity: .5; cursor: default; }
+.suggest span { color: var(--muted); font-size: 14px; }
+
+.settings { border: 1px solid var(--line); border-radius: 8px; margin: 0 0 12px; display: grid; gap: 8px; }
+.settings input[type=number] { width: 70px; }
+.settings small { color: var(--muted); }
+
+.results { border-collapse: collapse; margin: 8px 0 12px; }
+.results td, .results th { padding: 4px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+.final { font-size: 18px; }
+
+.guesses ol, .live ol { margin: 0; padding-left: 32px; font-size: 15px; }
+.guesses { max-height: 55vh; overflow: auto; }
+.plus { color: var(--ok); font-size: 12px; }
+.live { margin-bottom: 10px; font-size: 14px; }
+.win { color: var(--ok); font-weight: 700; }
+
+footer { padding: 20px; text-align: center; font-size: 13px; color: var(--muted); }
+footer a, .src a { color: inherit; }
+
+@media (max-width: 800px) {
+  #game { grid-template-columns: 1fr; padding: 12px; }
+  aside { position: static; }
+  #page { padding: 14px 16px; }
+}

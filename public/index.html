@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pikiguess</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header>
+    <a href="/" class="logo">Pikiguess</a>
+    <span id="room" hidden>Salon <b id="code"></b> <button id="copy" type="button" class="alt">Copier le lien</button></span>
+    <span id="status"></span>
+  </header>
+
+  <section id="home" hidden>
+    <h1>Pikiguess</h1>
+    <p>Un joueur choisit une page Wikipédia, les autres la devinent mot à mot. Le premier qui trouve le titre gagne.</p>
+    <form id="homeForm">
+      <input id="name" maxlength="20" placeholder="Ton pseudo" autocomplete="nickname" required>
+      <button id="go">Créer un salon</button>
+    </form>
+  </section>
+
+  <div id="game" hidden>
+    <aside>
+      <div id="timers"></div>
+      <h3>Joueurs</h3>
+      <ul id="players"></ul>
+      <div id="side"></div>
+    </aside>
+    <main>
+      <div id="bar"></div>
+      <div id="msg" role="status"></div>
+      <article id="page"></article>
+    </main>
+  </div>
+
+  <footer>
+    Textes : <a href="https://fr.wikipedia.org">Wikipédia</a> (CC BY-SA 4.0)
+    · Vecteurs de mots : <a href="https://fauconnier.github.io/#data">Jean-Philippe Fauconnier</a> (CC BY 3.0)
+    · Formes des mots : <a href="http://www.lexique.org">Lexique 3.83</a> (CC BY-SA 4.0)
+    · Inspiré de <a href="https://pedantix.certitudes.org">Pédantix</a>
+  </footer>
+</body>
+</html>
