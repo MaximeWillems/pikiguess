@@ -19,13 +19,20 @@ export function tokenize(text) {
   return out;
 }
 
+// Retire la prononciation ([tuʁɛfɛl], « prononcé en allemand … ») et les parenthèses restées vides.
+export function cleanExtract(text) {
+  return text
+    .replace(/\[[^\]\n]*\]/g, '')
+    .replace(/\(\s*(?:prononcé|prononciation)[^()\n]*\)/gi, '')
+    .replace(/\(\s*[,;:]?\s*\)/g, '');
+}
+
 // Les jetons sont des séparateurs (texte affiché tel quel) ou des numéros de mots, à deviner.
 export function buildPage(title, extract) {
   const words = [];
   const mark = text => tokenize(text).map(t => (typeof t === 'string' ? t : words.push({ text: t.w, key: normalize(t.w) }) - 1));
   const titleTokens = mark(title);
-  const paragraphs = extract
-    .replace(/\(\s*[,;]?\s*\)/g, '')
+  const paragraphs = cleanExtract(extract)
     .split(/\n+/)
     .map(p => p.replace(/[ \t ]{2,}/g, ' ').replace(/ ([,.])/g, '$1').trim())
     .filter(Boolean)
@@ -52,9 +59,15 @@ export function analyze(page, lex) {
   return keys;
 }
 
+// Deux années sont proches à ±30 ans près ; les autres nombres, à 15 % près.
+export function numberCloseness(a, b) {
+  const years = Math.min(a, b) >= 1000 && Math.max(a, b) <= 2100;
+  return 1 - Math.abs(a - b) / (years ? 40 : Math.max(5, 0.15 * Math.max(a, b)));
+}
+
 export function closeness(a, b, lex) {
   let s = a.row >= 0 && b.row >= 0 ? lex.cosine(a.row, b.row) : 0;
-  if (a.num !== null && b.num !== null) s = Math.max(s, 1 - Math.abs(a.num - b.num) / Math.max(10, 0.1 * Math.max(a.num, b.num)));
+  if (a.num !== null && b.num !== null) s = Math.max(s, numberCloseness(a.num, b.num));
   return s;
 }
 

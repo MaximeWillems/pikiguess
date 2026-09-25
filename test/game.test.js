@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { Lexicon } from '../src/lexicon.js';
-import { analyze, buildPage, guess, isFound, newRun, normalize, playerView, ranking, reveal } from '../src/game.js';
+import { analyze, buildPage, cleanExtract, guess, isFound, newRun, normalize, numberCloseness, playerView, ranking, reveal } from '../src/game.js';
 
 const TITLE = 'Mercure (planète)';
 const EXTRACT = "Le roi est né en 1789 ( ). Les rois sont nés à Paris, l'empire naquit.\n\nLa révolution est là.";
@@ -38,6 +38,23 @@ test('le texte est découpé en mots, parenthèses vides retirées', () => {
   assert.equal(page.paragraphs.length, 2);
   assert.ok(page.paragraphs[0].includes('. '));
   assert.ok(!page.paragraphs[0].some(t => typeof t === 'string' && t.includes('(')));
+});
+
+test('la prononciation est retirée du texte', () => {
+  assert.equal(cleanExtract('La tour Eiffel [tuʁɛfɛl]  est une tour'), 'La tour Eiffel   est une tour');
+  assert.equal(cleanExtract('Albert Einstein (prononcé en allemand [ˈalbɐt ˈaɪnʃtaɪn] ), né'), 'Albert Einstein , né');
+  assert.equal(cleanExtract('Mercure (planète) est'), 'Mercure (planète) est');
+  const page = buildPage('Albert Einstein', 'Albert Einstein (prononcé en allemand [ˈalbɐt] ), né le 14 mars 1879.');
+  assert.deepEqual(page.words.map(w => w.text), ['Albert', 'Einstein', 'Albert', 'Einstein', 'né', 'le', '14', 'mars', '1879']);
+});
+
+test('écart entre nombres : années à ±30 ans, le reste à 15 %', () => {
+  assert.ok(numberCloseness(1789, 1790) > 0.9);
+  assert.ok(numberCloseness(1889, 1914) > 0.3);
+  assert.ok(numberCloseness(1889, 1957) < 0.3);
+  assert.ok(numberCloseness(330, 300) > 0.3);
+  assert.ok(numberCloseness(15, 18) > 0.3);
+  assert.ok(numberCloseness(1, 9) < 0.3);
 });
 
 test('lexique : recherche, mot de base, doublons de casse', () => {
