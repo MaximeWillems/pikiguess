@@ -6,7 +6,7 @@ import { Lexicon } from '../src/lexicon.js';
 import { analyze, buildPage, cleanExtract, guess, isFound, newRun, normalize, numberCloseness, playerView, ranking, reveal } from '../src/game.js';
 
 const TITLE = 'Mercure (planète)';
-const EXTRACT = "Le roi est né en 1789 ( ). Les rois sont nés à Paris, l'empire naquit.\n\nLa révolution est là.";
+const EXTRACT = "Le roi est né en 1789 ( ). Les rois sont nés à Paris, l'empire naquit.\n\nLa révolution est une fête, là.";
 let lex;
 
 before(() => {
@@ -62,7 +62,7 @@ test('lexique : recherche, mot de base, doublons de casse', () => {
   assert.equal(lex.find("c'est"), -1);
   const rois = lex.find('rois');
   assert.deepEqual([...lex.lemmas(rois)], [lex.find('roi')]);
-  assert.equal(lex.row(lex.find('paris')), 4);
+  assert.equal(lex.row(lex.find('paris')), 5);
   assert.deepEqual([...lex.lemmas(lex.find('l'))], [lex.find('le')]);
 });
 
@@ -94,6 +94,14 @@ test('mots grisés : par le sens et par écart entre nombres', () => {
   const view = playerView(page, run);
   assert.ok(view.hints.some(([, w]) => w === '1790'));
   assert.ok(!view.revealed.some(([, t]) => t === 'Mercure'));
+});
+
+test('les petits mots se dévoilent mais ne grisent rien', () => {
+  const { page, go } = play();
+  const r = go('le');
+  assert.ok(r.revealed.length > 0);
+  assert.deepEqual(r.hints, []);
+  assert.deepEqual(texts(page, go('une').revealed), ['une']);
 });
 
 test('la page est trouvée quand tout le titre est dévoilé, parenthèse comprise', () => {

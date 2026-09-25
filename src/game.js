@@ -3,6 +3,14 @@ export const HINT_MIN = 0.3;
 export const POINTS = [1000, 600, 300, 100];
 const WORD = /[\p{L}\p{N}]+/gu;
 
+// Petits mots très fréquents : ils se dévoilent normalement mais ne grisent rien, sinon « le » s'afficherait partout.
+const STOP = new Set(
+  `le la les l un une des du de d au aux ce cet cette ces c mon ma mes ton ta tes son sa ses notre nos votre vos leur leurs
+  je j me m moi tu te t toi il elle on nous vous ils elles se s soi lui y en qui que qu quoi dont ou et mais donc or ni car si
+  comme a dans par pour sur sous avec sans entre vers chez ne n pas plus moins tres tout tous toute toutes meme aussi
+  est sont etait etaient ete etre ont avait avaient avoir fut furent sera seront soit`.split(/\s+/),
+);
+
 export function normalize(s) {
   return s.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/œ/g, 'oe').replace(/æ/g, 'ae');
 }
@@ -45,8 +53,11 @@ export function describe(key, lex) {
   const i = lex ? lex.find(key) : -1;
   if (i < 0) return { lemmas: new Set([key]), row: -1, num };
   const ids = lex.lemmas(i);
-  let row = lex.row(i);
-  for (let j = 0; row < 0 && j < ids.length; j++) row = lex.row(ids[j]);
+  let row = -1;
+  if (!STOP.has(key)) {
+    row = lex.row(i);
+    for (let j = 0; row < 0 && j < ids.length; j++) row = lex.row(ids[j]);
+  }
   return { lemmas: new Set(ids.length ? ids : [i]), row, num };
 }
 
