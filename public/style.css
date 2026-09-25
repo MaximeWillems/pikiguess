@@ -12,6 +12,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 
 body {
   margin: 0;
@@ -85,6 +86,7 @@ aside h3 { margin: 12px 0 6px; font-size: 13px; text-transform: uppercase; lette
 #bar { padding: 14px; margin-bottom: 12px; }
 #bar:empty { display: none; }
 #bar h2 { margin: 0 0 8px; font-size: 20px; }
+#bar h2 a { color: var(--accent); }
 #bar p { margin: 0 0 8px; }
 .row { display: flex; gap: 8px; }
 .row input { flex: 1; }
