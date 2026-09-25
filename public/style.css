@@ -106,14 +106,17 @@ aside h3 { margin: 12px 0 6px; font-size: 13px; text-transform: uppercase; lette
   vertical-align: -0.3em;
   border-radius: 3px;
   background: var(--box);
-  color: rgb(255 255 255 / calc(0.45 + var(--h) * 0.55));
+  color: hsl(calc(var(--h) * 120) 80% 62%);
   font: 0.85em/1.35em ui-monospace, Consolas, monospace;
   text-align: center;
   white-space: nowrap;
 }
 .w.hot { font-weight: 700; }
-.ok.new { border-radius: 3px; animation: fade 2.5s forwards; }
-@keyframes fade { from { background: var(--new); } to { background: transparent; } }
+.ok.new { border-radius: 3px; animation: found 1.8s ease-out forwards; }
+@keyframes found {
+  0%, 30% { background: var(--ok); color: #fff; }
+  100% { background: transparent; }
+}
 
 .mw { cursor: pointer; border-radius: 3px; }
 .mw:hover { background: var(--new); }

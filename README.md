@@ -14,7 +14,8 @@ Sans ces données, le jeu marche quand même, mais sans mots grisés ni formes :
 
 - On affiche l'intro d'une page Wikipédia telle quelle, titre compris, chaque mot caché sous une case noire de la taille du mot. Au départ rien n'est dévoilé, même pas les petits mots (le, de, et…).
 - Le joueur propose un mot : s'il est dans le texte, il se dévoile partout et sous toutes ses formes (pluriel, féminin, conjugaisons : « naître » dévoile « né », « naquit »…). Majuscules et accents ignorés : « egypte » dévoile « Égypte ».
-- Sinon, il s'affiche en grisé dans les cases des mots proches par le sens : plus il est proche, plus il est lisible. Chaque case garde le mot le plus proche proposé jusque-là.
+- Sinon, il s'affiche dans les cases des mots proches par le sens, en couleur : du rouge (un peu proche) au vert (très proche). Chaque case garde le mot le plus proche proposé jusque-là.
+- Un mot trouvé apparaît sur fond vert, qui s'efface en fondu.
 - Nombres et dates : un nombre est aussi proche d'un autre selon l'écart (« 1790 » s'affiche dans la case de « 1789 »). Le plus proche l'emporte, par l'écart ou par le sens.
 - Le but est juste de trouver le titre : la page est trouvée quand tous les mots du titre sont dévoilés, parenthèse comprise (pour « Mercure (planète) », il faut aussi « planète »).
 
