@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { Lexicon } from '../src/lexicon.js';
+import { playable } from '../src/wikipedia.js';
 import { analyze, buildPage, cleanExtract, guess, isFound, newRun, normalize, numberCloseness, playerView, ranking, reveal } from '../src/game.js';
 
 const TITLE = 'Mercure (planète)';
@@ -133,6 +134,12 @@ test('sans données : seulement les mots exacts', () => {
 test("indice du meneur : le mot et ses formes s'affichent", () => {
   const { page, run, keys } = play();
   assert.deepEqual(texts(page, reveal(page, keys, lex, run, 'rois')).sort(), ['roi', 'rois']);
+});
+
+test('pages populaires : sans pages techniques, listes ni pages pour adultes', () => {
+  for (const t of ['Lionel Messi', 'France', 'Spider-Man: Brand New Day', "L'Odyssée (film, 2026)"]) assert.ok(playable(t), t);
+  const out = ['Spécial:Recherche', 'Wikipédia:Accueil principal', 'Fichier:France relief location map.jpg', 'Liste des éclipses solaires', 'Décès en août 2026'];
+  for (const t of [...out, 'XNXX', '.xxx', 'Sexe', 'XXXX (homonymie)', '2026', '-']) assert.ok(!playable(t), t);
 });
 
 test('classement et points', () => {

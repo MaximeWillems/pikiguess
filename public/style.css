@@ -89,6 +89,7 @@ input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
 
 .row { display: flex; gap: 8px; }
 .row input { flex: 1; min-width: 0; }
+.row.grow > * { flex: 1; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-top: 16px; }
 
 /* Accueil */

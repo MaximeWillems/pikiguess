@@ -12,7 +12,7 @@
 <body>
   <header>
     <a href="/" class="logo" title="Retour à l'accueil">Pikiguess</a>
-    <span id="room" hidden>Salon <b id="code"></b> <button id="copy" type="button" class="alt small">Copier le lien</button></span>
+    <span id="room" hidden><span id="roomLabel">Salon <b id="code"></b></span> <button id="copy" type="button" class="alt small">Copier le lien</button></span>
     <span id="status"></span>
     <button id="rename" type="button" class="link" hidden>Changer de pseudo</button>
   </header>
@@ -23,7 +23,10 @@
     <form id="homeForm" class="card">
       <label for="name">Ton pseudo</label>
       <input id="name" maxlength="20" autocomplete="nickname" required>
-      <button id="go">Créer un salon</button>
+      <div class="row grow">
+        <button id="go">Créer un salon</button>
+        <button id="soloBtn" type="button" class="alt">Jouer seul</button>
+      </div>
       <div id="joinRow" class="row">
         <input id="joinCode" maxlength="10" placeholder="ou le code d'un salon" autocomplete="off" spellcheck="false" autocapitalize="characters">
         <button id="join" type="button" class="alt">Rejoindre</button>
@@ -37,6 +40,7 @@
         <li>Sinon, ton mot s'affiche dans les cases des mots proches par le sens, du <span class="cold">rouge</span> (un peu proche) au <span class="hot-text">vert</span> (très proche).</li>
         <li>Clique sur une case pour voir son nombre de lettres, et sur un de tes essais pour retrouver ses cases.</li>
         <li>Le premier qui dévoile tout le titre gagne la manche. Points : 1000, 600, 300, 100 selon la place.</li>
+        <li>Seul, tu joues sur une page tirée au hasard parmi les plus consultées de Wikipédia.</li>
       </ul>
     </details>
   </section>
@@ -44,8 +48,10 @@
   <div id="game" hidden>
     <aside>
       <div id="timers"></div>
-      <h3>Joueurs <span id="count"></span></h3>
-      <ul id="players"></ul>
+      <div id="playersBox">
+        <h3>Joueurs <span id="count"></span></h3>
+        <ul id="players"></ul>
+      </div>
       <div id="side"></div>
     </aside>
     <main>
@@ -59,6 +65,7 @@
           <span id="feedback" role="status" aria-live="polite"></span>
           <span id="progress"></span>
           <span id="clock"></span>
+          <button id="giveUp" type="button" class="link" hidden>Voir la réponse</button>
           <span class="legend" title="Couleur des mots proches"><span>loin</span><i></i><span>proche</span></span>
         </div>
       </div>

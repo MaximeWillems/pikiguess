@@ -16,7 +16,9 @@ const store = {
 };
 
 const HINT_MIN = 0.3;
-const asked = (new URLSearchParams(location.search).get('salon') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10);
+const params = new URLSearchParams(location.search);
+const solo = params.has('solo');
+const asked = (params.get('salon') || params.get('solo') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10);
 const code = asked.length >= 4 ? asked : '';
 let me = store.get('pikiguess.id');
 if (!me) store.set('pikiguess.id', (me = crypto.randomUUID()));
@@ -34,7 +36,7 @@ const isMeneur = () => st.you === st.meneurId;
 const isBoss = () => st.you === st.hostId || !st.players.find(p => p.id === st.hostId)?.online;
 const plural = (n, word) => `${n} ${word}${n > 1 ? 's' : ''}`;
 const heat = s => Math.min(1, Math.max(0, (s - HINT_MIN) / 0.5));
-const baseTitle = () => `Pikiguess · ${code}`;
+const baseTitle = () => (solo ? 'Pikiguess · solo' : `Pikiguess · ${code}`);
 const duration = ms => {
   const s = Math.round(ms / 1000);
   return s >= 60 ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, '0')} s` : `${s} s`;
@@ -52,14 +54,18 @@ function home() {
   $('#home').hidden = false;
   $('#name').value = myName;
   if (code) {
-    $('#go').textContent = `Rejoindre le salon ${code}`;
+    $('#go').textContent = solo ? 'Jouer seul' : `Rejoindre le salon ${code}`;
     $('#joinRow').hidden = true;
+    $('#soloBtn').hidden = true;
   }
   $('#homeForm').onsubmit = e => {
     e.preventDefault();
     if (!saveName()) return;
     if (code) enter();
     else location.search = `?salon=${newCode()}`;
+  };
+  $('#soloBtn').onclick = () => {
+    if (saveName()) location.search = `?solo=${newCode()}`;
   };
   $('#join').onclick = () => {
     const raw = $('#joinCode').value;
@@ -97,6 +103,10 @@ function enter() {
   $('#room').hidden = false;
   $('#rename').hidden = false;
   $('#code').textContent = code;
+  if (solo) {
+    $('#roomLabel').textContent = 'Partie solo';
+    $('#copy').hidden = true;
+  }
   document.title = baseTitle();
   connect();
 }
@@ -106,7 +116,7 @@ function connect() {
   ws.onopen = () => {
     retry = 0;
     status('');
-    ws.send(JSON.stringify({ t: 'join', id: me, name: myName }));
+    ws.send(JSON.stringify({ t: 'join', id: me, name: myName, solo }));
   };
   ws.onmessage = e => e.data !== 'pong' && onMessage(JSON.parse(e.data));
   ws.onclose = e => {
@@ -175,7 +185,7 @@ function onState(m) {
 }
 
 function events(prev, m) {
-  if (!prev) return;
+  if (!prev || m.solo) return;
   const changed = prev.phase !== m.phase || prev.round !== m.round;
   if (changed && m.phase === 'choosing' && m.meneurId === m.you) notify('À toi de choisir la page !', 'good');
   if (changed && m.phase === 'playing' && m.meneurId !== m.you && m.page) notify(`Manche ${m.round} : c'est parti !`, 'good');
@@ -262,6 +272,7 @@ function render() {
 }
 
 function renderPlayers() {
+  $('#playersBox').hidden = st.solo;
   $('#count').textContent = `(${st.players.length}/5)`;
   $('#players').innerHTML = st.players
     .map(
@@ -282,9 +293,14 @@ function renderTimers() {
   const playing = st.phase === 'playing';
   const end = playing ? Math.min(st.chronoEnd ?? Infinity, st.maxEnd ?? Infinity) : Infinity;
   const left = end - now;
-  let html = st.round ? `Manche ${st.round}${st.settings.tours > 1 ? ` · tour ${st.tour}/${st.settings.tours}` : ''}` : 'En attente des joueurs';
+  let html = st.solo
+    ? `Page ${st.round}`
+    : st.round
+      ? `Manche ${st.round}${st.settings.tours > 1 ? ` · tour ${st.tour}/${st.settings.tours}` : ''}`
+      : 'En attente des joueurs';
   if (playing) html += ` · ${clock(now - st.startedAt)}`;
   if (end < Infinity) html += `<br>${st.chronoEnd ? '<b>' : ''}Fin dans ${clock(left)}${st.chronoEnd ? '</b>' : ''}`;
+  if (st.solo) html += `<br>Pages trouvées : ${st.foundCount}/${st.played}`;
   $('#timers').innerHTML = html;
   const c = $('#clock');
   c.textContent = end < Infinity ? `⏱ fin dans ${clock(left)}` : playing ? `⏱ ${clock(now - st.startedAt)}` : '';
@@ -318,7 +334,25 @@ function refreshBar() {
   renderBar();
 }
 
+function renderSoloBar() {
+  const mode = `solo:${st.phase}:${st.round}`;
+  if (mode === barMode) return;
+  barMode = mode;
+  const r = st.results?.[0];
+  const next = '<button data-send="next">Nouvelle page</button>';
+  $('#bar').innerHTML =
+    {
+      lobby: `<p>Une page au hasard parmi les plus consultées de Wikipédia.</p>${next}`,
+      choosing: "<p>Recherche d'une page au hasard parmi les plus consultées de Wikipédia…</p>",
+      roundEnd:
+        r &&
+        `<h2>C'était « <a href="${esc(st.page.url)}" target="_blank" rel="noopener">${esc(st.page.title)}</a> »</h2>
+        <p>${r.found ? `Trouvé en ${duration(r.time)} avec ${plural(r.guesses, 'essai')} !` : `Réponse vue après ${plural(r.guesses, 'essai')}, ${r.pct} % du texte dévoilé.`}</p>${next}`,
+    }[st.phase] ?? '';
+}
+
 function renderBar() {
+  if (st.solo) return renderSoloBar();
   const boss = isBoss(), meneur = isMeneur();
   const mine = st.players.find(p => p.id === st.you);
   const online = st.players.filter(p => p.online).length;
@@ -352,7 +386,7 @@ function renderBar() {
     bar.innerHTML = `<p>Tu es le meneur : choisis la page que les autres vont chercher.</p>
       <form id="pick" class="row"><input id="q" placeholder="Chercher une page Wikipédia…" autocomplete="off" spellcheck="false" value="${esc(lastQuery)}"><button>Chercher</button></form>
       <div class="actions" style="margin-top:8px"><button type="button" class="alt small" data-ideas>Des idées ?</button>
-        <span class="hint">Pages au hasard parmi les articles de qualité de Wikipédia.</span></div>
+        <span class="hint">Pages au hasard parmi les plus consultées de Wikipédia.</span></div>
       <ul id="suggest" class="suggest"></ul>`;
     $('#q').focus();
     if (lastQuery) search(lastQuery);
@@ -387,6 +421,7 @@ function renderPlay() {
   const active = st.phase === 'playing' && !isMeneur() && mine?.playing && st.foundTime == null;
   const opening = active && $('#play').hidden;
   $('#play').hidden = !active;
+  $('#giveUp').hidden = !st.solo;
   if (opening) {
     $('#feedback').textContent = 'Tape un mot puis Entrée. Clique sur une case pour voir son nombre de lettres.';
     $('#word').value = '';
@@ -500,17 +535,13 @@ async function ideas() {
   const ul = $('#suggest');
   if (ul) ul.innerHTML = '<li class="off">Recherche d\'idées…</li>';
   try {
-    const d = await wiki({
-      generator: 'search',
-      gsrsearch: 'incategory:"Article de qualité"|"Bon article"',
-      gsrsort: 'random',
-      gsrlimit: '8',
-      gsrnamespace: '0',
-      prop: 'description',
-    });
+    const titles = await (await fetch('/api/idees')).json();
+    if (!titles.length) throw new Error();
+    const d = await wiki({ titles: titles.join('|'), prop: 'description|pageprops', ppprop: 'disambiguation', redirects: '1' });
     if (seq === searchSeq) suggestions(d.query?.pages ?? []);
   } catch {
-    toast('Wikipédia ne répond pas.', 'bad');
+    if (seq === searchSeq) suggestions([]);
+    toast('Pas d\'idées pour le moment, réessaie.', 'bad');
   }
 }
 
@@ -629,6 +660,10 @@ $('#guessForm').addEventListener('submit', e => {
 
 $('#word').addEventListener('keydown', e => {
   if (e.key === 'Escape') e.target.value = '';
+});
+
+$('#giveUp').addEventListener('click', () => {
+  if (confirm('Abandonner et voir la réponse ?')) send({ t: 'abandon' });
 });
 
 $('#page').addEventListener('click', e => {

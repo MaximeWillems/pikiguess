@@ -1,7 +1,7 @@
 import { DurableObject } from 'cloudflare:workers';
 import { analyze, buildPage, fullPage, guess, isFound, newRun, playerView, ranking, reveal, revealedCount } from './game.js';
 import { Lexicon } from './lexicon.js';
-import { fetchPage, UserError } from './wikipedia.js';
+import { fetchPage, randomPopularPage, UserError } from './wikipedia.js';
 
 const MAX_PEOPLE = 5;
 const MINUTE = 60_000;
@@ -39,6 +39,9 @@ export class Room extends DurableObject {
         startedAt: null,
         firstFoundAt: null,
         results: null,
+        solo: false,
+        played: 0,
+        foundCount: 0,
       };
     });
   }
@@ -59,7 +62,15 @@ export class Room extends DurableObject {
     }
     if (!msg || typeof msg !== 'object') return;
     try {
-      if (msg.t === 'join') return this.join(ws, msg);
+      if (msg.t === 'join') {
+        this.join(ws, msg);
+        const stuck = this.s.phase === 'lobby' || (this.s.phase === 'choosing' && !this.busy);
+        if (this.s.solo && stuck && (await this.soloRound())) {
+          this.save();
+          this.broadcast();
+        }
+        return;
+      }
       const id = ws.deserializeAttachment()?.id;
       if (id && (await this.handle(id, msg))) {
         this.save();
@@ -95,9 +106,10 @@ export class Room extends DurableObject {
     if (!id || !name) return this.send(ws, { t: 'error', msg: 'Choisis un pseudo.' });
     let p = s.players.find(p => p.id === id);
     if (!p) {
+      if (msg.solo && !s.players.length) Object.assign(s, { solo: true, settings: { chrono: 0, maxDuration: 0, meneurStop: false, tours: 1 } });
       const on = this.onlineIds();
       if (s.players.length >= MAX_PEOPLE && ['lobby', 'gameEnd'].includes(s.phase)) s.players = s.players.filter(p => on.has(p.id));
-      if (s.players.length >= MAX_PEOPLE) {
+      if (s.players.length >= (s.solo ? 1 : MAX_PEOPLE)) {
         this.send(ws, { t: 'full' });
         ws.close(4000, 'Salon complet');
         return;
@@ -126,6 +138,15 @@ export class Room extends DurableObject {
 
   async handle(id, m) {
     const s = this.s;
+    if (s.solo) {
+      if (m.t === 'guess') return this.onGuess(id, m.word);
+      if (m.t === 'abandon' && s.phase === 'playing') {
+        this.endRound();
+        return true;
+      }
+      if (m.t === 'next' && (s.phase === 'roundEnd' || s.phase === 'lobby')) return this.soloRound();
+      return false;
+    }
     const boss = id === s.hostId || !this.onlineIds().has(s.hostId);
     switch (m.t) {
       case 'settings':
@@ -213,6 +234,31 @@ export class Room extends DurableObject {
     }
   }
 
+  // Mode solo : une page au hasard parmi les plus consultées, sans meneur.
+  async soloRound() {
+    if (this.busy) return false;
+    this.busy = true;
+    const s = this.s;
+    s.round++;
+    Object.assign(s, { phase: 'choosing', meneurId: null, page: null, runs: {}, hinted: [], results: null, startedAt: null, firstFoundAt: null });
+    this.save();
+    this.broadcast();
+    try {
+      const p = await randomPopularPage();
+      s.page = { title: p.title, url: p.url, ...buildPage(p.title, p.extract) };
+      s.runs = { [s.players[0].id]: newRun() };
+      Object.assign(s, { phase: 'playing', startedAt: Date.now() });
+      return true;
+    } catch (e) {
+      s.phase = 'lobby';
+      this.save();
+      this.broadcast();
+      throw e;
+    } finally {
+      this.busy = false;
+    }
+  }
+
   async onGuess(id, word) {
     const s = this.s;
     const round = s.round;
@@ -264,9 +310,14 @@ export class Room extends DurableObject {
   endRound() {
     const s = this.s;
     s.results = ranking(s.page, s.runs, s.startedAt);
-    for (const r of s.results) {
-      const p = s.players.find(p => p.id === r.id);
-      if (p) p.score += r.points;
+    if (s.solo) {
+      s.played++;
+      if (s.results[0]?.found) s.foundCount++;
+    } else {
+      for (const r of s.results) {
+        const p = s.players.find(p => p.id === r.id);
+        if (p) p.score += r.points;
+      }
     }
     s.phase = 'roundEnd';
     this.ctx.storage.deleteAlarm();
@@ -329,6 +380,9 @@ export class Room extends DurableObject {
       last: !s.queue.length && s.tour >= s.settings.tours,
       meneurId: s.meneurId,
       startedAt: s.startedAt,
+      solo: !!s.solo,
+      played: s.played ?? 0,
+      foundCount: s.foundCount ?? 0,
       ...this.deadlines(),
       players: s.players.map(p => ({
         id: p.id,

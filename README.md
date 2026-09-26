@@ -49,9 +49,14 @@ L'hôte règle la partie comme il veut :
 - Il voit tout en direct : le texte complet et les mots proposés par chacun.
 - Il peut donner un indice : un mot se dévoile chez tous les joueurs.
 
+## Mode solo
+
+- Une page tirée au hasard parmi les plus consultées de Wikipédia en français : les 1000 premières de chacun des 6 derniers mois, sans pages techniques, listes, pages d'homonymie ni pages pour adultes.
+- Pas de chrono : on joue jusqu'à trouver, ou on clique « Voir la réponse ». Puis « Nouvelle page ».
+- Le bouton « Des idées ? » du meneur pioche dans la même liste.
+
 ## Pas prévu pour l'instant
 
-- Page au hasard : pas de meneur, tout le monde joue.
 - Grille commune : tous dévoilent la même grille, un point par mot trouvé, gros bonus pour le titre.
 - Chat : on joue en vocal à côté.
 
