@@ -112,6 +112,13 @@ test('la page est trouvée quand tout le titre est dévoilé, parenthèse compri
   assert.equal(isFound(page, run), true);
 });
 
+test('chaque essai garde sa proximité avec le mot caché le plus proche', () => {
+  const { go } = play();
+  assert.equal(go('roi').items[0].n, 2);
+  assert.ok(go('reine').items[0].s > 0.3);
+  assert.equal(go('xyz').items[0].s, 0);
+});
+
 test('plusieurs mots en une saisie', () => {
   const { go } = play();
   assert.equal(go('Grande-Bretagne').items.length, 2);

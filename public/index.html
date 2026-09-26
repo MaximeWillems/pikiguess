@@ -3,39 +3,70 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <title>Pikiguess</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f766e'/%3E%3Crect x='5' y='9' width='13' height='6' rx='1.5' fill='%23fff'/%3E%3Crect x='20' y='9' width='7' height='6' rx='1.5' fill='%2386efac'/%3E%3Crect x='5' y='18' width='8' height='6' rx='1.5' fill='%23fca5a5'/%3E%3Crect x='15' y='18' width='12' height='6' rx='1.5' fill='%23fff'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
   <script type="module" src="app.js"></script>
 </head>
 <body>
   <header>
-    <a href="/" class="logo">Pikiguess</a>
-    <span id="room" hidden>Salon <b id="code"></b> <button id="copy" type="button" class="alt">Copier le lien</button></span>
+    <a href="/" class="logo" title="Retour à l'accueil">Pikiguess</a>
+    <span id="room" hidden>Salon <b id="code"></b> <button id="copy" type="button" class="alt small">Copier le lien</button></span>
     <span id="status"></span>
+    <button id="rename" type="button" class="link" hidden>Changer de pseudo</button>
   </header>
 
   <section id="home" hidden>
     <h1>Pikiguess</h1>
-    <p>Un joueur choisit une page Wikipédia, les autres la devinent mot à mot. Le premier qui trouve le titre gagne.</p>
-    <form id="homeForm">
-      <input id="name" maxlength="20" placeholder="Ton pseudo" autocomplete="nickname" required>
+    <p class="lead">Un joueur choisit une page Wikipédia, les autres la devinent mot à mot. Le premier qui trouve le titre gagne.</p>
+    <form id="homeForm" class="card">
+      <label for="name">Ton pseudo</label>
+      <input id="name" maxlength="20" autocomplete="nickname" required>
       <button id="go">Créer un salon</button>
+      <div id="joinRow" class="row">
+        <input id="joinCode" maxlength="10" placeholder="ou le code d'un salon" autocomplete="off" spellcheck="false" autocapitalize="characters">
+        <button id="join" type="button" class="alt">Rejoindre</button>
+      </div>
     </form>
+    <details class="rules card" open>
+      <summary>Comment jouer ?</summary>
+      <ul>
+        <li>Le meneur choisit une page Wikipédia : son intro s'affiche, chaque mot caché sous une case.</li>
+        <li>Propose des mots : s'ils sont dans le texte, ils se dévoilent partout et sous toutes leurs formes (« roi » dévoile aussi « rois »).</li>
+        <li>Sinon, ton mot s'affiche dans les cases des mots proches par le sens, du <span class="cold">rouge</span> (un peu proche) au <span class="hot-text">vert</span> (très proche).</li>
+        <li>Clique sur une case pour voir son nombre de lettres, et sur un de tes essais pour retrouver ses cases.</li>
+        <li>Le premier qui dévoile tout le titre gagne la manche. Points : 1000, 600, 300, 100 selon la place.</li>
+      </ul>
+    </details>
   </section>
 
   <div id="game" hidden>
     <aside>
       <div id="timers"></div>
-      <h3>Joueurs</h3>
+      <h3>Joueurs <span id="count"></span></h3>
       <ul id="players"></ul>
       <div id="side"></div>
     </aside>
     <main>
       <div id="bar"></div>
-      <div id="msg" role="status"></div>
+      <div id="play" hidden>
+        <form id="guessForm" class="row">
+          <input id="word" placeholder="Propose un mot…" autocomplete="off" spellcheck="false" autocapitalize="off" enterkeyhint="send" maxlength="60">
+          <button>Envoyer</button>
+        </form>
+        <div class="meta">
+          <span id="feedback" role="status" aria-live="polite"></span>
+          <span id="progress"></span>
+          <span id="clock"></span>
+          <span class="legend" title="Couleur des mots proches"><span>loin</span><i></i><span>proche</span></span>
+        </div>
+      </div>
       <article id="page"></article>
     </main>
   </div>
+
+  <div id="toasts" aria-live="polite"></div>
 
   <footer>
     Textes : <a href="https://fr.wikipedia.org">Wikipédia</a> (CC BY-SA 4.0)

@@ -118,18 +118,23 @@ export function guess(page, keys, lex, run, input) {
     const g = describe(k, lex);
     const found = uncover(page, keys, run, g, k);
     res.revealed.push(...found);
+    let best = 0;
     for (const e of keys.values()) {
       if (run.revealed.has(e.key)) continue;
       const s = closeness(g, e, lex);
+      best = Math.max(best, s);
       if (s < HINT_MIN || s <= (run.hints.get(e.key)?.s ?? 0)) continue;
       run.hints.set(e.key, { w, s });
       for (const i of e.pos) res.hints.push([i, w, round(s)]);
     }
-    run.guesses.push({ w, n: found.length });
-    res.items.push({ w, n: found.length });
+    const item = { w, n: found.length, s: best >= HINT_MIN ? round(best) : 0 };
+    run.guesses.push(item);
+    res.items.push({ ...item });
   }
   return res;
 }
+
+export const revealedCount = (page, run) => page.words.reduce((n, w) => n + run.revealed.has(w.key), 0);
 
 export const isFound = (page, run) => page.titleWords.every(i => run.revealed.has(page.words[i].key));
 
@@ -155,7 +160,7 @@ export const fullPage = page => ({
 // Ceux qui ont trouvé par ordre d'arrivée, puis les autres selon le nombre de mots dévoilés.
 export function ranking(page, runs, startedAt) {
   const rows = Object.entries(runs).map(([id, r]) => {
-    const count = page.words.filter(w => r.revealed.has(w.key)).length;
+    const count = revealedCount(page, r);
     return {
       id,
       found: r.foundAt != null,

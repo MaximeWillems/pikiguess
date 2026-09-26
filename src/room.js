@@ -1,5 +1,5 @@
 import { DurableObject } from 'cloudflare:workers';
-import { analyze, buildPage, fullPage, guess, isFound, newRun, playerView, ranking, reveal } from './game.js';
+import { analyze, buildPage, fullPage, guess, isFound, newRun, playerView, ranking, reveal, revealedCount } from './game.js';
 import { Lexicon } from './lexicon.js';
 import { fetchPage, UserError } from './wikipedia.js';
 
@@ -228,7 +228,7 @@ export class Room extends DurableObject {
       s.firstFoundAt ??= run.foundAt;
     }
     this.sendTo(id, { t: 'guess', ...res });
-    this.sendTo(s.meneurId, { t: 'live', id, items: res.items });
+    this.sendTo(s.meneurId, { t: 'live', id, items: res.items, count: revealedCount(s.page, run) });
     if (!found) {
       this.save();
       return false;
@@ -343,11 +343,13 @@ export class Room extends DurableObject {
     if (s.phase === 'playing' && id === s.meneurId) {
       v.page = fullPage(s.page);
       v.hinted = s.page.words.flatMap((w, i) => (s.hinted.includes(w.key) ? [i] : []));
-      v.live = Object.fromEntries(Object.entries(s.runs).map(([pid, r]) => [pid, r.guesses]));
+      v.live = Object.fromEntries(Object.entries(s.runs).map(([pid, r]) => [pid, { guesses: r.guesses, count: revealedCount(s.page, r) }]));
     } else if (s.phase === 'playing' && run) {
-      v.page = run.foundAt != null ? fullPage(s.page) : playerView(s.page, run);
+      const found = run.foundAt != null;
+      v.page = found ? fullPage(s.page) : playerView(s.page, run);
       v.guesses = run.guesses;
-      v.foundTime = run.foundAt != null ? run.foundAt - s.startedAt : null;
+      v.foundTime = found ? run.foundAt - s.startedAt : null;
+      v.rank = found ? 1 + Object.values(s.runs).filter(r => r.foundAt != null && r.foundAt < run.foundAt).length : null;
     } else if (s.phase === 'roundEnd') {
       v.page = fullPage(s.page);
       v.results = s.results;
