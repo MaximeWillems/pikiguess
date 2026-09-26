@@ -675,10 +675,17 @@ document.addEventListener('keydown', e => {
   w.focus();
 });
 
+function focusWord() {
+  if (!$('#play').hidden) $('#word').focus();
+}
+
+window.addEventListener('focus', focusWord);
+
 document.addEventListener('visibilitychange', () => {
   if (document.hidden || !code) return;
   unread = 0;
   document.title = baseTitle();
+  focusWord();
 });
 
 setInterval(() => st?.phase === 'playing' && renderTimers(), 1000);
