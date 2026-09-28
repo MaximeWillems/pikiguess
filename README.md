@@ -29,6 +29,8 @@ Sans ces données, le jeu marche quand même, mais sans mots grisés ni formes :
 6. La manche s'arrête quand tout le monde a trouvé, ou selon les réglages.
 7. Manche suivante : un autre joueur devient meneur.
 
+Actualiser la page, ou la rouvrir plus tard, reprend la partie là où on en était : même joueur, mêmes mots dévoilés, même historique de ses essais (gardés par le serveur).
+
 ## Réglages de la partie
 
 L'hôte règle la partie comme il veut :
@@ -91,7 +93,23 @@ L'hôte règle la partie comme il veut :
 | `tools/prepare_data.py` | préparation des données, lancée par l'Action « Données » |
 | `test/` | tests des règles sur de fausses données (`npm test`, demande Python et numpy) |
 
-## Suite
+## À faire
 
-1. Mise en ligne (voir en haut) et première partie de test.
-2. Régler le seuil des mots grisés (`HINT_MIN` dans `src/game.js`, 0,3 pour l'instant) d'après les chiffres affichés par l'Action « Données ».
+### Le meneur regarde les joueurs comme des caméras
+
+Pendant la manche, le meneur choisit ce qu'il regarde :
+
+- **Texte complet** (vue actuelle) : la page en clair, d'où il donne les indices.
+- **Tous** : les grilles de tous les joueurs côte à côte, en réduit, chacune avec le pseudo, le nombre d'essais et la part dévoilée, mises à jour en direct.
+- **Un joueur** : la grille de ce joueur en grand, exactement comme il la voit (mots dévoilés, mots proches en couleur), avec la liste de ses essais.
+
+Technique : le serveur envoie au meneur, pour chaque joueur, ses mots dévoilés et ses mots proches, au début de la manche puis à chaque essai. Côté écran, un sélecteur « Texte complet | Tous | Alice | Bob… » en haut de la vue du meneur.
+
+### Autres points
+
+- Régler le seuil des mots proches (`HINT_MIN` dans `src/game.js`, 0,3 pour l'instant) après de vraies parties.
+- À mesurer : après une longue pause, le premier mot semble mettre plus d'une seconde à répondre, le temps que le salon recharge ses 25 Mo de données.
+
+### Fait
+
+- Actualiser la page sans perdre la partie ni l'historique de ses essais (vérifié le 28/09/2026).
