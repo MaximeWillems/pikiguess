@@ -51,7 +51,7 @@ export function buildPage(title, extract) {
 // Petits mots qui se dévoilent ensemble : formes au féminin, au pluriel ou contractées (« de » dévoile « du », « à » dévoile « au »).
 const GROUPS = [
   'le la les l',
-  'un une des',
+  'un une',
   'de du des d',
   'a au aux',
   'ce cet cette ces c',
