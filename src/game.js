@@ -159,8 +159,9 @@ const round = s => Math.round(s * 100) / 100;
 export function guess(page, keys, lex, run, input) {
   const res = { items: [], revealed: [], hints: [] };
   for (const [raw] of String(input).slice(0, 60).matchAll(WORD)) {
-    const w = raw.toLowerCase(), k = keyOf(raw);
-    if (run.tried.has(k) || run.revealed.has(k)) {
+    const w = raw.toLowerCase(), k = keyOf(raw), plain = normalize(raw);
+    const pending = [...keys.values()].some(e => e.plain === plain && !run.revealed.has(e.key));
+    if (run.tried.has(k) || (run.revealed.has(k) && !pending)) {
       res.items.push({ w, dup: true });
       continue;
     }

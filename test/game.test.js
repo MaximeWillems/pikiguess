@@ -94,6 +94,9 @@ test("« avoir » ne dévoile ni « s' » ni « à », mais « a » sans accent 
   assert.deepEqual(go('a'), ['a', 'ont', 'à']);
   assert.deepEqual(go('se'), ['s']);
   assert.deepEqual(go('ou'), ['où']);
+  const run = newRun();
+  guess(page, keys, lex, run, 'avoir');
+  assert.deepEqual(texts(page, guess(page, keys, lex, run, 'a').revealed), ['à']);
 });
 
 test('déjà proposé ou déjà dévoilé', () => {
