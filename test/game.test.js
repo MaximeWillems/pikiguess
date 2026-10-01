@@ -87,16 +87,16 @@ test('les petits mots se dévoilent avec leur féminin, pluriel et formes contra
 });
 
 test("« avoir » ne dévoile ni « s' » ni « à », mais « a » sans accent dévoile « à »", () => {
-  const page = buildPage('Test', "Il s'agit de ce qu'il a fait à Paris, où ils ont vécu.");
+  const page = buildPage('Test', "Il s'agit de ce qu'il a fait à Paris et au Louvre, où ils ont vécu.");
   const keys = analyze(page, lex);
   const go = w => texts(page, guess(page, keys, lex, newRun(), w).revealed).sort();
   assert.deepEqual(go('avoir'), ['a', 'ont']);
-  assert.deepEqual(go('a'), ['a', 'ont', 'à']);
+  assert.deepEqual(go('a'), ['a', 'au', 'ont', 'à']);
   assert.deepEqual(go('se'), ['s']);
   assert.deepEqual(go('ou'), ['où']);
   const run = newRun();
   guess(page, keys, lex, run, 'avoir');
-  assert.deepEqual(texts(page, guess(page, keys, lex, run, 'a').revealed), ['à']);
+  assert.deepEqual(texts(page, guess(page, keys, lex, run, 'a').revealed).sort(), ['au', 'à']);
 });
 
 test('déjà proposé ou déjà dévoilé', () => {

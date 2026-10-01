@@ -167,6 +167,10 @@ export function guess(page, keys, lex, run, input) {
     }
     run.tried.add(k);
     const g = describe(k, lex);
+
+    // Sans accent, « a » vaut aussi « à » : il en dévoile les formes (« au », « aux »).
+    for (const a of ACCENTED) if (normalize(a) === plain) for (const grp of GROUP_OF.get(a) ?? []) g.lemmas.add(grp);
+
     const found = uncover(page, keys, run, g, k);
     res.revealed.push(...found);
     let best = 0;
