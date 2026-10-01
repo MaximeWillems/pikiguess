@@ -15,6 +15,14 @@ export function normalize(s) {
   return s.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/œ/g, 'oe').replace(/æ/g, 'ae');
 }
 
+// Petits mots dont l'accent change le sens : « à » n'est pas « a » (avoir), « où » n'est pas « ou ».
+const ACCENTED = new Set(['à', 'où', 'là']);
+
+export function keyOf(word) {
+  const low = word.toLowerCase();
+  return ACCENTED.has(low) ? low : normalize(word);
+}
+
 export function tokenize(text) {
   const out = [];
   let last = 0;
@@ -38,7 +46,7 @@ export function cleanExtract(text) {
 // Les jetons sont des séparateurs (texte affiché tel quel) ou des numéros de mots, à deviner.
 export function buildPage(title, extract) {
   const words = [];
-  const mark = text => tokenize(text).map(t => (typeof t === 'string' ? t : words.push({ text: t.w, key: normalize(t.w) }) - 1));
+  const mark = text => tokenize(text).map(t => (typeof t === 'string' ? t : words.push({ text: t.w, key: keyOf(t.w) }) - 1));
   const titleTokens = mark(title);
   const paragraphs = cleanExtract(extract)
     .split(/\n+/)
@@ -48,12 +56,23 @@ export function buildPage(title, extract) {
   return { titleTokens, paragraphs, words, titleWords: titleTokens.filter(t => typeof t === 'number') };
 }
 
-// Petits mots qui se dévoilent ensemble : formes au féminin, au pluriel ou contractées (« de » dévoile « du », « à » dévoile « au »).
+// Petits mots qui se dévoilent ensemble : formes au féminin, au pluriel, contractées ou élidées (« de » dévoile « du », « à » dévoile « au »).
 const GROUPS = [
   'le la les l',
   'un une',
   'de du des d',
-  'a au aux',
+  'à au aux',
+  'se s',
+  'si s',
+  'je j',
+  'me m',
+  'te t',
+  'ne n',
+  'que qu',
+  'jusque jusqu',
+  'lorsque lorsqu',
+  'puisque puisqu',
+  'quoique quoiqu',
   'ce cet cette ces c',
   'mon ma mes',
   'ton ta tes',
@@ -72,9 +91,13 @@ for (const words of GROUPS.map(g => g.split(' '))) {
   for (const w of words) GROUP_OF.set(w, [...(GROUP_OF.get(w) ?? []), `#${words[0]}`]);
 }
 
+// Formes élidées (l', s', qu'…) : rattachées seulement à leurs petits mots, pas au dictionnaire (« s » y est relié à « avoir »).
+const ELIDED = new Set(['l', 'd', 'j', 'm', 't', 's', 'n', 'c', 'qu', 'jusqu', 'lorsqu', 'puisqu', 'quoiqu']);
+
 export function describe(key, lex) {
   const num = /^\d{1,9}$/.test(key) ? Number(key) : null;
   const groups = GROUP_OF.get(key) ?? [];
+  if (ELIDED.has(key)) return { lemmas: new Set(groups), row: -1, num };
   const i = lex ? lex.find(key) : -1;
   if (i < 0) return { lemmas: new Set([key, ...groups]), row: -1, num };
   const ids = lex.lemmas(i);
@@ -89,7 +112,7 @@ export function describe(key, lex) {
 export function analyze(page, lex) {
   const keys = new Map();
   page.words.forEach((w, i) => {
-    if (!keys.has(w.key)) keys.set(w.key, { key: w.key, pos: [], ...describe(w.key, lex) });
+    if (!keys.has(w.key)) keys.set(w.key, { key: w.key, plain: normalize(w.key), pos: [], ...describe(w.key, lex) });
     keys.get(w.key).pos.push(i);
   });
   return keys;
@@ -114,10 +137,12 @@ function shares(a, b) {
   return false;
 }
 
+// Un mot caché se dévoile s'il s'écrit pareil, accents mis à part, ou s'il a la même forme de base.
 function uncover(page, keys, run, g, key) {
+  const plain = normalize(key);
   const out = [];
   for (const e of keys.values()) {
-    if (run.revealed.has(e.key) || (e.key !== key && !shares(e.lemmas, g.lemmas))) continue;
+    if (run.revealed.has(e.key) || (e.plain !== plain && !shares(e.lemmas, g.lemmas))) continue;
     run.revealed.add(e.key);
     run.hints.delete(e.key);
     for (const i of e.pos) out.push([i, page.words[i].text]);
@@ -134,7 +159,7 @@ const round = s => Math.round(s * 100) / 100;
 export function guess(page, keys, lex, run, input) {
   const res = { items: [], revealed: [], hints: [] };
   for (const [raw] of String(input).slice(0, 60).matchAll(WORD)) {
-    const w = raw.toLowerCase(), k = normalize(raw);
+    const w = raw.toLowerCase(), k = keyOf(raw);
     if (run.tried.has(k) || run.revealed.has(k)) {
       res.items.push({ w, dup: true });
       continue;

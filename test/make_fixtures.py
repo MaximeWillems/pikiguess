@@ -40,6 +40,7 @@ LEXIQUE = [
     ("est", "être"), ("est", "est"), ("sont", "être"), ("être", "être"),
     ("le", "le"), ("la", "le"), ("les", "le"),
     ("planète", "planète"), ("planètes", "planète"),
+    ("a", "avoir"), ("ont", "avoir"), ("avoir", "avoir"), ("s", "avoir"),
     ("c'est-à-dire", "c'est-à-dire"),
 ]
 

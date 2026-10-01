@@ -72,7 +72,7 @@ test('un mot se dévoile sous toutes ses formes', () => {
   assert.deepEqual(texts(page, go('roi').revealed).sort(), ['roi', 'rois']);
   assert.deepEqual(texts(page, go('etre').revealed).sort(), ['est', 'est', 'sont']);
   assert.deepEqual(texts(page, go('naître').revealed).sort(), ['naquit', 'né', 'nés']);
-  assert.deepEqual(texts(page, go('le').revealed).sort(), ['La', 'Le', 'Les', 'l', 'là']);
+  assert.deepEqual(texts(page, go('le').revealed).sort(), ['La', 'Le', 'Les', 'l']);
 });
 
 test('les petits mots se dévoilent avec leur féminin, pluriel et formes contractées', () => {
@@ -84,6 +84,16 @@ test('les petits mots se dévoilent avec leur féminin, pluriel et formes contra
   assert.deepEqual(go('le'), ['Le', 'la', 'la', 'les']);
   assert.deepEqual(go('de'), ['de', 'des', 'du']);
   assert.deepEqual(go('à'), ['au', 'aux', 'à']);
+});
+
+test("« avoir » ne dévoile ni « s' » ni « à », mais « a » sans accent dévoile « à »", () => {
+  const page = buildPage('Test', "Il s'agit de ce qu'il a fait à Paris, où ils ont vécu.");
+  const keys = analyze(page, lex);
+  const go = w => texts(page, guess(page, keys, lex, newRun(), w).revealed).sort();
+  assert.deepEqual(go('avoir'), ['a', 'ont']);
+  assert.deepEqual(go('a'), ['a', 'ont', 'à']);
+  assert.deepEqual(go('se'), ['s']);
+  assert.deepEqual(go('ou'), ['où']);
 });
 
 test('déjà proposé ou déjà dévoilé', () => {
