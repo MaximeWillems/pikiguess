@@ -11,7 +11,10 @@
 </head>
 <body>
   <header>
-    <a href="/" class="logo" title="Retour à l'accueil">Pikiguess</a>
+    <a href="/" class="logo" title="Retour à l'accueil">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0f766e"/><rect x="5" y="9" width="13" height="6" rx="1.5" fill="#fff"/><rect x="20" y="9" width="7" height="6" rx="1.5" fill="#86efac"/><rect x="5" y="18" width="8" height="6" rx="1.5" fill="#fca5a5"/><rect x="15" y="18" width="12" height="6" rx="1.5" fill="#fff"/></svg>
+      Pikiguess
+    </a>
     <span id="room" hidden><span id="roomLabel">Salon <b id="code"></b></span> <button id="copy" type="button" class="alt small">Copier le lien</button></span>
     <span id="status"></span>
     <button id="rename" type="button" class="link" hidden>Changer de pseudo</button>
@@ -68,6 +71,7 @@
           <button id="giveUp" type="button" class="link" hidden>Voir la réponse</button>
           <span class="legend" title="Couleur des mots proches"><span>loin</span><i></i><span>proche</span></span>
         </div>
+        <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
       </div>
       <article id="page"></article>
     </main>

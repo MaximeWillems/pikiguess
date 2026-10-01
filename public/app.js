@@ -27,8 +27,10 @@ let sortByHeat = store.get('pikiguess.sort') === 'heat';
 
 let ws, st, offset = 0, retry = 0, barMode = '', unread = 0;
 let pick = null, lastQuery = '', searchTimer, searchSeq = 0;
-let hinted = new Set();
-const view = { revealed: new Map(), hints: new Map(), fresh: new Set(), guesses: [], live: {}, last: null, hits: new Map() };
+let hinted = new Set(), pageKey = '';
+const view = { revealed: new Map(), hints: new Map(), fresh: new Set(), freshHints: new Set(), guesses: [], added: 0, live: {}, liveNew: {}, last: null, hits: new Map() };
+const seen = { ids: new Set(), found: new Set() };
+const livePct = new Map();
 
 const send = msg => ws?.readyState === 1 && ws.send(JSON.stringify(msg));
 const nameOf = id => st.players.find(p => p.id === id)?.name ?? '?';
@@ -45,6 +47,13 @@ const clock = ms => {
   const s = Math.max(0, Math.ceil(ms / 1000));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 };
+// Relance une animation CSS sur un élément déjà affiché.
+function replay(el, cls) {
+  el.classList.remove(cls);
+  void el.offsetWidth;
+  el.classList.add(cls);
+}
+
 const wiki = params =>
   fetch(`https://fr.wikipedia.org/w/api.php?${new URLSearchParams({ action: 'query', format: 'json', formatversion: '2', origin: '*', ...params })}`).then(r => r.json());
 
@@ -173,6 +182,7 @@ function onState(m) {
   if (prev?.round !== m.round) {
     view.last = null;
     view.hits.clear();
+    livePct.clear();
     pick = null;
     lastQuery = '';
   }
@@ -180,7 +190,7 @@ function onState(m) {
   view.live = m.live || {};
   hinted = new Set(m.hinted || []);
   events(prev, m);
-  if (prev && (prev.phase !== m.phase || prev.round !== m.round)) window.scrollTo({ top: 0 });
+  if (prev && (prev.phase !== m.phase || prev.round !== m.round)) window.scrollTo({ top: 0, behavior: 'smooth' });
   render();
 }
 
@@ -217,16 +227,19 @@ function onGuess(m) {
   for (const [i, w, s] of m.hints) {
     if (view.revealed.has(i)) continue;
     view.hints.set(i, { w, s });
+    view.freshHints.add(i);
     changed.add(i);
   }
   const items = m.items.filter(x => !x.dup);
   view.guesses.push(...items);
+  view.added = items.length;
   if (items.length) view.last = items[items.length - 1].w;
   if (items.length === 1 && m.revealed.length) view.hits.set(items[0].w, m.revealed.map(([i]) => i));
   feedback(m.items);
   updateWords(changed);
   renderProgress();
   renderSide();
+  view.added = 0;
 }
 
 function feedback(items) {
@@ -239,6 +252,7 @@ function feedback(items) {
       return `${w} n'est pas dans le texte, et rien de proche`;
     })
     .join(' · ');
+  replay($('#feedback'), 'rise');
 }
 
 function onHint(m) {
@@ -249,9 +263,12 @@ function onHint(m) {
 
 function onLive(m) {
   const l = (view.live[m.id] ||= { guesses: [], count: 0 });
-  l.guesses.push(...m.items.filter(x => !x.dup));
+  const items = m.items.filter(x => !x.dup);
+  l.guesses.push(...items);
   l.count = m.count;
+  view.liveNew = { [m.id]: items.length };
   renderSide();
+  view.liveNew = {};
 }
 
 function full() {
@@ -274,18 +291,23 @@ function render() {
 function renderPlayers() {
   $('#playersBox').hidden = st.solo;
   $('#count').textContent = `(${st.players.length}/5)`;
+  const first = !seen.ids.size;
   $('#players').innerHTML = st.players
-    .map(
-      p => `<li class="${p.online ? '' : 'off'}${p.id === st.you ? ' me' : ''}">
+    .map(p => {
+      const joined = !first && !seen.ids.has(p.id);
+      const found = !first && p.found && !seen.found.has(p.id);
+      return `<li class="${p.online ? '' : 'off'}${p.id === st.you ? ' me' : ''}${joined ? ' rise' : ''}">
         <span class="pname">${esc(p.name)}${p.id === st.you ? ' (toi)' : ''}</span>
         ${p.id === st.hostId ? '<span class="tag">hôte</span>' : ''}
         ${p.id === st.meneurId ? '<span class="tag meneur">meneur</span>' : ''}
-        ${p.found ? '<span class="tag ok">trouvé</span>' : ''}
+        ${p.found ? `<span class="tag ok${found ? ' pop' : ''}">trouvé</span>` : ''}
         ${p.online ? '' : '<span class="tag">hors ligne</span>'}
         <span class="score">${p.score}</span>
-      </li>`,
-    )
+      </li>`;
+    })
     .join('');
+  seen.ids = new Set(st.players.map(p => p.id));
+  seen.found = new Set(st.players.filter(p => p.found).map(p => p.id));
 }
 
 function renderTimers() {
@@ -321,7 +343,7 @@ function settingsForm(editable) {
 function resultsTable() {
   const rows = st.results
     .map(
-      r => `<tr${r.id === st.you ? ' class="me"' : ''}><td>${r.rank + 1}</td><td>${esc(nameOf(r.id))}</td>
+      (r, i) => `<tr class="stagger${r.id === st.you ? ' me' : ''}" style="--i:${i}"><td>${r.rank + 1}</td><td>${esc(nameOf(r.id))}</td>
         <td>${r.found ? `trouvé en ${duration(r.time)}` : `${r.pct} % dévoilé`}</td>
         <td>${plural(r.guesses, 'essai')}</td><td>+${r.points}</td></tr>`,
     )
@@ -349,6 +371,7 @@ function renderSoloBar() {
         `<h2>C'était « <a href="${esc(st.page.url)}" target="_blank" rel="noopener">${esc(st.page.title)}</a> »</h2>
         <p>${r.found ? `Trouvé en ${duration(r.time)} avec ${plural(r.guesses, 'essai')} !` : `Réponse vue après ${plural(r.guesses, 'essai')}, ${r.pct} % du texte dévoilé.`}</p>${next}`,
     }[st.phase] ?? '';
+  replay($('#bar'), 'rise');
 }
 
 function renderBar() {
@@ -411,9 +434,10 @@ function renderBar() {
     const medals = ['🥇', '🥈', '🥉'];
     const ranked = [...st.players].sort((a, b) => b.score - a.score);
     bar.innerHTML = `<h2>Classement final</h2>
-      <ol class="final">${ranked.map((p, i) => `<li>${medals[i] ?? `${i + 1}.`} <b>${esc(p.name)}</b> : ${p.score} points</li>`).join('')}</ol>
+      <ol class="final">${ranked.map((p, i) => `<li style="--i:${i}">${medals[i] ?? `${i + 1}.`} <b>${esc(p.name)}</b> : ${p.score} points</li>`).join('')}</ol>
       ${boss ? '<div class="actions"><button data-send="start">Rejouer</button><button class="alt" data-send="lobby">Changer les réglages</button></div>' : "<p class=\"hint\">En attente de l'hôte…</p>"}`;
   }
+  replay(bar, 'rise');
 }
 
 function renderPlay() {
@@ -426,6 +450,7 @@ function renderPlay() {
     $('#feedback').textContent = 'Tape un mot puis Entrée. Clique sur une case pour voir son nombre de lettres.';
     $('#word').value = '';
     $('#word').focus();
+    replay($('#play'), 'rise');
   }
   renderProgress();
 }
@@ -436,7 +461,9 @@ function renderProgress() {
   const total = p.lens.length;
   const titleWords = p.titleTokens.filter(t => typeof t === 'number');
   const titleFound = titleWords.filter(i => view.revealed.has(i)).length;
-  $('#progress').textContent = `Titre : ${titleFound}/${titleWords.length} · Texte : ${view.revealed.size}/${total} mots (${Math.round((100 * view.revealed.size) / total)} %)`;
+  const pct = Math.round((100 * view.revealed.size) / total);
+  $('#progress').textContent = `Titre : ${titleFound}/${titleWords.length} · Texte : ${view.revealed.size}/${total} mots (${pct} %)`;
+  $('#progressBar').style.width = `${pct}%`;
 }
 
 function wordHtml(i) {
@@ -451,21 +478,36 @@ function wordHtml(i) {
   const tip = `${plural(n, 'lettre')}${h ? ` · « ${h.w} » proche à ${Math.round(h.s * 100)} %` : ''}`;
   if (!h) return `<span id="w${i}" class="w" data-n="${n}" style="--n:${n}" title="${esc(tip)}"></span>`;
   const fit = Math.max(0.5, Math.min(1, n / [...h.w].length));
-  return `<span id="w${i}" class="w${h.s >= 0.6 ? ' hot' : ''}" data-n="${n}" data-g="${esc(h.w)}" style="--n:${n};--h:${heat(h.s).toFixed(2)}" title="${esc(tip)}"><i style="--f:${fit.toFixed(2)}">${esc(h.w)}</i></span>`;
+  const pop = view.freshHints.has(i) ? ' class="pop"' : '';
+  return `<span id="w${i}" class="w${h.s >= 0.6 ? ' hot' : ''}" data-n="${n}" data-g="${esc(h.w)}" style="--n:${n};--h:${heat(h.s).toFixed(2)}" title="${esc(tip)}"><i${pop} style="--f:${fit.toFixed(2)}">${esc(h.w)}</i></span>`;
+}
+
+// Le texte n'est redessiné en entier que s'il a vraiment changé, pour ne pas couper les animations en cours.
+function currentPageKey() {
+  const p = st.page;
+  return [st.phase, st.round, p.texts ? 'full' : 'hidden', view.revealed.size, view.hints.size, hinted.size].join(':');
 }
 
 function renderPage() {
   const el = $('#page'), p = st.page;
   if (!p || (st.phase !== 'playing' && st.phase !== 'roundEnd')) {
     el.innerHTML = '';
+    pageKey = '';
     return;
   }
+  const key = currentPageKey();
+  if (key === pageKey) return;
+  const base = key.split(':').slice(0, 3).join(':');
+  const changed = !pageKey.startsWith(`${base}:`);
   const line = tokens => tokens.map(t => (typeof t === 'number' ? wordHtml(t) : esc(t))).join('');
   el.innerHTML =
     `<h1 class="title">${line(p.titleTokens)}</h1>` +
     p.paragraphs.map(par => `<p>${line(par)}</p>`).join('') +
     (p.url && st.phase === 'playing' ? `<p class="src"><a href="${esc(p.url)}" target="_blank" rel="noopener">Voir la page sur Wikipédia</a></p>` : '');
+  if (changed) replay(el, 'fade');
+  pageKey = key;
   view.fresh.clear();
+  view.freshHints.clear();
 }
 
 function updateWords(indices) {
@@ -473,18 +515,22 @@ function updateWords(indices) {
     const el = document.getElementById(`w${i}`);
     if (el) el.outerHTML = wordHtml(i);
   }
+  pageKey = currentPageKey();
   view.fresh.clear();
+  view.freshHints.clear();
 }
 
 const rank = g => (g.n ? 2 : g.s || 0);
 
-function guessList(items, from, byHeat, mine) {
+function guessList(items, from, byHeat, mine, added = 0) {
+  const total = from + items.length;
   const rows = items.map((g, i) => ({ ...g, k: from + i + 1 }));
   if (byHeat) rows.sort((a, b) => rank(b) - rank(a) || b.k - a.k);
   else rows.reverse();
+  const cls = g => [mine && g.w === view.last ? 'last' : '', g.k > total - added ? 'new' : ''].filter(Boolean).join(' ');
   return `<ul class="guesses">${rows
     .map(
-      g => `<li${mine ? ` data-g="${esc(g.w)}" title="Retrouver ce mot dans le texte"` : ''}${mine && g.w === view.last ? ' class="last"' : ''}>
+      g => `<li${mine ? ` data-g="${esc(g.w)}" title="Retrouver ce mot dans le texte"` : ''}${cls(g) ? ` class="${cls(g)}"` : ''}>
         <span class="k">${g.k}</span><span class="gw">${esc(g.w)}</span>
         ${g.n ? `<span class="plus">+${g.n}</span>` : g.s ? `<span class="heat" style="--h:${heat(g.s).toFixed(2)}">${Math.round(g.s * 100)} %</span>` : ''}
       </li>`,
@@ -503,16 +549,18 @@ function renderSide() {
         .map(p => {
           const l = view.live[p.id] || { guesses: [], count: 0 };
           const pct = Math.round((100 * l.count) / total);
+          const from = livePct.get(p.id) ?? pct;
+          livePct.set(p.id, pct);
           const shown = l.guesses.slice(-6);
           return `<div class="live"><div class="side-head"><b>${esc(p.name)}</b>
               <span class="hint">${plural(l.guesses.length, 'essai')} · ${pct} %${p.found ? ' · trouvé' : ''}</span></div>
-            <div class="gauge" style="--p:${pct}"><i></i></div>${guessList(shown, l.guesses.length - shown.length, false, false)}</div>`;
+            <div class="gauge" style="--p:${pct};--from:${from}%"><i></i></div>${guessList(shown, l.guesses.length - shown.length, false, false, view.liveNew[p.id] || 0)}</div>`;
         })
         .join('');
   } else if (st.phase === 'playing' && view.guesses.length) {
     el.innerHTML = `<div class="side-head"><h3>Mes essais (${view.guesses.length})</h3>
         <button type="button" class="link" data-sort>${sortByHeat ? 'trier par ordre' : 'trier par proximité'}</button></div>
-      ${guessList(view.guesses, 0, sortByHeat, true)}`;
+      ${guessList(view.guesses, 0, sortByHeat, true, view.added)}`;
   } else el.innerHTML = '';
 }
 
