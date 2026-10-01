@@ -108,7 +108,7 @@ Technique : le serveur envoie au meneur, pour chaque joueur, ses mots dévoilés
 
 ### Autres points
 
-- Régler le seuil des mots proches (`HINT_MIN` dans `src/game.js`, 0,3 pour l'instant) après de vraies parties.
+- Régler les mots proches après de vraies parties. Seuil `HINT_MIN` à 0,4 (`src/game.js` et `public/app.js`) : en dessous, rien ne s'affiche. Échelle des couleurs dans `public/app.js` : 0,6 orange (44 %), 0,7 jaune (67 %), vert à partir de 0,8. Mesuré sur « Monstre (série télévisée) » : les mots hors sujet (« guerre », « nazi ») montent à 0,43-0,6, ceux du sujet (« meurtre », « crime ») à 0,65-0,84.
 - À mesurer : après une longue pause, le premier mot semble mettre plus d'une seconde à répondre, le temps que le salon recharge ses 25 Mo de données.
 
 ### Fait

@@ -1,5 +1,5 @@
 // Règles du jeu, sans dépendance à Cloudflare : testables avec node --test.
-export const HINT_MIN = 0.3;
+export const HINT_MIN = 0.4;
 export const POINTS = [1000, 600, 300, 100];
 const WORD = /[\p{L}\p{N}]+/gu;
 

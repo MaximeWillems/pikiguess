@@ -15,7 +15,7 @@ const store = {
   },
 };
 
-const HINT_MIN = 0.3;
+const HINT_MIN = 0.4;
 const params = new URLSearchParams(location.search);
 const solo = params.has('solo');
 const asked = (params.get('salon') || params.get('solo') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10);
@@ -37,7 +37,10 @@ const nameOf = id => st.players.find(p => p.id === id)?.name ?? '?';
 const isMeneur = () => st.you === st.meneurId;
 const isBoss = () => st.you === st.hostId || !st.players.find(p => p.id === st.hostId)?.online;
 const plural = (n, word) => `${n} ${word}${n > 1 ? 's' : ''}`;
-const heat = s => Math.min(1, Math.max(0, (s - HINT_MIN) / 0.5));
+// Proximité affichée : 0 % au seuil (0,4), 100 % vers 0,85. La couleur ne vire au vert qu'en fin d'échelle.
+const level = s => Math.min(1, Math.max(0, (s - HINT_MIN) / 0.45));
+const pct = s => Math.round(level(s) * 100);
+const heat = s => level(s) ** 2;
 const baseTitle = () => (solo ? 'Pikiguess · solo' : `Pikiguess · ${code}`);
 const duration = ms => {
   const s = Math.round(ms / 1000);
@@ -248,7 +251,7 @@ function feedback(items) {
       const w = `« ${esc(x.w)} »`;
       if (x.dup) return `${w} déjà proposé`;
       if (x.n) return `${w} : <b class="plus">${plural(x.n, 'mot')} dévoilé${x.n > 1 ? 's' : ''}</b>`;
-      if (x.s) return `${w} n'est pas dans le texte, mais proche à <b class="heat" style="--h:${heat(x.s).toFixed(2)}">${Math.round(x.s * 100)} %</b>`;
+      if (x.s) return `${w} n'est pas dans le texte, mais proche à <b class="heat" style="--h:${heat(x.s).toFixed(2)}">${pct(x.s)} %</b>`;
       return `${w} n'est pas dans le texte, et rien de proche`;
     })
     .join(' · ');
@@ -475,10 +478,10 @@ function wordHtml(i) {
   const r = view.revealed.get(i);
   if (r != null) return `<span id="w${i}" class="ok${view.fresh.has(i) ? ' new' : ''}">${esc(r)}</span>`;
   const n = p.lens[i], h = view.hints.get(i);
-  const tip = `${plural(n, 'lettre')}${h ? ` · « ${h.w} » proche à ${Math.round(h.s * 100)} %` : ''}`;
+  const tip = `${plural(n, 'lettre')}${h ? ` · « ${h.w} » proche à ${pct(h.s)} %` : ''}`;
   if (!h) return `<span id="w${i}" class="w" data-n="${n}" style="--n:${n}" title="${esc(tip)}"></span>`;
   const pop = view.freshHints.has(i) ? ' class="pop"' : '';
-  return `<span id="w${i}" class="w${h.s >= 0.6 ? ' hot' : ''}" data-n="${n}" data-g="${esc(h.w)}" style="--n:${n};--h:${heat(h.s).toFixed(2)}" title="${esc(tip)}"><i${pop}>${esc(h.w)}</i></span>`;
+  return `<span id="w${i}" class="w${level(h.s) >= 0.7 ? ' hot' : ''}" data-n="${n}" data-g="${esc(h.w)}" style="--n:${n};--h:${heat(h.s).toFixed(2)}" title="${esc(tip)}"><i${pop}>${esc(h.w)}</i></span>`;
 }
 
 // Le texte n'est redessiné en entier que s'il a vraiment changé, pour ne pas couper les animations en cours.
@@ -531,7 +534,7 @@ function guessList(items, from, byHeat, mine, added = 0) {
     .map(
       g => `<li${mine ? ` data-g="${esc(g.w)}" title="Retrouver ce mot dans le texte"` : ''}${cls(g) ? ` class="${cls(g)}"` : ''}>
         <span class="k">${g.k}</span><span class="gw">${esc(g.w)}</span>
-        ${g.n ? `<span class="plus">+${g.n}</span>` : g.s ? `<span class="heat" style="--h:${heat(g.s).toFixed(2)}">${Math.round(g.s * 100)} %</span>` : ''}
+        ${g.n ? `<span class="plus">+${g.n}</span>` : g.s ? `<span class="heat" style="--h:${heat(g.s).toFixed(2)}">${pct(g.s)} %</span>` : ''}
       </li>`,
     )
     .join('')}</ul>`;
