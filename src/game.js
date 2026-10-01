@@ -120,9 +120,11 @@ export function analyze(page, lex) {
 
 // Proximité entre deux nombres, assez large pour s'approcher petit à petit : de 0,35 (trop loin, rien ne s'affiche)
 // à 0,84 (presque trouvé). Années : visibles jusqu'à ~120 ans d'écart. Autres nombres : jusqu'à un facteur 6 environ.
+// Une année et un autre nombre (« 1888 » et « 337 » mètres) ne se comparent pas.
 export function numberCloseness(a, b) {
-  const years = Math.min(a, b) >= 1000 && Math.max(a, b) <= 2100;
-  const gap = years ? Math.abs(a - b) / 150 : Math.abs(Math.log10((a + 1) / (b + 1)));
+  const isYear = n => n >= 1000 && n <= 2100;
+  if (isYear(a) !== isYear(b)) return 0;
+  const gap = isYear(a) ? Math.abs(a - b) / 150 : Math.abs(Math.log10((a + 1) / (b + 1)));
   return 0.35 + 0.49 * (1 - Math.min(1, Math.sqrt(gap)));
 }
 

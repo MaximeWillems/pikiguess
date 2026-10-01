@@ -59,6 +59,7 @@ test('écart entre nombres : on peut s\'approcher petit à petit', () => {
   assert.ok(numberCloseness(330, 100) > 0.4);
   assert.ok(numberCloseness(330, 30) < 0.4);
   assert.ok(numberCloseness(15, 14) > numberCloseness(15, 10));
+  assert.equal(numberCloseness(1888, 337), 0);
 });
 
 test('lexique : recherche, mot de base, doublons de casse', () => {
