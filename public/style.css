@@ -227,17 +227,19 @@ main { grid-area: main; min-width: 0; }
 }
 .src { font-size: 15px; }
 
+/* Case d'un mot caché : au moins la largeur du mot, et elle s'élargit si le mot proche affiché est plus long */
 .w {
   position: relative;
   display: inline-block;
-  min-width: calc(var(--n) * 0.6em + 6px);
-  height: 1.35em;
-  padding: 0 3px;
-  vertical-align: -0.3em;
+  min-width: calc(var(--n) * 0.6em + 8px);
+  height: 1.45em;
+  padding: 0 4px;
+  overflow: hidden;
+  vertical-align: -0.38em;
   border-radius: 4px;
   background: var(--box);
   color: hsl(calc(var(--h, 0) * 120) 80% 62%);
-  font: 0.85em/1.35em ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font: 0.85em/1.45em ui-monospace, "Cascadia Mono", Consolas, monospace;
   text-align: center;
   white-space: nowrap;
   cursor: pointer;
@@ -245,8 +247,8 @@ main { grid-area: main; min-width: 0; }
   transition: filter .2s var(--ease);
 }
 .w:hover { filter: brightness(1.25); }
-.w i { display: inline-block; font-style: normal; font-size: calc(var(--f, 1) * 1em); }
-.w i.pop { animation: pop .4s var(--ease) both; }
+.w i { font-style: normal; }
+.w i.pop { animation: fade .45s var(--ease) both; }
 .w.hot { font-weight: 700; }
 .w.len::after {
   content: attr(data-n);

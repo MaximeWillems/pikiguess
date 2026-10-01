@@ -477,9 +477,8 @@ function wordHtml(i) {
   const n = p.lens[i], h = view.hints.get(i);
   const tip = `${plural(n, 'lettre')}${h ? ` · « ${h.w} » proche à ${Math.round(h.s * 100)} %` : ''}`;
   if (!h) return `<span id="w${i}" class="w" data-n="${n}" style="--n:${n}" title="${esc(tip)}"></span>`;
-  const fit = Math.max(0.5, Math.min(1, n / [...h.w].length));
   const pop = view.freshHints.has(i) ? ' class="pop"' : '';
-  return `<span id="w${i}" class="w${h.s >= 0.6 ? ' hot' : ''}" data-n="${n}" data-g="${esc(h.w)}" style="--n:${n};--h:${heat(h.s).toFixed(2)}" title="${esc(tip)}"><i${pop} style="--f:${fit.toFixed(2)}">${esc(h.w)}</i></span>`;
+  return `<span id="w${i}" class="w${h.s >= 0.6 ? ' hot' : ''}" data-n="${n}" data-g="${esc(h.w)}" style="--n:${n};--h:${heat(h.s).toFixed(2)}" title="${esc(tip)}"><i${pop}>${esc(h.w)}</i></span>`;
 }
 
 // Le texte n'est redessiné en entier que s'il a vraiment changé, pour ne pas couper les animations en cours.
