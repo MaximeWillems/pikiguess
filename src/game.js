@@ -48,17 +48,42 @@ export function buildPage(title, extract) {
   return { titleTokens, paragraphs, words, titleWords: titleTokens.filter(t => typeof t === 'number') };
 }
 
+// Petits mots qui se dévoilent ensemble : formes au féminin, au pluriel ou contractées (« de » dévoile « du », « à » dévoile « au »).
+const GROUPS = [
+  'le la les l',
+  'un une des',
+  'de du des d',
+  'a au aux',
+  'ce cet cette ces c',
+  'mon ma mes',
+  'ton ta tes',
+  'son sa ses',
+  'notre nos',
+  'votre vos',
+  'leur leurs',
+  'il ils elle elles',
+  'celui celle ceux celles',
+  'quel quelle quels quelles',
+  'lequel laquelle lesquels lesquelles',
+  'tout toute tous toutes',
+];
+const GROUP_OF = new Map();
+for (const words of GROUPS.map(g => g.split(' '))) {
+  for (const w of words) GROUP_OF.set(w, [...(GROUP_OF.get(w) ?? []), `#${words[0]}`]);
+}
+
 export function describe(key, lex) {
   const num = /^\d{1,9}$/.test(key) ? Number(key) : null;
+  const groups = GROUP_OF.get(key) ?? [];
   const i = lex ? lex.find(key) : -1;
-  if (i < 0) return { lemmas: new Set([key]), row: -1, num };
+  if (i < 0) return { lemmas: new Set([key, ...groups]), row: -1, num };
   const ids = lex.lemmas(i);
   let row = -1;
   if (!STOP.has(key)) {
     row = lex.row(i);
     for (let j = 0; row < 0 && j < ids.length; j++) row = lex.row(ids[j]);
   }
-  return { lemmas: new Set(ids.length ? ids : [i]), row, num };
+  return { lemmas: new Set([...(ids.length ? ids : [i]), ...groups]), row, num };
 }
 
 export function analyze(page, lex) {

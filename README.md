@@ -14,6 +14,7 @@ Sans ces données, le jeu marche quand même, mais sans mots grisés ni formes :
 
 - On affiche l'intro d'une page Wikipédia telle quelle, titre compris, chaque mot caché sous une case noire de la taille du mot. Au départ rien n'est dévoilé, même pas les petits mots (le, de, et…).
 - Le joueur propose un mot : s'il est dans le texte, il se dévoile partout et sous toutes ses formes (pluriel, féminin, conjugaisons : « naître » dévoile « né », « naquit »…). Majuscules et accents ignorés : « egypte » dévoile « Égypte ».
+- Les petits mots se dévoilent aussi ensemble : « le » dévoile « la, les, l' », « de » dévoile « du, des, d' », « à » dévoile « au, aux », de même pour « un/une », « ce/cette/ces », « son/sa/ses », « il/elle/ils/elles »… (liste `GROUPS` dans `src/game.js`).
 - Sinon, il s'affiche dans les cases des mots proches par le sens, en couleur : du rouge (un peu proche) au vert (très proche). Chaque case garde le mot le plus proche proposé jusque-là.
 - Un mot trouvé apparaît sur fond vert, qui s'efface en fondu.
 - Nombres et dates : un nombre est aussi proche d'un autre selon l'écart (« 1790 » s'affiche dans la case de « 1789 »). Le plus proche l'emporte, par l'écart ou par le sens.

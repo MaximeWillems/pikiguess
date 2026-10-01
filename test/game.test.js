@@ -75,6 +75,17 @@ test('un mot se dévoile sous toutes ses formes', () => {
   assert.deepEqual(texts(page, go('le').revealed).sort(), ['La', 'Le', 'Les', 'l', 'là']);
 });
 
+test('les petits mots se dévoilent avec leur féminin, pluriel et formes contractées', () => {
+  const page = buildPage('Test', 'Le chat de la voisine et les chiens du quartier vont à la plage, au parc et aux champs, avec une amie.');
+  const keys = analyze(page, lex);
+  const run = newRun();
+  const go = w => texts(page, guess(page, keys, lex, run, w).revealed).sort();
+  assert.deepEqual(go('le'), ['Le', 'la', 'la', 'les']);
+  assert.deepEqual(go('de'), ['de', 'du']);
+  assert.deepEqual(go('à'), ['au', 'aux', 'à']);
+  assert.deepEqual(go('un'), ['une']);
+});
+
 test('déjà proposé ou déjà dévoilé', () => {
   const { go } = play();
   go('roi');
