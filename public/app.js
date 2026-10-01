@@ -28,7 +28,7 @@ let sortByHeat = store.get('pikiguess.sort') === 'heat';
 let ws, st, offset = 0, retry = 0, barMode = '', unread = 0;
 let pick = null, lastQuery = '', searchTimer, searchSeq = 0;
 let hinted = new Set(), pageKey = '';
-const view = { revealed: new Map(), hints: new Map(), fresh: new Set(), freshHints: new Set(), guesses: [], added: 0, live: {}, liveNew: {}, last: null, hits: new Map() };
+const view = { revealed: new Map(), hints: new Map(), fresh: new Set(), freshHints: new Set(), guesses: [], added: 0, live: {}, liveNew: {}, last: null };
 const seen = { ids: new Set(), found: new Set() };
 const livePct = new Map();
 
@@ -184,7 +184,6 @@ function onState(m) {
   }
   if (prev?.round !== m.round) {
     view.last = null;
-    view.hits.clear();
     livePct.clear();
     pick = null;
     lastQuery = '';
@@ -237,7 +236,6 @@ function onGuess(m) {
   view.guesses.push(...items);
   view.added = items.length;
   if (items.length) view.last = items[items.length - 1].w;
-  if (items.length === 1 && m.revealed.length) view.hits.set(items[0].w, m.revealed.map(([i]) => i));
   feedback(m.items);
   updateWords(changed);
   renderProgress();
@@ -473,7 +471,7 @@ function wordHtml(i) {
   const p = st.page;
   if (p.texts) {
     if (st.phase === 'playing' && isMeneur()) return `<span class="mw${hinted.has(i) ? ' hinted' : ''}" data-i="${i}">${esc(p.texts[i])}</span>`;
-    return esc(p.texts[i]);
+    return `<span id="w${i}" class="ok">${esc(p.texts[i])}</span>`;
   }
   const r = view.revealed.get(i);
   if (r != null) return `<span id="w${i}" class="ok${view.fresh.has(i) ? ' new' : ''}">${esc(r)}</span>`;
@@ -738,9 +736,9 @@ $('#side').addEventListener('click', e => {
   const li = e.target.closest('li[data-g]');
   if (!li) return;
   const word = li.dataset.g;
-  const boxes = [...document.querySelectorAll(`.w[data-g="${CSS.escape(word)}"]`)];
-  const hits = (view.hits.get(word) || []).map(i => document.getElementById(`w${i}`)).filter(Boolean);
-  if (!spot(boxes.length ? boxes : hits)) toast(`« ${word} » n'est affiché dans aucune case pour le moment.`);
+  const found = (view.guesses.find(g => g.w === word)?.at ?? []).map(i => document.getElementById(`w${i}`)).filter(Boolean);
+  const near = [...document.querySelectorAll(`.w[data-g="${CSS.escape(word)}"]`)];
+  if (!spot([...found, ...near])) toast(`« ${word} » n'est affiché dans aucune case pour le moment.`);
 });
 
 $('#copy').addEventListener('click', e => copyLink(e.currentTarget));

@@ -182,7 +182,7 @@ export function guess(page, keys, lex, run, input) {
       run.hints.set(e.key, { w, s });
       for (const i of e.pos) res.hints.push([i, w, round(s)]);
     }
-    const item = { w, n: found.length, s: best >= HINT_MIN ? round(best) : 0 };
+    const item = { w, n: found.length, s: best >= HINT_MIN ? round(best) : 0, at: found.map(([i]) => i) };
     run.guesses.push(item);
     res.items.push({ ...item });
   }

@@ -244,7 +244,7 @@ main { grid-area: main; min-width: 0; }
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
-  transition: filter .2s var(--ease);
+  transition: filter .2s var(--ease), outline-color .5s var(--ease);
 }
 .w:hover { filter: brightness(1.25); }
 .w i { font-style: normal; }
@@ -264,8 +264,10 @@ main { grid-area: main; min-width: 0; }
 }
 @keyframes lenShow { 0% { opacity: 0; } 12%, 80% { opacity: 1; } 100% { opacity: 0; } }
 
-.spot { border-radius: 4px; outline: 3px solid transparent; outline-offset: 1px; animation: spot 2.5s var(--ease) both; }
-@keyframes spot { 10%, 70% { outline-color: var(--spot); } 100% { outline-color: transparent; } }
+/* Contour d'un essai cliqué dans la liste : mots trouvés comme mots proches */
+.w, .ok { outline: 3px solid transparent; outline-offset: 1px; }
+.ok { border-radius: 4px; transition: outline-color .5s var(--ease); }
+.w.spot, .ok.spot { outline-color: var(--spot); }
 
 /* Mot trouvé : la case passe au vert puis s'efface en fondu */
 .ok.new { margin: 0 -2px; padding: 0 2px; border-radius: 4px; animation: found 1.8s var(--ease) both; }

@@ -139,7 +139,9 @@ test('la page est trouvée quand tout le titre est dévoilé, parenthèse compri
 
 test('chaque essai garde sa proximité avec le mot caché le plus proche', () => {
   const { go } = play();
-  assert.equal(go('roi').items[0].n, 2);
+  const r = go('roi');
+  assert.equal(r.items[0].n, 2);
+  assert.deepEqual(r.items[0].at, r.revealed.map(([i]) => i));
   assert.ok(go('reine').items[0].s > 0.3);
   assert.equal(go('xyz').items[0].s, 0);
 });
