@@ -118,16 +118,18 @@ export function analyze(page, lex) {
   return keys;
 }
 
-// Deux années sont proches à ±30 ans près ; les autres nombres, à 15 % près.
+// Proximité entre deux nombres, assez large pour s'approcher petit à petit : de 0,35 (trop loin, rien ne s'affiche)
+// à 0,84 (presque trouvé). Années : visibles jusqu'à ~120 ans d'écart. Autres nombres : jusqu'à un facteur 6 environ.
 export function numberCloseness(a, b) {
   const years = Math.min(a, b) >= 1000 && Math.max(a, b) <= 2100;
-  return 1 - Math.abs(a - b) / (years ? 40 : Math.max(5, 0.15 * Math.max(a, b)));
+  const gap = years ? Math.abs(a - b) / 150 : Math.abs(Math.log10((a + 1) / (b + 1)));
+  return 0.35 + 0.49 * (1 - Math.min(1, Math.sqrt(gap)));
 }
 
+// Entre deux nombres, seul l'écart compte ; sinon, la proximité de sens des vecteurs.
 export function closeness(a, b, lex) {
-  let s = a.row >= 0 && b.row >= 0 ? lex.cosine(a.row, b.row) : 0;
-  if (a.num !== null && b.num !== null) s = Math.max(s, numberCloseness(a.num, b.num));
-  return s;
+  if (a.num !== null && b.num !== null) return numberCloseness(a.num, b.num);
+  return a.row >= 0 && b.row >= 0 ? lex.cosine(a.row, b.row) : 0;
 }
 
 export const newRun = () => ({ revealed: new Set(), hints: new Map(), tried: new Set(), guesses: [], foundAt: null });

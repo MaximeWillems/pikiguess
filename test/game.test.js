@@ -49,13 +49,16 @@ test('la prononciation est retirée du texte', () => {
   assert.deepEqual(page.words.map(w => w.text), ['Albert', 'Einstein', 'Albert', 'Einstein', 'né', 'le', '14', 'mars', '1879']);
 });
 
-test('écart entre nombres : années à ±30 ans, le reste à 15 %', () => {
-  assert.ok(numberCloseness(1789, 1790) > 0.9);
-  assert.ok(numberCloseness(1889, 1914) > 0.3);
-  assert.ok(numberCloseness(1889, 1957) < 0.3);
-  assert.ok(numberCloseness(330, 300) > 0.3);
-  assert.ok(numberCloseness(15, 18) > 0.3);
-  assert.ok(numberCloseness(1, 9) < 0.3);
+test('écart entre nombres : on peut s\'approcher petit à petit', () => {
+  const years = [1, 5, 10, 25, 50, 100].map(d => numberCloseness(1889, 1889 + d));
+  assert.ok(years.every((s, i) => i === 0 || s < years[i - 1]));
+  assert.ok(numberCloseness(1789, 1790) > 0.75);
+  assert.ok(numberCloseness(1889, 1957) > 0.4);
+  assert.ok(numberCloseness(1500, 1900) < 0.4);
+  assert.ok(numberCloseness(330, 300) > 0.7);
+  assert.ok(numberCloseness(330, 100) > 0.4);
+  assert.ok(numberCloseness(330, 30) < 0.4);
+  assert.ok(numberCloseness(15, 14) > numberCloseness(15, 10));
 });
 
 test('lexique : recherche, mot de base, doublons de casse', () => {
@@ -115,7 +118,7 @@ test('mots grisés : par le sens et par écart entre nombres', () => {
   const n = go('1790');
   assert.equal(n.hints.length, 1);
   assert.equal(page.words[n.hints[0][0]].text, '1789');
-  assert.ok(n.hints[0][2] > 0.9);
+  assert.ok(n.hints[0][2] > 0.75);
   const view = playerView(page, run);
   assert.ok(view.hints.some(([, w]) => w === '1790'));
   assert.ok(!view.revealed.some(([, t]) => t === 'Mercure'));
