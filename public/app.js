@@ -41,7 +41,7 @@ const isBoss = () => st.you === st.hostId || !st.players.find(p => p.id === st.h
 const plural = (n, word) => `${n} ${word}${n > 1 ? 's' : ''}`;
 // Proximité affichée : 0 % au seuil (0,4), 100 % vers 0,85. La couleur ne vire au vert qu'en fin d'échelle.
 const level = s => Math.min(1, Math.max(0, (s - HINT_MIN) / 0.45));
-const pct = s => Math.min(99, Math.round(level(s) * 100));
+const pct = s => Math.min(99, Math.max(1, Math.round(level(s) * 100)));
 const heat = s => level(s) ** 2;
 const baseTitle = () => (solo ? 'Pikiguess · solo' : `Pikiguess · ${code}`);
 const duration = ms => {
