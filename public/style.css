@@ -277,6 +277,21 @@ main { grid-area: main; min-width: 0; }
   100% { background: transparent; }
 }
 
+/* Caméras du meneur : onglets, écran d'un joueur, mosaïque de tous les écrans */
+.povs { display: flex; flex-wrap: wrap; gap: 6px; margin-right: auto; }
+.povs button { padding: 4px 12px; font-size: 14px; font-weight: 500; background: transparent; color: var(--ink); border-color: var(--line); }
+.povs button.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.povs .pct { opacity: .7; font-variant-numeric: tabular-nums; }
+.cam-head { margin: -4px 0 12px; font-size: 14px; color: var(--muted); }
+.mosaic { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.mini { padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; transition: border-color .2s var(--ease), box-shadow .2s var(--ease); }
+.mini:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+.mini-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; font-size: 13px; }
+.mini-head span { color: var(--muted); }
+.mini-page { max-height: 340px; overflow: hidden; font-size: 8px; line-height: 1.9; -webkit-mask-image: linear-gradient(#000 85%, transparent); mask-image: linear-gradient(#000 85%, transparent); }
+.mini-page .title { margin: 0 0 4px; padding-bottom: 2px; font-size: 14px; }
+.mini-page p { margin: 0 0 4px; }
+
 .mw { cursor: pointer; border-radius: 3px; transition: background-color .2s var(--ease); }
 .mw:hover { background: var(--new); }
 .mw.hinted { background: var(--hinted); cursor: default; }

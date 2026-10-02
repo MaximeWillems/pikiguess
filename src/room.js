@@ -1,5 +1,5 @@
 import { DurableObject } from 'cloudflare:workers';
-import { analyze, buildPage, fullPage, guess, isFound, newRun, playerView, ranking, reveal, revealedCount } from './game.js';
+import { analyze, buildPage, camView, fullPage, guess, isFound, newRun, playerView, ranking, reveal, revealedCount } from './game.js';
 import { Lexicon } from './lexicon.js';
 import { fetchPage, randomPopularPage, UserError } from './wikipedia.js';
 
@@ -274,7 +274,14 @@ export class Room extends DurableObject {
       s.firstFoundAt ??= run.foundAt;
     }
     this.sendTo(id, { t: 'guess', ...res });
-    this.sendTo(s.meneurId, { t: 'live', id, items: res.items, count: revealedCount(s.page, run) });
+    this.sendTo(s.meneurId, {
+      t: 'live',
+      id,
+      items: res.items,
+      count: revealedCount(s.page, run),
+      revealed: res.revealed.map(([i]) => i),
+      hints: res.hints,
+    });
     if (!found) {
       this.save();
       return false;
@@ -398,6 +405,7 @@ export class Room extends DurableObject {
       v.page = fullPage(s.page);
       v.hinted = s.page.words.flatMap((w, i) => (s.hinted.includes(w.key) ? [i] : []));
       v.live = Object.fromEntries(Object.entries(s.runs).map(([pid, r]) => [pid, { guesses: r.guesses, count: revealedCount(s.page, r) }]));
+      v.cams = Object.fromEntries(Object.entries(s.runs).map(([pid, r]) => [pid, camView(s.page, r)]));
     } else if (s.phase === 'playing' && run) {
       const found = run.foundAt != null;
       v.page = found ? fullPage(s.page) : playerView(s.page, run);

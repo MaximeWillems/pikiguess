@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { Lexicon } from '../src/lexicon.js';
 import { playable } from '../src/wikipedia.js';
-import { analyze, buildPage, cleanExtract, guess, isFound, newRun, normalize, numberCloseness, playerView, ranking, reveal } from '../src/game.js';
+import { analyze, buildPage, camView, cleanExtract, guess, isFound, newRun, normalize, numberCloseness, playerView, ranking, reveal } from '../src/game.js';
 
 const TITLE = 'Mercure (planète)';
 const EXTRACT = "Le roi est né en 1789 ( ). Les rois sont nés à Paris, l'empire naquit.\n\nLa révolution est une fête, là.";
@@ -148,6 +148,16 @@ test('chaque essai garde sa proximité avec le mot caché le plus proche', () =>
   assert.deepEqual(r.items[0].at, r.revealed.map(([i]) => i));
   assert.ok(go('reine').items[0].s > 0.3);
   assert.equal(go('xyz').items[0].s, 0);
+});
+
+test('caméra du meneur : ce que voit un joueur', () => {
+  const { page, run, go } = play();
+  go('roi');
+  go('reine');
+  const cam = camView(page, run);
+  assert.deepEqual(cam.revealed.map(i => page.words[i].text).sort(), ['roi', 'rois']);
+  assert.ok(cam.hints.some(([i, w]) => page.words[i].text === 'empire' && w === 'reine'));
+  assert.equal(cam.found, false);
 });
 
 test('plusieurs mots en une saisie', () => {

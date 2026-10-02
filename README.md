@@ -49,8 +49,11 @@ L'hôte règle la partie comme il veut :
 
 ## Le meneur pendant sa manche
 
-- Il voit tout en direct : le texte complet et les mots proposés par chacun.
-- Il peut donner un indice : un mot se dévoile chez tous les joueurs.
+- Il passe d'un écran à l'autre avec des onglets, comme des caméras :
+  - **Ma vue** : le texte complet, d'où il donne les indices ;
+  - **Tous** : les grilles de tous les joueurs côte à côte, en réduit, mises à jour en direct (un clic ouvre celle du joueur) ;
+  - **un joueur** : sa grille en grand, exactement comme il la voit (mots dévoilés, mots proches en couleur), avec la liste de ses essais.
+- Il peut donner un indice : un mot se dévoile chez tous les joueurs. Il clique sur le mot dans sa vue, ou sur une case dans l'écran d'un joueur (le survol montre le mot caché).
 
 ## Mode solo
 
@@ -96,17 +99,7 @@ L'hôte règle la partie comme il veut :
 
 ## À faire
 
-### Le meneur regarde les joueurs comme des caméras
-
-Pendant la manche, le meneur choisit ce qu'il regarde :
-
-- **Texte complet** (vue actuelle) : la page en clair, d'où il donne les indices.
-- **Tous** : les grilles de tous les joueurs côte à côte, en réduit, chacune avec le pseudo, le nombre d'essais et la part dévoilée, mises à jour en direct.
-- **Un joueur** : la grille de ce joueur en grand, exactement comme il la voit (mots dévoilés, mots proches en couleur), avec la liste de ses essais.
-
-Technique : le serveur envoie au meneur, pour chaque joueur, ses mots dévoilés et ses mots proches, au début de la manche puis à chaque essai. Côté écran, un sélecteur « Texte complet | Tous | Alice | Bob… » en haut de la vue du meneur.
-
-### Autres points
+### Points ouverts
 
 - Régler les mots proches après de vraies parties. Seuil `HINT_MIN` à 0,4 (`src/game.js` et `public/app.js`) : en dessous, rien ne s'affiche. Échelle des couleurs dans `public/app.js` : 0,6 orange (44 %), 0,7 jaune (67 %), vert à partir de 0,8. Mesuré sur « Monstre (série télévisée) » : les mots hors sujet (« guerre », « nazi ») montent à 0,43-0,6, ceux du sujet (« meurtre », « crime ») à 0,65-0,84.
 - À mesurer : après une longue pause, le premier mot semble mettre plus d'une seconde à répondre, le temps que le salon recharge ses 25 Mo de données.
@@ -114,3 +107,4 @@ Technique : le serveur envoie au meneur, pour chaque joueur, ses mots dévoilés
 ### Fait
 
 - Actualiser la page sans perdre la partie ni l'historique de ses essais (vérifié le 28/09/2026).
+- Caméras du meneur (voir « Le meneur pendant sa manche »).

@@ -28,7 +28,9 @@ let sortByHeat = store.get('pikiguess.sort') === 'heat';
 let ws, st, offset = 0, retry = 0, barMode = '', unread = 0;
 let pick = null, lastQuery = '', searchTimer, searchSeq = 0;
 let hinted = new Set(), pageKey = '';
-const view = { revealed: new Map(), hints: new Map(), fresh: new Set(), freshHints: new Set(), guesses: [], added: 0, live: {}, liveNew: {}, last: null };
+// Ce que regarde le meneur : sa vue (texte complet), tous les joueurs, ou l'écran d'un joueur (son id).
+let pov = 'me';
+const view = { revealed: new Map(), hints: new Map(), fresh: new Set(), freshHints: new Set(), guesses: [], added: 0, live: {}, liveNew: {}, cams: {}, last: null };
 const seen = { ids: new Set(), found: new Set() };
 const livePct = new Map();
 
@@ -190,6 +192,13 @@ function onState(m) {
   }
   view.guesses = m.guesses || [];
   view.live = m.live || {};
+  view.cams = Object.fromEntries(
+    Object.entries(m.cams || {}).map(([pid, c]) => [
+      pid,
+      { revealed: new Set(c.revealed), hints: new Map(c.hints.map(([i, w, s]) => [i, { w, s }])), found: c.found, fresh: new Set(), freshHints: new Set() },
+    ]),
+  );
+  if (prev?.round !== m.round || prev?.phase !== m.phase || (pov !== 'me' && pov !== 'all' && !view.cams[pov])) pov = 'me';
   hinted = new Set(m.hinted || []);
   events(prev, m);
   if (prev && (prev.phase !== m.phase || prev.round !== m.round)) window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -267,7 +276,39 @@ function onLive(m) {
   const items = m.items.filter(x => !x.dup);
   l.guesses.push(...items);
   l.count = m.count;
+
+  // Met à jour la caméra de ce joueur, et seulement ses cases qui ont changé si on la regarde
+  const cam = view.cams[m.id];
+  if (cam) {
+    const changed = new Set();
+    for (const i of m.revealed ?? []) {
+      cam.revealed.add(i);
+      cam.hints.delete(i);
+      cam.fresh.add(i);
+      changed.add(i);
+    }
+    for (const [i, w, s] of m.hints ?? []) {
+      if (cam.revealed.has(i)) continue;
+      cam.hints.set(i, { w, s });
+      cam.freshHints.add(i);
+      changed.add(i);
+    }
+    const k = st.players.filter(p => p.playing).findIndex(p => p.id === m.id);
+    const prefix = pov === m.id ? 'c' : pov === 'all' ? `m${k}-` : null;
+    if (prefix) {
+      for (const i of changed) {
+        const el = document.getElementById(`${prefix}${i}`);
+        if (el) el.outerHTML = camWord(cam, prefix)(i);
+      }
+      if (pov === m.id) $('#camHead').innerHTML = camHead(m.id);
+      pageKey = currentPageKey();
+    }
+    cam.fresh.clear();
+    cam.freshHints.clear();
+  }
+
   view.liveNew = { [m.id]: items.length };
+  renderPovs();
   renderSide();
   view.liveNew = {};
 }
@@ -284,6 +325,7 @@ function render() {
   renderPlayers();
   renderTimers();
   renderBar();
+  renderPovs();
   renderPlay();
   renderPage();
   renderSide();
@@ -419,8 +461,9 @@ function renderBar() {
       ${boss ? '<button class="alt small" data-send="skip" data-confirm="Passer au meneur suivant ?">Passer son tour</button>' : ''}`;
   } else if (st.phase === 'playing' && meneur) {
     bar.innerHTML = `<p>Tu es le meneur : les autres cherchent « <b>${esc(st.page.title)}</b> ».</p>
-      <p class="hint">Clique sur un mot du texte pour le donner en indice à tous les joueurs. Leurs essais s'affichent en direct à gauche.</p>
-      ${st.settings.meneurStop ? '<button class="alt small" data-send="stop" data-confirm="Arrêter la manche maintenant ?">Arrêter la manche</button>' : ''}`;
+      <p class="hint">Passe d'un écran à l'autre avec les onglets, comme des caméras. Clique sur un mot, ou sur une case chez un joueur, pour le donner en indice à tous.</p>
+      <div class="actions"><div id="povs" class="povs"></div>
+        ${st.settings.meneurStop ? '<button class="alt small" data-send="stop" data-confirm="Arrêter la manche maintenant ?">Arrêter la manche</button>' : ''}</div>`;
   } else if (st.phase === 'playing') {
     bar.innerHTML = !mine?.playing
       ? '<p>Manche en cours : tu joueras à la prochaine.</p>'
@@ -467,6 +510,13 @@ function renderProgress() {
   $('#progressBar').style.width = `${pct}%`;
 }
 
+// Case d'un mot caché, vide ou avec le mot proche le plus proche ; « secret » : le vrai mot, montré au meneur au survol.
+function boxHtml(i, n, h, id, fresh, secret) {
+  const tip = `${secret ? `${secret} · ` : ''}${plural(n, 'lettre')}${h ? ` · « ${h.w} » proche à ${pct(h.s)} %` : ''}`;
+  if (!h) return `<span id="${id}" class="w" data-i="${i}" data-n="${n}" style="--n:${n}" title="${esc(tip)}"></span>`;
+  return `<span id="${id}" class="w${level(h.s) >= 0.7 ? ' hot' : ''}" data-i="${i}" data-n="${n}" data-g="${esc(h.w)}" style="--n:${n};--h:${heat(h.s).toFixed(2)}" title="${esc(tip)}"><i${fresh ? ' class="pop"' : ''}>${esc(h.w)}</i></span>`;
+}
+
 function wordHtml(i) {
   const p = st.page;
   if (p.texts) {
@@ -475,17 +525,78 @@ function wordHtml(i) {
   }
   const r = view.revealed.get(i);
   if (r != null) return `<span id="w${i}" class="ok${view.fresh.has(i) ? ' new' : ''}">${esc(r)}</span>`;
-  const n = p.lens[i], h = view.hints.get(i);
-  const tip = `${plural(n, 'lettre')}${h ? ` · « ${h.w} » proche à ${pct(h.s)} %` : ''}`;
-  if (!h) return `<span id="w${i}" class="w" data-n="${n}" style="--n:${n}" title="${esc(tip)}"></span>`;
-  const pop = view.freshHints.has(i) ? ' class="pop"' : '';
-  return `<span id="w${i}" class="w${level(h.s) >= 0.7 ? ' hot' : ''}" data-n="${n}" data-g="${esc(h.w)}" style="--n:${n};--h:${heat(h.s).toFixed(2)}" title="${esc(tip)}"><i${pop}>${esc(h.w)}</i></span>`;
+  return boxHtml(i, p.lens[i], view.hints.get(i), `w${i}`, view.freshHints.has(i));
+}
+
+// Un mot vu par la caméra du meneur, tel que le joueur le voit.
+const camWord = (cam, prefix) => i => {
+  const text = st.page.texts[i];
+  if (cam.found || cam.revealed.has(i)) return `<span id="${prefix}${i}" class="ok${cam.fresh.has(i) ? ' new' : ''}">${esc(text)}</span>`;
+  return boxHtml(i, [...text].length, cam.hints.get(i), `${prefix}${i}`, cam.freshHints.has(i), text);
+};
+
+function gridHtml(p, word) {
+  const line = tokens => tokens.map(t => (typeof t === 'number' ? word(t) : esc(t))).join('');
+  return `<h1 class="title">${line(p.titleTokens)}</h1>${p.paragraphs.map(par => `<p>${line(par)}</p>`).join('')}`;
+}
+
+function camStats(id) {
+  const cam = view.cams[id], p = st.page;
+  const titleWords = p.titleTokens.filter(t => typeof t === 'number');
+  const guesses = (view.live[id]?.guesses ?? []).length;
+  if (cam.found) return `a trouvé · ${plural(guesses, 'essai')}`;
+  return `titre ${titleWords.filter(i => cam.revealed.has(i)).length}/${titleWords.length} · texte ${Math.round((100 * cam.revealed.size) / p.texts.length)} % · ${plural(guesses, 'essai')}`;
+}
+
+function camHead(id) {
+  return `Écran de <b>${esc(nameOf(id))}</b> · ${camStats(id)}`;
+}
+
+function mosaicHtml() {
+  const p = st.page;
+  const minis = st.players
+    .filter(x => x.playing)
+    .map((x, k) =>
+      view.cams[x.id]
+        ? `<div class="mini" data-pov="${esc(x.id)}" title="Voir l'écran de ${esc(x.name)}">
+            <div class="mini-head"><b>${esc(x.name)}</b><span>${camStats(x.id)}</span></div>
+            <div class="mini-page">${gridHtml(p, camWord(view.cams[x.id], `m${k}-`))}</div>
+          </div>`
+        : '',
+    );
+  return `<div class="mosaic">${minis.join('')}</div>`;
+}
+
+function renderPovs() {
+  const el = $('#povs');
+  if (!el || st.phase !== 'playing' || !isMeneur()) return;
+  const tab = (id, label) => `<button type="button" data-pov="${esc(id)}"${pov === id ? ' class="active"' : ''}>${label}</button>`;
+  const players = st.players.filter(p => p.playing && view.cams[p.id]);
+  el.innerHTML =
+    tab('me', 'Ma vue') +
+    tab('all', 'Tous') +
+    players
+      .map(p => {
+        const cam = view.cams[p.id];
+        return tab(p.id, `${esc(p.name)} <span class="pct">${cam.found ? '✓' : `${Math.round((100 * cam.revealed.size) / st.page.texts.length)} %`}</span>`);
+      })
+      .join('');
+}
+
+function setPov(id) {
+  if (pov === id) return;
+  pov = id;
+  renderPovs();
+  renderPage();
+  renderSide();
 }
 
 // Le texte n'est redessiné en entier que s'il a vraiment changé, pour ne pas couper les animations en cours.
 function currentPageKey() {
   const p = st.page;
-  return [st.phase, st.round, p.texts ? 'full' : 'hidden', view.revealed.size, view.hints.size, hinted.size].join(':');
+  const watching = st.phase === 'playing' && isMeneur() ? pov : '-';
+  const cams = watching === 'me' || watching === '-' ? '' : Object.values(view.cams).map(c => `${c.revealed.size}/${c.hints.size}/${c.found}`).join(',');
+  return [st.phase, st.round, p.texts ? 'full' : 'hidden', watching, view.revealed.size, view.hints.size, hinted.size, cams].join(':');
 }
 
 function renderPage() {
@@ -497,13 +608,15 @@ function renderPage() {
   }
   const key = currentPageKey();
   if (key === pageKey) return;
-  const base = key.split(':').slice(0, 3).join(':');
+  const base = key.split(':').slice(0, 4).join(':');
   const changed = !pageKey.startsWith(`${base}:`);
-  const line = tokens => tokens.map(t => (typeof t === 'number' ? wordHtml(t) : esc(t))).join('');
-  el.innerHTML =
-    `<h1 class="title">${line(p.titleTokens)}</h1>` +
-    p.paragraphs.map(par => `<p>${line(par)}</p>`).join('') +
-    (p.url && st.phase === 'playing' ? `<p class="src"><a href="${esc(p.url)}" target="_blank" rel="noopener">Voir la page sur Wikipédia</a></p>` : '');
+  const watching = st.phase === 'playing' && isMeneur() ? pov : 'me';
+  if (watching === 'all') el.innerHTML = mosaicHtml();
+  else if (watching !== 'me') el.innerHTML = `<div id="camHead" class="cam-head">${camHead(watching)}</div>${gridHtml(p, camWord(view.cams[watching], 'c'))}`;
+  else
+    el.innerHTML =
+      gridHtml(p, wordHtml) +
+      (p.url && st.phase === 'playing' ? `<p class="src"><a href="${esc(p.url)}" target="_blank" rel="noopener">Voir la page sur Wikipédia</a></p>` : '');
   if (changed) replay(el, 'fade');
   pageKey = key;
   view.fresh.clear();
@@ -540,7 +653,10 @@ function guessList(items, from, byHeat, mine, added = 0) {
 
 function renderSide() {
   const el = $('#side');
-  if (st.phase === 'playing' && isMeneur()) {
+  if (st.phase === 'playing' && isMeneur() && view.cams[pov]) {
+    const l = view.live[pov] || { guesses: [] };
+    el.innerHTML = `<h3>Essais de ${esc(nameOf(pov))} (${l.guesses.length})</h3>${guessList(l.guesses, 0, false, false, view.liveNew[pov] || 0)}`;
+  } else if (st.phase === 'playing' && isMeneur()) {
     const total = st.page.texts.length;
     el.innerHTML =
       '<h3>En direct</h3>' +
@@ -662,6 +778,7 @@ $('#bar').addEventListener('click', e => {
     return;
   }
   if (b.dataset.send && (!b.dataset.confirm || confirm(b.dataset.confirm))) send({ t: b.dataset.send });
+  if (b.dataset.pov) setPov(b.dataset.pov);
   if ('copy' in b.dataset) copyLink(b);
   if ('ideas' in b.dataset) ideas();
   if ('launch' in b.dataset && pick?.ready) {
@@ -714,15 +831,19 @@ $('#giveUp').addEventListener('click', () => {
   if (confirm('Abandonner et voir la réponse ?')) send({ t: 'abandon' });
 });
 
+function giveHint(i) {
+  if (st.phase !== 'playing' || !isMeneur() || hinted.has(i)) return;
+  if (confirm(`Donner « ${st.page.texts[i]} » en indice à tous les joueurs ?`)) send({ t: 'hint', i });
+}
+
 $('#page').addEventListener('click', e => {
+  const mini = e.target.closest('.mini');
+  if (mini) return setPov(mini.dataset.pov);
   const mw = e.target.closest('.mw');
-  if (mw) {
-    if (!mw.classList.contains('hinted') && st.phase === 'playing' && isMeneur() && confirm(`Donner « ${mw.textContent} » en indice à tous les joueurs ?`))
-      send({ t: 'hint', i: Number(mw.dataset.i) });
-    return;
-  }
+  if (mw) return giveHint(Number(mw.dataset.i));
   const w = e.target.closest('.w');
   if (!w) return;
+  if (st.phase === 'playing' && isMeneur()) return giveHint(Number(w.dataset.i));
   w.classList.add('len');
   setTimeout(() => w.classList.remove('len'), 1500);
 });

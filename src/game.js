@@ -208,6 +208,17 @@ export function playerView(page, run) {
   return { titleTokens: page.titleTokens, paragraphs: page.paragraphs, lens, revealed, hints };
 }
 
+// Ce que voit un joueur, pour la caméra du meneur : positions dévoilées et mots proches affichés.
+export function camView(page, run) {
+  const revealed = [], hints = [];
+  page.words.forEach((w, i) => {
+    const h = run.hints.get(w.key);
+    if (run.revealed.has(w.key)) revealed.push(i);
+    else if (h) hints.push([i, h.w, round(h.s)]);
+  });
+  return { revealed, hints, found: run.foundAt != null };
+}
+
 export const fullPage = page => ({
   title: page.title,
   url: page.url,
