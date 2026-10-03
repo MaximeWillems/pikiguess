@@ -1,4 +1,25 @@
-===== Préparation frWaC (données en ligne)
+===== Tous les mots du modèle, vecteurs réduits pour tenir en ligne (données en ligne)
+words.bin : 6.2 Mo
+vectors.bin : 26.1 Mo
+155562 mots dans le modèle, 134784 vecteurs gardés de 191 dimensions, 186985 mots connus, 115569 formes
+Similarité du 10e voisin : médiane 0.61, 10e centile 0.48, 90e centile 0.78
+Similarité du 100e voisin : médiane 0.50, 10e centile 0.38, 90e centile 0.65
+Similarité du 500e voisin : médiane 0.39, 10e centile 0.30, 90e centile 0.50
+Proximité de mots pris au hasard : 50e centile -0.02, 90e centile 0.11, 99e centile 0.31, 99.9e centile 0.56
+roi : trone 0.82, regente 0.80, chambellan 0.77, prince 0.76, duc 0.75, reine 0.75, suzerain 0.74, connetable 0.73, royaume 0.73, vassal 0.73
+napoléon : bonaparte 0.91, imperatrice 0.78, abdication 0.78, napoleonienne 0.77, bourbons 0.77, talleyrand 0.76, empereur 0.75, beauharnais 0.75, imperiale 0.75, persigny 0.74
+paris : nanterre 0.65, vincennes 0.61, sorbonne 0.59, daumesnil 0.59, malesherbes 0.58, caumartin 0.57, montrouge 0.56, rue 0.56, debourg 0.55, boulevard 0.55
+1789 : absent
+guerre : guerres 0.75, militaire 0.73, allies 0.72, belligerants 0.70, bombardements 0.70, capitulation 0.69, armistice 0.68, soldats 0.68, invasion 0.68, militaires 0.68
+fleuve : rives 0.80, fleuves 0.79, riviere 0.78, affluent 0.75, affluents 0.72, rivieres 0.69, confluent 0.68, rive 0.68, berges 0.68, confluence 0.67
+planète : planetaire 0.82, planetaires 0.67, rechauffement 0.65, climatique 0.62, oceans 0.62, wwf 0.60, deforestation 0.60, biosphere 0.60, ecologiques 0.60, vivable 0.59
+chat : chats 0.80, minou 0.75, chien 0.74, miaule 0.73, matou 0.72, chatte 0.70, ronrons 0.70, toutou 0.68, loustic 0.68, chattes 0.67
+borgne : batard 0.62, pederaste 0.53, mousquetaire 0.48, brigand 0.47, rosse 0.47, chetif 0.47, fourbe 0.47, fripon 0.45, metayer 0.45, vieillard 0.44
+manger : mange 0.75, grignoter 0.72, mangeant 0.70, cuisine 0.64, mangent 0.64, sainement 0.63, cuisiner 0.63, goinfrer 0.63, vegetarien 0.62, copieux 0.62
+tyrannosaure : dinosaure 0.74, diplodocus 0.66, dinos 0.63, mammouth 0.61, dinosaures 0.60, griffes 0.58, reptile 0.58, gorille 0.58, mammouths 0.58, singes 0.57
+théropode : absent
+spinosaurus : absent
+===== 100 000 mots, vecteurs complets (pour comparer)
 words.bin : 5.8 Mo
 vectors.bin : 20.3 Mo
 155562 mots dans le modèle, 100000 vecteurs gardés de 200 dimensions, 161495 mots connus, 115569 formes
@@ -16,26 +37,237 @@ planète : planetaire 0.83, planetaires 0.68, rechauffement 0.66, oceans 0.65, c
 chat : chats 0.81, minou 0.77, chien 0.76, miaule 0.76, matou 0.75, chatte 0.73, chattes 0.70, loustic 0.70, toutou 0.70, matous 0.70
 borgne : batard 0.67, rosse 0.57, fourbe 0.57, brigand 0.56, chetif 0.55, mousquetaire 0.55, fripon 0.54, brave 0.54, vieillard 0.53, nigaud 0.53
 manger : mange 0.77, grignoter 0.74, mangeant 0.72, mangent 0.67, sainement 0.66, cuisine 0.66, copieux 0.65, cuisiner 0.65, goinfrer 0.65, mangeons 0.65
-===== Préparation Wikipédia (pour comparer)
-words.bin : 5.2 Mo
-vectors.bin : 12.9 Mo
-66274 mots dans le modèle, 63437 vecteurs gardés de 200 dimensions, 133663 mots connus, 115569 formes
-Similarité du 10e voisin : médiane 0.61, 10e centile 0.49, 90e centile 0.77
-Similarité du 100e voisin : médiane 0.47, 10e centile 0.38, 90e centile 0.63
-Similarité du 500e voisin : médiane 0.34, 10e centile 0.28, 90e centile 0.45
-Proximité de mots pris au hasard : 50e centile -0.02, 90e centile 0.12, 99e centile 0.34, 99.9e centile 0.56
-roi : regent 0.78, souverain 0.75, trone 0.71, reine 0.69, duc 0.68, regente 0.68, connetable 0.67, prince 0.66, empereur 0.66, chambellan 0.66
-napoléon : lannes 0.63, louis 0.63, marechal 0.62, richelieu 0.57, charles 0.57, armand 0.55, generalissime 0.55, colbert 0.55, ferdinand 0.54, moncey 0.54
-paris : avenue 0.65, rue 0.64, arrondissement 0.63, honore 0.62, montrouge 0.61, boulevard 0.61, vincennes 0.61, bagnolet 0.60, clichy 0.59, villette 0.58
-1789 : absent
-guerre : mondiale 0.71, guerres 0.68, bataille 0.62, hostilites 0.62, armee 0.62, batailles 0.61, armistice 0.61, prussienne 0.60, combats 0.60, conflit 0.60
-fleuve : riviere 0.85, embouchure 0.78, navigable 0.77, rive 0.77, fleuves 0.76, rives 0.75, affluent 0.74, rivieres 0.73, confluent 0.72, estuaire 0.71
-planète : planetes 0.76, tellurique 0.75, galaxie 0.74, galactique 0.74, stellaire 0.72, planetaire 0.71, phobos 0.70, uranus 0.69, interplanetaire 0.67, extraterrestre 0.67
-chat : lapin 0.79, chien 0.79, felin 0.72, singe 0.72, furet 0.71, chaton 0.69, caniche 0.68, chiot 0.67, chats 0.67, rat 0.67
-borgne : voleur 0.62, ivrogne 0.60, fou 0.60, vieillard 0.59, begue 0.59, fossoyeur 0.58, boiteux 0.58, farceur 0.58, serviteur 0.58, moustachu 0.56
-manger : cuisiner 0.69, mange 0.68, repas 0.68, dormir 0.67, gouter 0.66, mangeant 0.66, boire 0.63, dejeuner 0.63, mangent 0.61, consommer 0.60
+tyrannosaure : absent
+théropode : absent
+spinosaurus : absent
 
 ===== public/data =====
+
+Monstre (série télévisée)
+  sujet   tueur          dévoilé
+  sujet   crime          brûlant 0.93 → criminel
+  sujet   assassin       chaud 0.63 → Monstre
+  sujet   psychopathe    chaud 0.74 → tueurs
+  sujet   cannibale      tiède 0.49 → Monstre
+  sujet   horreur        chaud 0.64 → tueurs
+  sujet   enquête        rien
+  sujet   cadavre        chaud 0.65 → Monstre
+  sujet   policier       chaud 0.69 → meurtres
+  sujet   sang           rien
+  pièges  guerre         chaud 0.77 → seconde
+  pièges  nazi           rien
+  pièges  soldat         rien
+  pièges  bataille       rien
+  pièges  football       chaud 0.68 → saison
+  pièges  cuisine        rien
+  pièges  voiture        rien
+  pièges  mariage        tiède 0.33 → parents
+
+Tour Eiffel
+  sujet   acier          chaud 0.79 → fer
+  sujet   métal          chaud 0.74 → fer
+  sujet   ingénieur      tiède 0.37 → niveau
+  sujet   touristes      brûlant 0.91 → touristique
+  sujet   construction   chaud 0.63 → plan
+  sujet   structure      tiède 0.33 → Utilisée
+  sujet   antenne        dévoilé
+  sujet   pylône         chaud 0.74 → mètres
+  sujet   architecte     tiède 0.33 → Construite
+  sujet   tourisme       brûlant 0.96 → touristique
+  pièges  montagne       tiède 0.58 → haute
+  pièges  océan          chaud 0.68 → ouest
+  pièges  football       tiède 0.37 → France
+  pièges  chanson        rien
+  pièges  guerre         tiède 0.42 → Révolution
+  pièges  cuisine        tiède 0.54 → étage
+  pièges  médecin        rien
+  pièges  roi            rien
+
+Napoléon Ier
+  sujet   conquête       chaud 0.8 → reconquérir
+  sujet   couronne       chaud 0.66 → revers
+  sujet   soldats        brûlant 0.91 → militaires
+  sujet   monarque       chaud 0.89 → roi
+  sujet   victoire       dévoilé
+  sujet   maréchal       dévoilé
+  sujet   dictateur      tiède 0.43 → despotique
+  sujet   trône          dévoilé
+  sujet   stratège       chaud 0.61 → reconquérir
+  sujet   invasion       chaud 0.77 → alliés
+  pièges  football       tiède 0.37 → France
+  pièges  internet       tiède 0.55 → consulte
+  pièges  cuisine        chaud 0.77 → restaurant
+  pièges  musique        rien
+  pièges  voiture        chaud 0.73 → partir
+  pièges  ordinateur     rien
+  pièges  chat           rien
+  pièges  plage          brûlant 0.92 → mer
+
+Lionel Messi
+  sujet   ballon         chaud 0.67 → joueur
+  sujet   but            dévoilé
+  sujet   dribble        brûlant 0.9 → joueur
+  sujet   stade          chaud 0.67 → football
+  sujet   ronaldo        brûlant 0.91 → Messi
+  sujet   championnat    dévoilé
+  sujet   sportif        dévoilé
+  sujet   gardien        brûlant 0.9 → passeur
+  sujet   penalty        brûlant 0.91 → buteur
+  sujet   maillot        tiède 0.3 → club
+  pièges  guerre         tiède 0.41 → décennie
+  pièges  roi            tiède 0.38 → surnommé
+  pièges  peinture       rien
+  pièges  cuisine        rien
+  pièges  avion          rien
+  pièges  église         tiède 0.58 → Saint
+  pièges  tracteur       rien
+  pièges  médecin        rien
+
+Seconde Guerre mondiale
+  sujet   hitler         brûlant 0.94 → nazi
+  sujet   soldats        brûlant 0.91 → civils
+  sujet   bataille       brûlant 0.9 → front
+  sujet   occupation     brûlant 0.91 → occupés
+  sujet   débarquement   chaud 0.6 → capitulation
+  sujet   armée          dévoilé
+  sujet   front          dévoilé
+  sujet   occupant       dévoilé
+  sujet   fusil          tiède 0.59 → armé
+  sujet   envahisseur    dévoilé
+  pièges  football       tiède 0.37 → France
+  pièges  cuisine        tiède 0.57 → chambres
+  pièges  musique        tiède 0.34 → Tziganes
+  pièges  mariage        chaud 0.86 → séparation
+  pièges  ordinateur     rien
+  pièges  plage          tiède 0.44 → chambres
+  pièges  chat           rien
+  pièges  peinture       tiède 0.38 → gomme
+
+Chat
+  sujet   souris         tiède 0.36 → tactiles
+  sujet   ronronner      brûlant 0.91 → miaulement
+  sujet   chaton         dévoilé
+  sujet   fourrure       brûlant 0.9 → poil
+  sujet   minou          brûlant 0.92 → Chat
+  sujet   tigre          chaud 0.6 → félins
+  sujet   lion           chaud 0.6 → chasseur
+  sujet   croquettes     brûlant 0.9 → chats
+  sujet   litière        chaud 0.81 → rongeurs
+  sujet   miauler        brûlant 0.91 → miaulement
+  pièges  guerre         rien
+  pièges  voiture        chaud 0.73 → partir
+  pièges  politique      tiède 0.58 → Europe
+  pièges  football       chaud 0.62 → sélections
+  pièges  ordinateur     tiède 0.41 → tactiles
+  pièges  roi            chaud 0.66 → noblesse
+  pièges  banque         tiède 0.41 → compte
+  pièges  élection       rien
+
+Wolfgang Amadeus Mozart
+  sujet   concert        chaud 0.82 → musique
+  sujet   partition      tiède 0.35 → symphonie
+  sujet   orchestre      chaud 0.88 → piano
+  sujet   mélodie        chaud 0.61 → musique
+  sujet   chef           rien
+  sujet   beethoven      dévoilé
+  sujet   requiem        tiède 0.56 → symphonie
+  sujet   clavecin       brûlant 0.91 → piano
+  sujet   baroque        brûlant 0.91 → classique
+  sujet   virtuose       dévoilé
+  pièges  guerre         tiède 0.38 → trente
+  pièges  football       rien
+  pièges  voiture        rien
+  pièges  cuisine        rien
+  pièges  politique      tiède 0.58 → Europe
+  pièges  avion          tiède 0.35 → Amadeus
+  pièges  plage          rien
+  pièges  ordinateur     rien
+
+Soleil
+  sujet   lumière        chaud 0.7 → Soleil
+  sujet   chaleur        chaud 0.77 → solaire
+  sujet   lune           brûlant 0.91 → Soleil
+  sujet   ciel           brûlant 0.93 → Soleil
+  sujet   rayons         chaud 0.75 → Soleil
+  sujet   astre          brûlant 0.91 → Soleil
+  sujet   galaxie        brûlant 0.95 → galactique
+  sujet   chaud          tiède 0.45 → Soleil
+  sujet   éclipse        brûlant 0.9 → Soleil
+  sujet   aurore         chaud 0.61 → Soleil
+  pièges  guerre         rien
+  pièges  roi            rien
+  pièges  football       rien
+  pièges  cuisine        rien
+  pièges  voiture        tiède 0.47 → km
+  pièges  musique        rien
+  pièges  élection       rien
+  pièges  banque         rien
+
+Pizza
+  sujet   fromage        brûlant 0.91 → pain
+  sujet   restaurant     brûlant 0.91 → restauration
+  sujet   pâtes          dévoilé
+  sujet   pain           dévoilé
+  sujet   olive          dévoilé
+  sujet   jambon         chaud 0.83 → mozzarella
+  sujet   basilic        chaud 0.82 → tomate
+  sujet   spaghetti      tiède 0.48 → mozzarella
+  sujet   lasagne        chaud 0.61 → mozzarella
+  sujet   boulanger      rien
+  pièges  guerre         rien
+  pièges  football       rien
+  pièges  ordinateur     rien
+  pièges  voiture        rien
+  pièges  politique      tiède 0.51 → culture
+  pièges  musique        tiède 0.32 → culture
+  pièges  planète        chaud 0.8 → monde
+  pièges  église         rien
+
+Spinosaurus
+  sujet   tyrannosaure   brûlant 0.93 → dinosaure
+  sujet   tyrannosaurus  chaud 0.66 → Spinosaurus
+  sujet   vélociraptor   rien
+  sujet   diplodocus     brûlant 0.92 → dinosaure
+  sujet   reptile        brûlant 0.92 → dinosaure
+  sujet   crocodile      chaud 0.86 → dinosaure
+  sujet   préhistoire    chaud 0.66 → dinosaures
+  sujet   jurassique     brûlant 0.96 → Crétacé
+  sujet   prédateur      brûlant 0.93 → proies
+  sujet   raptor         rien
+  pièges  football       rien
+  pièges  cuisine        rien
+  pièges  voiture        chaud 0.73 → partir
+  pièges  politique      tiède 0.32 → mondiale
+  pièges  musique        rien
+  pièges  banque         rien
+  pièges  mariage        chaud 0.63 → famille
+  pièges  ordinateur     chaud 0.69 → support
+
+Albert Einstein
+  sujet   atome          chaud 0.69 → photoélectrique
+  sujet   lumière        tiède 0.39 → photoélectrique
+  sujet   mathématiques  chaud 0.89 → physique
+  sujet   univers        tiède 0.56 → cosmologie
+  sujet   chercheur      brûlant 0.9 → scientifique
+  sujet   newton         brûlant 0.9 → Einstein
+  sujet   laboratoire    chaud 0.77 → scientifique
+  sujet   savant         chaud 0.64 → physicien
+  sujet   professeur     chaud 0.7 → Ulm
+  sujet   gravité        tiède 0.36 → restreinte
+  pièges  football       rien
+  pièges  cuisine        rien
+  pièges  voiture        rien
+  pièges  peinture       rien
+  pièges  chanson        rien
+  pièges  plage          rien
+  pièges  chat           rien
+  pièges  mariage        rien
+
+Résumé public/data
+  sujet : dévoilé 18, brûlant 33, chaud 38, tiède 15, rien 6
+  pièges : dévoilé 0, brûlant 1, chaud 13, tiède 25, rien 49
+
+===== data-100k =====
 
 Monstre (série télévisée)
   sujet   tueur          dévoilé
@@ -217,6 +449,26 @@ Pizza
   pièges  planète        chaud 0.69 → monde
   pièges  église         rien
 
+Spinosaurus
+  sujet   tyrannosaure   chaud 0.69 → dinosaure
+  sujet   tyrannosaurus  chaud 0.66 → Spinosaurus
+  sujet   vélociraptor   rien
+  sujet   diplodocus     rien
+  sujet   reptile        brûlant 0.91 → dinosaure
+  sujet   crocodile      chaud 0.88 → dinosaure
+  sujet   préhistoire    chaud 0.7 → paléontologues
+  sujet   jurassique     brûlant 0.96 → Crétacé
+  sujet   prédateur      brûlant 0.94 → proies
+  sujet   raptor         rien
+  pièges  football       rien
+  pièges  cuisine        rien
+  pièges  voiture        chaud 0.69 → partir
+  pièges  politique      tiède 0.38 → mondiale
+  pièges  musique        rien
+  pièges  banque         rien
+  pièges  mariage        chaud 0.61 → famille
+  pièges  ordinateur     chaud 0.67 → support
+
 Albert Einstein
   sujet   atome          chaud 0.73 → photoélectrique
   sujet   lumière        tiède 0.48 → photoélectrique
@@ -237,212 +489,6 @@ Albert Einstein
   pièges  chat           rien
   pièges  mariage        rien
 
-Résumé public/data
-  sujet : dévoilé 18, brûlant 26, chaud 39, tiède 15, rien 2
-  pièges : dévoilé 0, brûlant 1, chaud 13, tiède 23, rien 43
-
-===== data-frwiki =====
-
-Monstre (série télévisée)
-  sujet   tueur          dévoilé
-  sujet   crime          brûlant 0.93 → criminel
-  sujet   assassin       chaud 0.89 → criminel
-  sujet   psychopathe    chaud 0.86 → criminel
-  sujet   cannibale      chaud 0.67 → tueurs
-  sujet   horreur        tiède 0.55 → série
-  sujet   enquête        chaud 0.72 → meurtres
-  sujet   cadavre        tiède 0.37 → tueurs
-  sujet   policier       chaud 0.71 → tueurs
-  sujet   sang           rien
-  pièges  guerre         tiède 0.46 → seconde
-  pièges  nazi           tiède 0.42 → criminel
-  pièges  soldat         tiède 0.31 → criminel
-  pièges  bataille       tiède 0.34 → septembre
-  pièges  football       chaud 0.78 → depuis
-  pièges  cuisine        rien
-  pièges  voiture        rien
-  pièges  mariage        chaud 0.61 → parents
-
-Tour Eiffel
-  sujet   acier          chaud 0.83 → autoportante
-  sujet   métal          tiède 0.48 → fer
-  sujet   ingénieur      chaud 0.72 → élevé
-  sujet   touristes      brûlant 0.94 → visiteurs
-  sujet   construction   brûlant 0.9 → installation
-  sujet   structure      chaud 0.73 → autoportante
-  sujet   antenne        dévoilé
-  sujet   pylône         chaud 0.79 → hauteur
-  sujet   architecte     chaud 0.74 → élevé
-  sujet   tourisme       brûlant 0.95 → touristique
-  pièges  montagne       chaud 0.84 → haute
-  pièges  océan          chaud 0.7 → nord
-  pièges  football       chaud 0.78 → site
-  pièges  chanson        chaud 0.6 → officielle
-  pièges  guerre         brûlant 0.9 → pendant
-  pièges  cuisine        rien
-  pièges  médecin        tiède 0.45 → français
-  pièges  roi            rien
-
-Napoléon Ier
-  sujet   conquête       chaud 0.86 → Empire
-  sujet   couronne       chaud 0.74 → revers
-  sujet   soldats        brûlant 0.92 → civils
-  sujet   monarque       chaud 0.86 → roi
-  sujet   victoire       dévoilé
-  sujet   maréchal       dévoilé
-  sujet   dictateur      chaud 0.78 → consul
-  sujet   trône          dévoilé
-  sujet   stratège       chaud 0.7 → vaincu
-  sujet   invasion       brûlant 0.91 → alliés
-  pièges  football       brûlant 0.9 → date
-  pièges  internet       tiède 0.55 → consulte
-  pièges  cuisine        chaud 0.66 → restaurant
-  pièges  musique        chaud 0.68 → romantique
-  pièges  voiture        rien
-  pièges  ordinateur     chaud 0.88 → mode
-  pièges  chat           rien
-  pièges  plage          chaud 0.78 → mer
-
-Lionel Messi
-  sujet   ballon         chaud 0.61 → dribbleur
-  sujet   but            dévoilé
-  sujet   dribble        brûlant 0.93 → dribbleur
-  sujet   stade          brûlant 0.9 → buts
-  sujet   ronaldo        chaud 0.75 → buts
-  sujet   championnat    dévoilé
-  sujet   sportif        dévoilé
-  sujet   gardien        brûlant 0.91 → passeur
-  sujet   penalty        brûlant 0.91 → matchs
-  sujet   maillot        chaud 0.71 → montre
-  pièges  guerre         brûlant 0.9 → pendant
-  pièges  roi            chaud 0.65 → Ambassadeur
-  pièges  peinture       rien
-  pièges  cuisine        rien
-  pièges  avion          rien
-  pièges  église         chaud 0.89 → personnalités
-  pièges  tracteur       rien
-  pièges  médecin        rien
-
-Seconde Guerre mondiale
-  sujet   hitler         rien
-  sujet   soldats        brûlant 0.92 → combattants
-  sujet   bataille       brûlant 0.91 → Guerre
-  sujet   occupation     chaud 0.78 → mondiale
-  sujet   débarquement   chaud 0.86 → bombardement
-  sujet   armée          dévoilé
-  sujet   front          dévoilé
-  sujet   occupant       dévoilé
-  sujet   fusil          brûlant 0.94 → armé
-  sujet   envahisseur    dévoilé
-  pièges  football       brûlant 0.91 → international
-  pièges  cuisine        tiède 0.31 → japonaise
-  pièges  musique        chaud 0.62 → collaboration
-  pièges  mariage        chaud 0.83 → Union
-  pièges  ordinateur     rien
-  pièges  plage          rien
-  pièges  chat           rien
-  pièges  peinture       rien
-
-Chat
-  sujet   souris         chaud 0.8 → odorat
-  sujet   ronronner      rien
-  sujet   chaton         dévoilé
-  sujet   fourrure       chaud 0.79 → poil
-  sujet   minou          tiède 0.5 → chatte
-  sujet   tigre          chaud 0.78 → sauvage
-  sujet   lion           tiède 0.54 → croissant
-  sujet   croquettes     chaud 0.76 → viande
-  sujet   litière        chaud 0.66 → végétaux
-  sujet   miauler        rien
-  pièges  guerre         chaud 0.78 → indépendance
-  pièges  voiture        rien
-  pièges  politique      chaud 0.73 → populaire
-  pièges  football       brûlant 0.9 → sélections
-  pièges  ordinateur     chaud 0.63 → tactiles
-  pièges  roi            tiède 0.43 → mort
-  pièges  banque         chaud 0.62 → compagnie
-  pièges  élection       tiède 0.44 → populaire
-
-Wolfgang Amadeus Mozart
-  sujet   concert        chaud 0.65 → musicaux
-  sujet   partition      tiède 0.57 → Haydn
-  sujet   orchestre      chaud 0.89 → piano
-  sujet   mélodie        chaud 0.63 → musique
-  sujet   chef           tiède 0.32 → génie
-  sujet   beethoven      dévoilé
-  sujet   requiem        chaud 0.74 → Amadeus
-  sujet   clavecin       brûlant 0.91 → violon
-  sujet   baroque        brûlant 0.91 → classique
-  sujet   virtuose       dévoilé
-  pièges  guerre         tiède 0.45 → trente
-  pièges  football       chaud 0.64 → Europe
-  pièges  voiture        rien
-  pièges  cuisine        rien
-  pièges  politique      tiède 0.41 → histoire
-  pièges  avion          rien
-  pièges  plage          rien
-  pièges  ordinateur     tiède 0.45 → langage
-
-Soleil
-  sujet   lumière        chaud 0.87 → Soleil
-  sujet   chaleur        tiède 0.53 → Soleil
-  sujet   lune           brûlant 0.93 → Soleil
-  sujet   ciel           brûlant 0.91 → Soleil
-  sujet   rayons         chaud 0.62 → solaire
-  sujet   astre          brûlant 0.91 → solaire
-  sujet   galaxie        brûlant 0.94 → galactique
-  sujet   chaud          chaud 0.62 → Soleil
-  sujet   éclipse        chaud 0.75 → solaire
-  sujet   aurore         chaud 0.65 → Soleil
-  pièges  guerre         tiède 0.42 → années
-  pièges  roi            rien
-  pièges  football       tiède 0.59 → année
-  pièges  cuisine        rien
-  pièges  voiture        tiède 0.56 → vitesse
-  pièges  musique        rien
-  pièges  élection       rien
-  pièges  banque         tiède 0.4 → millions
-
-Pizza
-  sujet   fromage        brûlant 0.9 → pâte
-  sujet   restaurant     tiède 0.51 → pizzas
-  sujet   pâtes          dévoilé
-  sujet   pain           dévoilé
-  sujet   olive          dévoilé
-  sujet   jambon         chaud 0.84 → Plat
-  sujet   basilic        tiède 0.55 → olive
-  sujet   spaghetti      rien
-  sujet   lasagne        rien
-  sujet   boulanger      tiède 0.35 → pain
-  pièges  guerre         rien
-  pièges  football       chaud 0.78 → depuis
-  pièges  ordinateur     rien
-  pièges  voiture        tiède 0.34 → déclinée
-  pièges  politique      tiède 0.37 → culturel
-  pièges  musique        chaud 0.72 → traditionnelle
-  pièges  planète        rien
-  pièges  église         chaud 0.62 → patrimoine
-
-Albert Einstein
-  sujet   atome          chaud 0.63 → quantique
-  sujet   lumière        tiède 0.54 → photoélectrique
-  sujet   mathématiques  chaud 0.84 → physique
-  sujet   univers        chaud 0.66 → cosmologie
-  sujet   chercheur      chaud 0.76 → scientifique
-  sujet   newton         chaud 0.62 → relativité
-  sujet   laboratoire    chaud 0.71 → scientifiques
-  sujet   savant         chaud 0.62 → physicien
-  sujet   professeur     chaud 0.65 → physicien
-  sujet   gravité        brûlant 0.92 → masse
-  pièges  football       chaud 0.6 → mars
-  pièges  cuisine        rien
-  pièges  voiture        rien
-  pièges  peinture       rien
-  pièges  chanson        tiède 0.39 → publie
-  pièges  plage          rien
-  pièges  chat           rien
-  pièges  mariage        chaud 0.68 → cousine
-
-Résumé data-frwiki
-  sujet : dévoilé 18, brûlant 21, chaud 43, tiède 12, rien 6
-  pièges : dévoilé 0, brûlant 5, chaud 24, tiède 19, rien 32
+Résumé data-100k
+  sujet : dévoilé 18, brûlant 29, chaud 43, tiède 15, rien 5
+  pièges : dévoilé 0, brûlant 1, chaud 16, tiède 24, rien 47
