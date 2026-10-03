@@ -313,11 +313,14 @@ function common(a, b) {
 }
 
 // Mots sans vecteur (rares, noms savants) : on compare l'orthographe. Un morceau commun d'au moins 5 lettres
-// donne un indice, au plus chaud (« tyrannosaure » et « Spinosaurus » partagent « osaur »).
+// donne un indice (« tyrannosaure » et « Spinosaurus » partagent « osaur ») ; brûlant s'il couvre 80 % du mot
+// (« spinosaure » et « Spinosaurus »).
 export function spelling(a, b) {
   if (a.length < 6 || b.length < 6) return 0;
   const n = common(a, b);
-  return n < 5 ? 0 : Math.min(0.7, 0.3 + (0.5 * n) / Math.min(a.length, b.length));
+  if (n < 5) return 0;
+  const r = n / Math.min(a.length, b.length);
+  return r >= 0.8 ? 0.9 + 0.25 * (r - 0.8) : Math.min(0.7, 0.3 + 0.5 * r);
 }
 
 export function closeness(g, e, lex) {

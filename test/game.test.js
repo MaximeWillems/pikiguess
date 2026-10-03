@@ -181,6 +181,7 @@ test("mots sans vecteur : l'orthographe donne un indice", () => {
   assert.ok(s.Spinosaurus >= 0.3 && s.Spinosaurus <= 0.7);
   assert.ok(s.dinosaures >= 0.5);
   assert.equal(spelling('chaton', 'chateau'), 0);
+  assert.ok(spelling('spinosaure', 'spinosaurus') >= 0.9);
 });
 
 test('caméra du meneur : ce que voit un joueur', () => {
