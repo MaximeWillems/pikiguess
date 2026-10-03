@@ -23,6 +23,9 @@ let me = store.get('pikiguess.id');
 if (!me) store.set('pikiguess.id', (me = crypto.randomUUID()));
 let myName = store.get('pikiguess.name') || '';
 let sortByHeat = store.get('pikiguess.sort') === 'heat';
+// Aide à l'écriture, choisie par chaque joueur : mots proches d'un mot qui n'existe pas, et liste pendant la frappe
+let helpOn = store.get('pikiguess.aide') === '1';
+let completeSeq = 0, completeTimer, lastSent = '';
 
 let ws, st, offset = 0, retry = 0, barMode = '', unread = 0;
 let pick = null, lastQuery = '', searchTimer, searchSeq = 0;
@@ -167,6 +170,8 @@ function onMessage(m) {
       return onHint(m);
     case 'live':
       return onLive(m);
+    case 'suggest':
+      return onComplete(m);
     case 'error':
       return toast(m.msg, 'bad');
     case 'full':
@@ -247,11 +252,15 @@ function onGuess(m) {
     view.freshHints.add(i);
     changed.add(i);
   }
-  const items = m.items.filter(x => !x.dup);
+  const items = m.items.filter(x => !x.dup && (!x.unknown || x.s));
   view.guesses.push(...items);
   view.added = items.length;
   if (items.length) view.last = items[items.length - 1].w;
   feedback(m.items);
+
+  // Un mot qui n'existe pas revient dans la case, pour le corriger
+  const w = $('#word');
+  if (m.items.every(x => x.unknown && !x.s) && !w.value) w.value = lastSent;
   updateWords(changed);
   renderProgress();
   renderSide();
@@ -259,13 +268,22 @@ function onGuess(m) {
 }
 
 function feedback(items) {
+  // Aide à l'écriture : les mots proches, à cliquer
+  const sugg = x =>
+    x.sugg?.length
+      ? `<span class="didyou">Tu voulais dire : ${x.sugg.map(s => `<button type="button" class="sugg" data-word="${esc(s)}">${esc(s)}</button>`).join('')}</span>`
+      : helpOn && x.unknown && !x.s
+        ? '<span class="didyou">Aucun mot proche trouvé.</span>'
+        : '';
   $('#feedback').innerHTML = items
     .map(x => {
       const w = `« ${esc(x.w)} »`;
       if (x.dup) return `${w} déjà proposé`;
       if (x.n) return `${w} : <b class="plus">${plural(x.n, 'mot')} dévoilé${x.n > 1 ? 's' : ''}</b>`;
-      if (x.s) return `${w} n'est pas dans le texte, mais c'est <b class="heat" style="--h:${heat(x.s).toFixed(2)}">${temp(x.s)}</b>`;
-      return `${w} n'est pas dans le texte, et rien de proche`;
+      if (x.unknown && !x.s) return `${w} n'existe pas : il ne compte pas.${sugg(x)}`;
+      if (x.s)
+        return `${w} ${x.unknown ? "n'existe pas" : "n'est pas dans le texte"}, mais c'est <b class="heat" style="--h:${heat(x.s).toFixed(2)}">${temp(x.s)}</b>${sugg(x)}`;
+      return `${w} n'est pas dans le texte, et rien de proche${sugg(x)}`;
     })
     .join(' · ');
   replay($('#feedback'), 'rise');
@@ -548,6 +566,7 @@ function renderPlay() {
   $('#giveUp').hidden = !st.solo;
   if (opening) {
     $('#feedback').textContent = 'Tape un mot puis Entrée. Clique sur une case pour voir son nombre de lettres.';
+    closeComplete();
     $('#word').value = '';
     $('#word').focus();
     replay($('#play'), 'rise');
@@ -701,7 +720,7 @@ function guessList(items, from, byHeat, mine, added = 0) {
   return `<ul class="guesses">${rows
     .map(
       g => `<li${mine ? ` data-g="${esc(g.w)}" title="Retrouver ce mot dans le texte"` : ''}${cls(g) ? ` class="${cls(g)}"` : ''}>
-        <span class="k">${g.k}</span><span class="gw">${esc(g.w)}</span>
+        <span class="k">${g.k}</span><span class="gw${g.unknown ? ' unknown' : ''}"${g.unknown ? ' title="Ce mot n’existe pas"' : ''}>${esc(g.w)}</span>
         ${g.n ? `<span class="plus">+${g.n}</span>` : g.s ? `<span class="heat" style="--h:${heat(g.s).toFixed(2)}">${temp(g.s)}</span>` : ''}
       </li>`,
     )
@@ -872,16 +891,98 @@ $('#bar').addEventListener('submit', e => {
   else if (q) preview(q);
 });
 
+function submitGuess(text = $('#word').value.trim()) {
+  const w = $('#word');
+  if (text) {
+    lastSent = text;
+    send({ t: 'guess', word: text, help: helpOn });
+  }
+  w.value = '';
+  closeComplete();
+  w.focus();
+}
+
 $('#guessForm').addEventListener('submit', e => {
   e.preventDefault();
-  const w = $('#word');
-  if (w.value.trim()) send({ t: 'guess', word: w.value.trim() });
-  w.value = '';
-  w.focus();
+  const active = $('#complete li.active');
+  if (active) pickComplete(active.dataset.word);
+  else submitGuess();
 });
 
 $('#word').addEventListener('keydown', e => {
-  if (e.key === 'Escape') e.target.value = '';
+  const open = !$('#complete').hidden;
+  if (open && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+    e.preventDefault();
+    moveComplete(e.key === 'ArrowDown' ? 1 : -1);
+  } else if (e.key === 'Escape') {
+    if (open) closeComplete();
+    else e.target.value = '';
+  }
+});
+
+// Liste pendant la frappe : demandée au salon pour le mot en cours, à partir de 3 lettres, une fois la frappe posée
+const lastWord = text => text.match(/[\p{L}\p{M}]+$/u)?.[0] ?? '';
+
+$('#word').addEventListener('input', () => {
+  const q = lastWord($('#word').value);
+  if (!helpOn || q.length < 3) return closeComplete();
+  clearTimeout(completeTimer);
+  completeTimer = setTimeout(() => send({ t: 'suggest', q, n: ++completeSeq }), 120);
+});
+
+$('#word').addEventListener('blur', () => closeComplete());
+
+function onComplete(m) {
+  const list = $('#complete');
+  if (m.n !== completeSeq || !helpOn || $('#play').hidden) return;
+  list.innerHTML = m.words.map((w, i) => `<li id="c${i}" role="option" data-word="${esc(w)}">${esc(w)}</li>`).join('');
+  list.hidden = !m.words.length;
+  $('#word').setAttribute('aria-expanded', String(!list.hidden));
+  $('#word').removeAttribute('aria-activedescendant');
+}
+
+function closeComplete() {
+  clearTimeout(completeTimer);
+  completeSeq++;
+  const list = $('#complete');
+  list.hidden = true;
+  list.innerHTML = '';
+  $('#word').setAttribute('aria-expanded', 'false');
+  $('#word').removeAttribute('aria-activedescendant');
+}
+
+function moveComplete(step) {
+  const items = [...$('#complete').children];
+  const next = Math.max(-1, Math.min(items.length - 1, items.findIndex(li => li.classList.contains('active')) + step));
+  items.forEach((li, i) => li.classList.toggle('active', i === next));
+  if (next >= 0) $('#word').setAttribute('aria-activedescendant', items[next].id);
+  else $('#word').removeAttribute('aria-activedescendant');
+}
+
+// Le mot choisi remplace celui en cours de frappe, et part tout de suite
+function pickComplete(word) {
+  const w = $('#word'), q = lastWord(w.value);
+  submitGuess((w.value.slice(0, w.value.length - q.length) + word).trim());
+}
+
+$('#complete').addEventListener('mousedown', e => {
+  const li = e.target.closest('li[data-word]');
+  if (!li) return;
+  e.preventDefault();
+  pickComplete(li.dataset.word);
+});
+
+$('#feedback').addEventListener('click', e => {
+  const b = e.target.closest('button[data-word]');
+  if (b) submitGuess(b.dataset.word);
+});
+
+$('#aide').checked = helpOn;
+$('#aide').addEventListener('change', e => {
+  helpOn = e.target.checked;
+  store.set('pikiguess.aide', helpOn ? '1' : '0');
+  if (!helpOn) closeComplete();
+  $('#word').focus();
 });
 
 $('#giveUp').addEventListener('click', () => {

@@ -407,7 +407,16 @@ export function guess(page, keys, lex, run, input) {
       run.hints.set(e.key, { w, s });
       for (const i of e.pos) res.hints.push([i, w, round(s)]);
     }
-    const item = { w, n: found.length, s: best >= HINT_MIN ? round(best) : 0, at: found.map(([i]) => i) };
+
+    // Mot absent du dictionnaire et du texte : signalé, et s'il ne réchauffe aucune case, il ne compte pas comme essai
+    const unknown = !!lex && !found.length && !g.num && lex.find(plain) < 0 && !GROUP_OF.has(k) && !ELIDED.has(k) && ![...keys.values()].some(e => e.plain === plain);
+    if (unknown && best < HINT_MIN) {
+      run.tried.delete(k);
+      res.items.push({ w, unknown: true });
+      continue;
+    }
+
+    const item = { w, n: found.length, s: best >= HINT_MIN ? round(best) : 0, at: found.map(([i]) => i), ...(unknown && { unknown: true }) };
     run.guesses.push(item);
     res.items.push({ ...item });
   }

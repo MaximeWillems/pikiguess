@@ -17,6 +17,7 @@ Sans ces données, le jeu marche quand même, mais sans mots grisés ni formes :
 - Un mot absent du dictionnaire des formes (nom propre, mot étranger) se dévoile aussi avec son singulier ou son pluriel en -s ou -x : « transformer » dévoile « Transformers ». Pas pour les mots du dictionnaire, qui décide seul (« mai » ne dévoile pas « mais »).
 - Les petits mots se dévoilent aussi ensemble : « le » dévoile « la, les, l' », « de » dévoile « du, des, d' », « à » dévoile « au, aux », de même pour « un/une », « ce/cette/ces », « son/sa/ses », « il/elle/ils/elles »… (liste `GROUPS` dans `src/game.js`).
 - Sinon, il s'affiche dans les cases des mots proches par le sens : **tiède** (rouge) s'il fait partie des 500 mots les plus proches du mot caché, **chaud** des 100, **brûlant** (vert) des 10. Le calcul se fait mot par mot : un mot courant comme « guerre » ne s'allume plus partout. Pour un mot inconnu des vecteurs (rare, nom savant), on compare l'orthographe : un morceau commun d'au moins 5 lettres donne un indice, au plus chaud (« tyrannosaure » ↔ « Spinosaurus »). Chaque case garde le mot le plus proche proposé jusque-là.
+- Un mot qui n'existe ni dans le dictionnaire du jeu ni dans le texte est signalé « n'existe pas ». S'il ne réchauffe aucune case, il ne compte pas comme essai et revient dans la case pour être corrigé ; sinon il compte, comme « spinosaure » qui réchauffe « Spinosaurus ».
 - Un mot trouvé apparaît sur fond vert, qui s'efface en fondu.
 - Nombres et dates : entre deux nombres, seul l'écart compte, pour s'approcher petit à petit. Chaque nombre du texte est reconnu d'après les mots autour, avec son échelle :
   - année (« en 1889 », « 382 av. J.-C. ») : brûlant à 1 ou 2 ans près, visible jusqu'à ~120 ans ;
@@ -71,6 +72,15 @@ L'hôte règle la partie comme il veut :
 - Pas de chrono : on joue jusqu'à trouver, ou on clique « Voir la réponse ». Puis « Nouvelle page ».
 - Le bouton « Des idées ? » du meneur pioche dans la même liste.
 
+## Aide à l'écriture (dyslexie)
+
+Une case « Aide à l'écriture » sous la saisie, que chaque joueur coche pour lui. Son navigateur la garde ; les autres ne voient rien.
+
+- **Mots proches** : quand un mot n'existe pas (ou n'est connu que comme faute courante du web), jusqu'à 5 mots existants à cliquer. D'abord ceux qui se prononcent pareil (« fonétik » → phonétique, « otomobil » → automobile), puis ceux à une faute près : lettres inversées, oubliée, en trop ou remplacée (« porblème » → problème, b/d, p/q…). Jamais de correction automatique : le joueur choisit.
+- **Liste pendant la frappe** : dès 3 lettres, jusqu'à 6 mots qui commencent pareil ou se prononcent pareil au début, les plus courants d'abord. On choisit avec les flèches et Entrée, ou d'un clic ; Échap ferme la liste.
+- **Aucun indice** : les propositions viennent du dictionnaire entier, classées par fréquence, jamais du texte de la page. Elles aident à écrire, pas à trouver.
+- **Écarté : le correcteur du navigateur.** Il dépend de la langue du navigateur, souligne des noms propres justes et se corrige au clic droit.
+
 ## Pas prévu pour l'instant
 
 - Grille commune : tous dévoilent la même grille, un point par mot trouvé, gros bonus pour le titre.
@@ -92,6 +102,10 @@ L'hôte règle la partie comme il veut :
 
 [Lexique 3.83](http://www.lexique.org) relie chaque forme à son mot de base (« naquit » → « naître »). C'est lui qui dévoile toutes les formes d'un mot ; les vecteurs ne servent qu'aux mots grisés. Licence CC BY-SA 4.0, cité en bas de page.
 
+### Aide à l'écriture
+
+`tools/prepare_help.mjs`, lancé par l'Action après `prepare_data.py`, écrit `public/data/aide.bin` : pour chaque mot, son orthographe avec accents (les clés de `words.bin` n'en ont pas), son rang de fréquence et son son (`sound` dans `src/spell.js`), plus deux listes triées, par écriture et par son, pour chercher par le début. Le salon ne charge ce fichier que quand un joueur utilise l'aide. Le rapport de l'Action montre des exemples de fautes et leurs propositions.
+
 ## Technique : Cloudflare, 100 % gratuit
 
 - Front en JS, sans outil de build, dans `public/`. PC d'abord, utilisable sur téléphone sans effort particulier.
@@ -106,7 +120,8 @@ L'hôte règle la partie comme il veut :
 | `src/room.js` | un salon : joueurs, manches, chronos, connexions |
 | `src/game.js` | les règles : mots dévoilés, mots grisés, classement |
 | `src/lexicon.js` | lecture des données préparées |
-| `tools/prepare_data.py` | préparation des données, lancée par l'Action « Données » |
+| `src/spell.js` | aide à l'écriture : son des mots, mots proches, liste pendant la frappe |
+| `tools/prepare_data.py`, `tools/prepare_help.mjs` | préparation des données, lancée par l'Action « Données » |
 | `tools/evaluate.mjs`, `tools/evaluation.json` | mesure des mots proches sur des pages de test (rapport de l'Action) |
 | `test/` | tests des règles sur de fausses données (`npm test`, demande Python et numpy) |
 
@@ -119,27 +134,13 @@ L'hôte règle la partie comme il veut :
 - Régler les seuils d'après le rapport et de vraies parties : rangs 10 / 100 / 500 (`RANKS` dans `tools/prepare_data.py`), plancher de similarité 0,25 (`semantic` dans `src/game.js`).
 - Pas fait, à décider : une flèche ↑/↓ dans la case d'un nombre (plus grand / plus petit). Les couleurs guident déjà ; la flèche rendrait les nombres très faciles.
 
-### Aide à l'écriture (dyslexie)
-
-Décidé le 03/10/2026, pas encore développé :
-
-- **Pour tous.** Un mot absent du dictionnaire du jeu et du texte, qui ne réchauffe aucune case, est signalé « n'existe pas ». Il ne compte pas comme essai et reste dans la case pour être corrigé.
-  - S'il réchauffe une case (orthographe proche d'un mot du texte, comme « spinosaure »), il compte comme aujourd'hui.
-  - Aujourd'hui, le jeu répond « pas dans le texte » même quand le mot y est, mal écrit. Les mots courts ne donnent rien (« otel »).
-- **Option « Aide à l'écriture », choisie par chaque joueur.** C'est une case à cocher près de la saisie, gardée par son navigateur ; les autres ne voient rien. Elle comprend :
-  - **mots proches** : quand le mot n'existe pas, 3 à 5 mots existants à cliquer, les plus courants d'abord. Ils sont proches par l'écriture (lettres inversées, oubliées, en trop) ou par le son (« fonétik » → phonétique, « otomobil » → automobile), confusions b/d, p/q, f/v comprises ;
-  - **liste pendant la frappe** : des mots du dictionnaire s'affichent sous la case pendant qu'on tape, ceux qui commencent ou se prononcent pareil. On choisit avec les flèches et Entrée, ou d'un clic.
-- **Jamais de correction automatique** : le joueur choisit.
-- **Aucun indice** : les propositions viennent du dictionnaire entier, classées par fréquence, jamais du texte de la page.
-- **Écarté : le correcteur du navigateur.** Il dépend de la langue du navigateur, souligne des noms propres justes et se corrige au clic droit.
-- **Technique.** L'Action « Données » prépare un fichier à part : l'orthographe avec accents (les clés de `words.bin` n'en ont pas) et un index des sons. Le salon ne le charge que quand un joueur utilise l'aide, et les propositions passent par la connexion du salon.
-- **À préciser** : une autre aide cochée sans précision.
-
 ### Points ouverts
+- À vérifier dans `rapport.txt` : les propositions de l'aide à l'écriture sur de vraies fautes ; régler `sound` (`src/spell.js`) au besoin.
 - À mesurer : après une longue pause, le premier mot semble mettre plus d'une seconde à répondre, le temps que le salon recharge ses 25 Mo de données.
 
 ### Fait
 
 - Actualiser la page sans perdre la partie ni l'historique de ses essais (vérifié le 28/09/2026).
 - Caméras du meneur (voir « Le meneur pendant sa manche »).
+- Aide à l'écriture pour les joueurs dyslexiques (voir « Aide à l'écriture »).
 - Mots proches : nombres et dates par sorte, nationalités, proximité calibrée mot par mot, mesure sur des pages de test, affichage tiède / chaud / brûlant (voir « Règles »).

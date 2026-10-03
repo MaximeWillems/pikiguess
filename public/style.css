@@ -217,6 +217,32 @@ main { grid-area: main; min-width: 0; }
 #clock.urgent { color: var(--err); font-weight: 700; animation: pulse 1.2s ease-in-out infinite; }
 .legend { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; font-size: 12px; }
 .legend i { width: 70px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, hsl(0 80% 55%), hsl(60 85% 50%), hsl(120 70% 42%)); }
+
+/* Aide à l'écriture : case à cocher, mots proches à cliquer, liste pendant la frappe */
+.aide { display: inline-flex; align-items: center; gap: 5px; margin-left: auto; cursor: pointer; user-select: none; }
+.aide + .legend { margin-left: 0; }
+.didyou { display: block; margin-top: 5px; }
+button.sugg { padding: 2px 12px; margin: 2px 6px 2px 0; font-size: 15px; font-weight: 500; background: transparent; color: var(--accent); }
+#guessForm { position: relative; }
+.complete {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 10;
+  min-width: 260px;
+  max-width: 100%;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  animation: rise .2s var(--ease) both;
+}
+.complete li { padding: 6px 12px; border-radius: 7px; font-size: 17px; letter-spacing: .02em; cursor: pointer; }
+.complete li:hover, .complete li.active { background: var(--line); }
+.gw.unknown { font-style: italic; }
 .progress { height: 4px; margin-top: 9px; border-radius: 2px; background: var(--line); overflow: hidden; }
 .progress i { display: block; width: 0; height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--accent), var(--ok)); transition: width .7s var(--ease); }
 

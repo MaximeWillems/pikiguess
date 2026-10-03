@@ -61,14 +61,17 @@
       <div id="bar"></div>
       <div id="play" hidden>
         <form id="guessForm" class="row">
-          <input id="word" placeholder="Propose un mot…" autocomplete="off" spellcheck="false" autocapitalize="off" enterkeyhint="send" maxlength="60">
+          <input id="word" placeholder="Propose un mot…" autocomplete="off" spellcheck="false" autocapitalize="off" enterkeyhint="send" maxlength="60"
+            role="combobox" aria-autocomplete="list" aria-controls="complete" aria-expanded="false">
           <button>Envoyer</button>
+          <ul id="complete" class="complete" role="listbox" aria-label="Mots proposés" hidden></ul>
         </form>
         <div class="meta">
           <span id="feedback" role="status" aria-live="polite"></span>
           <span id="progress"></span>
           <span id="clock"></span>
           <button id="giveUp" type="button" class="link" hidden>Voir la réponse</button>
+          <label class="aide" title="Quand un mot n'existe pas, propose les mots existants les plus proches (écriture et son), et affiche une liste de mots pendant la frappe"><input type="checkbox" id="aide"> Aide à l'écriture</label>
           <span class="legend" title="Couleur des mots proches"><span>tiède</span><i></i><span>brûlant</span></span>
         </div>
         <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>

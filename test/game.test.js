@@ -4,11 +4,13 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { Lexicon } from '../src/lexicon.js';
 import { playable } from '../src/wikipedia.js';
+import { distance, edits1, sound } from '../src/spell.js';
+import { buildHelp } from '../tools/prepare_help.mjs';
 import { analyze, buildPage, camView, cleanExtract, guess, isFound, newRun, normalize, playerView, ranking, reveal, spelling } from '../src/game.js';
 
 const TITLE = 'Mercure (planète)';
 const EXTRACT = "Le roi est né en 1789 ( ). Les rois sont nés à Paris, l'empire naquit.\n\nLa révolution est une fête, là.";
-let lex;
+let lex, help;
 
 before(() => {
   execFileSync('python', ['test/make_fixtures.py'], { stdio: 'pipe' });
@@ -17,6 +19,7 @@ before(() => {
     return b.buffer.slice(b.byteOffset, b.byteOffset + b.length);
   };
   lex = new Lexicon(load('words.bin'), load('vectors.bin'));
+  help = buildHelp('test/.data/out').help;
 });
 
 function play(lexicon = lex) {
@@ -179,7 +182,7 @@ test('chaque essai garde sa proximité avec le mot caché le plus proche', () =>
   assert.equal(r.items[0].n, 2);
   assert.deepEqual(r.items[0].at, r.revealed.map(([i]) => i));
   assert.ok(go('reine').items[0].s > 0.3);
-  assert.equal(go('xyz').items[0].s, 0);
+  assert.equal(go('mai').items[0].s, 0);
 });
 
 test('pluriel hors dictionnaire : « transformer » dévoile « Transformers », mais « mai » pas « mais »', () => {
@@ -238,6 +241,46 @@ test('sans données : seulement les mots exacts', () => {
   const { page, go } = play(null);
   assert.deepEqual(texts(page, go('roi').revealed), ['roi']);
   assert.equal(go('1790').hints.length, 1);
+});
+
+test("mot qui n'existe pas : signalé, et il ne compte pas s'il ne réchauffe rien", () => {
+  const { run, go } = play();
+  assert.deepEqual(go('zorglub').items, [{ w: 'zorglub', unknown: true }]);
+  assert.deepEqual(go('zorglub').items, [{ w: 'zorglub', unknown: true }]);
+  assert.equal(run.guesses.length, 0);
+  const near = go('revolutiom').items[0];
+  assert.ok(near.unknown && near.s >= 0.9);
+  assert.equal(run.guesses.length, 1);
+  assert.equal(go('1957').items[0].unknown, undefined);
+  assert.equal(go('mercure').items[0].unknown, undefined);
+});
+
+test("aide à l'écriture : le son des mots", () => {
+  const same = [
+    ['phonétique', 'fonétik'], ['automobile', 'otomobil'], ['beaucoup', 'bocou'], ['dinosaure', 'dinosor'],
+    ['téléphone', 'téléfone'], ['verre', 'vert'], ['vert', 'vers'], ['cinéma', 'sinéma'], ['enfant', 'anfan'],
+    ['manger', 'mangé'], ['château', 'shato'], ['pain', 'pin'], ['photographie', 'fotografi'], ['garçon', 'garsson'],
+  ];
+  for (const [a, b] of same) assert.equal(sound(a), sound(b), `${a} / ${b}`);
+  assert.notEqual(sound('poisson'), sound('poison'));
+  assert.notEqual(sound('chat'), sound('chien'));
+  assert.equal(distance('porbleme', 'probleme'), 1);
+  assert.equal(distance('chat', 'chien'), 3);
+  assert.ok([...edits1('porbleme')].includes('probleme'));
+});
+
+test("aide à l'écriture : mots proches et liste pendant la frappe, pris dans le dictionnaire seulement", () => {
+  assert.ok(help.fits(lex));
+  assert.deepEqual(help.suggest(lex, 'planette'), ['planète', 'planètes']);
+  assert.deepEqual(help.suggest(lex, 'revolusion'), ['révolution']);
+  assert.equal(help.suggest(lex, 'amériquain')[0], 'américain');
+  assert.deepEqual(help.suggest(lex, 'planète'), []);
+  assert.deepEqual(help.suggest(lex, 'zq'), []);
+  assert.deepEqual(help.complete(lex, 'pla'), ['planète', 'planètes']);
+  assert.deepEqual(help.complete(lex, 'rev'), ['révolution']);
+  // « Mercure », mot de la page absent du dictionnaire, n'est jamais proposé
+  assert.deepEqual(help.suggest(lex, 'mercur'), []);
+  assert.deepEqual(help.complete(lex, 'merc'), []);
 });
 
 test("indice du meneur : le mot et ses formes s'affichent", () => {

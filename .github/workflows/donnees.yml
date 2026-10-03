@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ["tools/**", ".github/workflows/donnees.yml"]
+    paths: ["tools/**", "src/spell.js", ".github/workflows/donnees.yml"]
 
 permissions:
   contents: write
@@ -41,6 +41,8 @@ jobs:
           {
             echo "===== Tous les mots du modèle, vecteurs réduits pour tenir en ligne (données en ligne)"
             python tools/prepare_data.py data-src/frwac.bin data-src/Lexique383.tsv public/data
+            echo "===== Aide à l'écriture"
+            node tools/prepare_help.mjs public/data
             echo "===== 100 000 mots, vecteurs complets (pour comparer)"
             python tools/prepare_data.py data-src/frwac.bin data-src/Lexique383.tsv data-100k --max-vectors 100000
             node tools/evaluate.mjs public/data data-100k

@@ -2,7 +2,7 @@
 
 Usage : python tools/prepare_data.py <modèle word2vec .bin> <Lexique383.tsv> <dossier de sortie> [--dims N]
 
-Produit words.bin et vectors.bin, lus par src/lexicon.js.
+Produit words.bin et vectors.bin, lus par src/lexicon.js, et formes.tsv, que tools/prepare_help.mjs transforme en aide.bin.
 Les mots y sont normalisés (minuscules, sans accents), comme dans src/game.js.
 vectors.bin contient aussi, pour chaque mot, la similarité de son 10e, 100e et 500e voisin le plus proche :
 c'est ce qui calibre les mots proches (tiède, chaud, brûlant) mot par mot.
@@ -64,7 +64,15 @@ def read_word2vec(path):
     return words, vectors
 
 
+def number(s):
+    try:
+        return float(s or 0)
+    except ValueError:
+        return 0.0
+
+
 def read_lexique(path):
+    """Les formes de chaque mot, et son orthographe la plus fréquente avec accents (fréquence films + livres)."""
     raw = Path(path).read_bytes()
     try:
         text = raw.decode("utf-8")
@@ -73,12 +81,15 @@ def read_lexique(path):
     rows = csv.DictReader(io.StringIO(text), delimiter="\t", quoting=csv.QUOTE_NONE)
     if not {"ortho", "lemme"} <= set(rows.fieldnames or []):
         sys.exit(f"Colonnes ortho et lemme absentes de {path} : {rows.fieldnames}")
-    forms = {}
+    forms, spelled = {}, {}
     for row in rows:
         form, lemma = normalize(row["ortho"]), normalize(row["lemme"] or row["ortho"])
         if VALID.fullmatch(form) and VALID.fullmatch(lemma):
             forms.setdefault(form, set()).add(lemma)
-    return forms
+            freq = number(row.get("freqfilms2")) + number(row.get("freqlivres"))
+            best, top, total = spelled.get(form, (row["ortho"], -1.0, 0.0))
+            spelled[form] = (row["ortho"], freq, total + freq) if freq > top else (best, top, total + freq)
+    return forms, spelled
 
 
 def unit(m):
@@ -136,7 +147,7 @@ def report(q, rows, cut):
 
 def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
     words, vectors = read_word2vec(model_path)
-    forms = read_lexique(lexique_path)
+    forms, spelled = read_lexique(lexique_path)
     for form, lemmas in ELISIONS.items():
         forms.setdefault(form, set()).update(lemmas)
 
@@ -204,6 +215,17 @@ def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
 
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
+
+    # Pour l'aide à l'écriture (tools/prepare_help.mjs en fait aide.bin) : orthographe avec accents et rang de fréquence
+    # de chaque mot. Ceux du modèle sont déjà rangés par fréquence ; ceux du seul Lexique viennent après, par sa fréquence.
+    rare = sorted((k for k in keys if k not in rows), key=lambda k: -spelled.get(k, ("", 0, 0))[2])
+    rank = {k: len(order) + j for j, k in enumerate(rare)}
+    lines = []
+    for k in keys:
+        shown = spelled[k][0] if k in spelled else words[order[rows[k]]] if k in rows else k
+        lines.append(f"{shown if normalize(shown) == k else k}\t{rows[k] if k in rows else rank[k]}\n")
+    (out / "formes.tsv").write_text("".join(lines), encoding="utf-8")
+
     for name, content in (("words.bin", words_bin), ("vectors.bin", vectors_bin)):
         if len(content) > MAX_FILE:
             sys.exit(f"{name} dépasse 25 Mio ({len(content)} octets)")

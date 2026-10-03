@@ -1,6 +1,7 @@
 import { DurableObject } from 'cloudflare:workers';
 import { analyze, buildPage, camView, fullPage, guess, isFound, newRun, playerView, ranking, reveal, revealedCount } from './game.js';
 import { Lexicon } from './lexicon.js';
+import { Help } from './spell.js';
 import { fetchPage, randomPopularPage, UserError } from './wikipedia.js';
 
 const MAX_PEOPLE = 5;
@@ -140,8 +141,9 @@ export class Room extends DurableObject {
 
   async handle(id, m) {
     const s = this.s;
+    if (m.t === 'suggest') return this.onSuggest(id, m);
     if (s.solo) {
-      if (m.t === 'guess') return this.onGuess(id, m.word);
+      if (m.t === 'guess') return this.onGuess(id, m.word, m.help);
       if (m.t === 'abandon' && s.phase === 'playing') {
         this.endRound();
         return true;
@@ -179,7 +181,7 @@ export class Room extends DurableObject {
         s.meneurId = m.meneur;
         return true;
       case 'guess':
-        return this.onGuess(id, m.word);
+        return this.onGuess(id, m.word, m.help);
       case 'hint':
         return this.onHint(id, m.i);
       case 'stop':
@@ -294,15 +296,23 @@ export class Room extends DurableObject {
     if (s.phase === 'playing' && this.allFound()) this.endRound();
   }
 
-  async onGuess(id, word) {
+  async onGuess(id, word, help) {
     const s = this.s;
     const round = s.round;
     if (s.phase !== 'playing' || !s.runs[id] || s.runs[id].foundAt != null || typeof word !== 'string') return false;
-    const { lex, keys } = await this.analysis();
+    const [{ lex, keys }, aide] = await Promise.all([this.analysis(), help ? this.help() : null]);
     const run = s.runs[id];
     if (s.round !== round || s.phase !== 'playing' || run.foundAt != null) return false;
     const res = guess(s.page, keys, lex, run, word);
     if (!res.items.length) return false;
+
+    // Aide à l'écriture : des mots existants proches de ceux qui n'existent pas
+    if (aide?.fits(lex))
+      for (const x of res.items) {
+        const sugg = x.dup || x.n ? [] : aide.suggest(lex, x.w);
+        if (sugg.length) x.sugg = sugg;
+      }
+
     const found = isFound(s.page, run);
     if (found) {
       run.foundAt = Date.now();
@@ -312,7 +322,7 @@ export class Room extends DurableObject {
     this.sendTo(s.meneurId, {
       t: 'live',
       id,
-      items: res.items,
+      items: res.items.filter(x => !x.unknown || x.s).map(({ sugg, ...x }) => x),
       count: revealedCount(s.page, run),
       revealed: res.revealed.map(([i]) => i),
       hints: res.hints,
@@ -390,6 +400,27 @@ export class Room extends DurableObject {
     const lex = await this.lexicon();
     if (this.info?.round !== this.s.round) this.info = { round: this.s.round, keys: analyze(this.s.page, lex) };
     return { lex, keys: this.info.keys };
+  }
+
+  // Liste pendant la frappe (aide à l'écriture) : réponse au seul joueur qui tape
+  async onSuggest(id, m) {
+    const s = this.s;
+    if (s.phase !== 'playing' || !s.runs[id] || typeof m.q !== 'string') return false;
+    const [lex, aide] = await Promise.all([this.lexicon(), this.help()]);
+    if (aide?.fits(lex)) this.sendTo(id, { t: 'suggest', n: m.n, words: aide.complete(lex, m.q.slice(0, 40)) });
+    return false;
+  }
+
+  // Données de l'aide à l'écriture, chargées seulement quand un joueur s'en sert
+  help() {
+    this.aide ??= this.env.ASSETS.fetch(new Request('https://assets.local/data/aide.bin'))
+      .then(async res => (res.ok ? new Help(await res.arrayBuffer()) : null))
+      .catch(e => {
+        console.warn("Aide à l'écriture indisponible :", e.message);
+        this.aide = null;
+        return null;
+      });
+    return this.aide;
   }
 
   lexicon() {
