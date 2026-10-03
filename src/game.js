@@ -262,6 +262,10 @@ for (const words of GROUPS.map(g => g.split(' '))) {
   for (const w of words) GROUP_OF.set(w, [...(GROUP_OF.get(w) ?? []), `#${words[0]}`]);
 }
 
+// Petits mots de même famille : brûlants entre eux, sans se dévoiler l'un l'autre (« dessous » ↔ « sous »).
+const RELATED = ['sous dessous', 'sur dessus', 'dans dedans', 'hors dehors', 'pres aupres', 'avant devant'];
+const RELATED_OF = new Map(RELATED.flatMap(r => r.split(' ').map(w => [w, r])));
+
 // Formes élidées (l', s', qu'…) : rattachées seulement à leurs petits mots, pas au dictionnaire (« s » y est relié à « avoir »).
 const ELIDED = new Set(['l', 'd', 'j', 'm', 't', 's', 'n', 'c', 'qu', 'jusqu', 'lorsqu', 'puisqu', 'quoiqu']);
 
@@ -336,6 +340,7 @@ export function closeness(g, e, lex) {
   if (n !== null) return n;
   const gn = g.nation ?? g.country, en = e.nation ?? e.country;
   if (gn && en && (gn === en || PARENT.get(gn) === en || PARENT.get(en) === gn)) return 0.9;
+  if (RELATED_OF.has(g.plain) && RELATED_OF.get(g.plain) === RELATED_OF.get(e.plain)) return 0.9;
   let t = semantic(g, e, lex);
   if (!t && (g.row < 0 || e.row < 0) && !g.stop && !e.stop) t = spelling(g.plain, e.plain);
   return gn && en ? Math.min(t, 0.35) : t;

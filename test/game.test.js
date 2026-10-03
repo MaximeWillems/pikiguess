@@ -180,6 +180,15 @@ test('chaque essai garde sa proximité avec le mot caché le plus proche', () =>
   assert.equal(go('xyz').items[0].s, 0);
 });
 
+test('petits mots de même famille : brûlants entre eux', () => {
+  const page = buildPage('Test', 'Le chat dort dessous et le chien sur la table.');
+  const keys = analyze(page, lex);
+  const near = (w, target) => Math.max(0, ...guess(page, keys, lex, newRun(), w).hints.filter(([i]) => page.words[i].text === target).map(h => h[2]));
+  assert.ok(near('sous', 'dessous') >= 0.9);
+  assert.ok(near('dessus', 'sur') >= 0.9);
+  assert.equal(near('sous', 'sur'), 0);
+});
+
 test("mots sans vecteur : l'orthographe donne un indice", () => {
   const page = buildPage('Spinosaurus', 'Le Spinosaurus est un genre de dinosaures.');
   const keys = analyze(page, lex);
