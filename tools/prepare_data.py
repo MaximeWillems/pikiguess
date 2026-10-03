@@ -174,10 +174,14 @@ def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
             h = (h + 1) & (size - 1)
         table[h] = i + 1
 
+    # Mots du dictionnaire des formes (Lexique) : la règle du pluriel en -s ne s'applique qu'aux autres
+    in_lexique = set(forms) | {l for ls in forms.values() for l in ls}
+    known = np.array([k in in_lexique for k in keys], dtype=np.uint8)
+
     pool = "".join(keys).encode("ascii")
     offsets = np.cumsum([0] + [len(k) for k in keys])
     words_bin = b"".join([
-        b"PKW1",
+        b"PKW2",
         np.array([len(keys), size, len(pool), len(lemma_pool)], dtype="<u4").tobytes(),
         offsets.astype("<u4").tobytes(),
         np.array([rows.get(k, -1) for k in keys], dtype="<i4").tobytes(),
@@ -185,6 +189,7 @@ def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
         np.array(lemma_pool, dtype="<u4").tobytes(),
         table.tobytes(),
         pool,
+        known.tobytes(),
     ])
 
     # Autant de dimensions que la limite de 25 Mio le permet (vecteurs + 3 seuils par mot), « dims » au plus

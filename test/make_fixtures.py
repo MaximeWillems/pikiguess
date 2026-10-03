@@ -43,6 +43,7 @@ LEXIQUE = [
     ("a", "avoir"), ("ont", "avoir"), ("avoir", "avoir"), ("s", "avoir"),
     ("américain", "américain"), ("américaine", "américain"), ("américains", "américain"), ("britannique", "britannique"),
     ("québécois", "québécois"), ("québécoise", "québécois"),
+    ("transformer", "transformer"), ("mai", "mai"), ("mais", "mais"),
     ("c'est-à-dire", "c'est-à-dire"),
 ]
 

@@ -180,6 +180,14 @@ test('chaque essai garde sa proximité avec le mot caché le plus proche', () =>
   assert.equal(go('xyz').items[0].s, 0);
 });
 
+test('pluriel hors dictionnaire : « transformer » dévoile « Transformers », mais « mai » pas « mais »', () => {
+  const page = buildPage('Transformers', 'Les Transformers arrivent en mai mais repartent.');
+  const keys = analyze(page, lex);
+  const go = w => texts(page, guess(page, keys, lex, newRun(), w).revealed).sort();
+  assert.deepEqual(go('transformer'), ['Transformers', 'Transformers']);
+  assert.deepEqual(go('mai'), ['mai']);
+});
+
 test('petits mots de même famille : brûlants entre eux', () => {
   const page = buildPage('Test', 'Le chat dort dessous et le chien sur la table.');
   const keys = analyze(page, lex);

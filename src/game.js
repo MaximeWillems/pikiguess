@@ -271,7 +271,7 @@ const ELIDED = new Set(['l', 'd', 'j', 'm', 't', 's', 'n', 'c', 'qu', 'jusqu', '
 
 export function describe(key, lex) {
   const groups = GROUP_OF.get(key) ?? [];
-  if (ELIDED.has(key)) return { lemmas: new Set(groups), row: -1, stop: true, plain: key };
+  if (ELIDED.has(key)) return { lemmas: new Set(groups), row: -1, stop: true, plain: key, known: true };
   const country = COUNTRY_OF.get(key) ?? null;
   const i = lex ? lex.find(key) : -1;
   const ids = i < 0 ? [] : [...lex.lemmas(i)];
@@ -285,7 +285,7 @@ export function describe(key, lex) {
     row = lex.row(i);
     for (let j = 0; row < 0 && j < ids.length; j++) row = lex.row(ids[j]);
   }
-  return { lemmas, row, nation, country, stop, plain: normalize(key) };
+  return { lemmas, row, nation, country, stop, plain: normalize(key), known: i >= 0 && lex.known(i) };
 }
 
 export function analyze(page, lex) {
@@ -353,12 +353,20 @@ function shares(a, b) {
   return false;
 }
 
-// Un mot caché se dévoile s'il s'écrit pareil, accents mis à part, ou s'il a la même forme de base.
+// Pluriel en -s ou -x d'un mot absent du dictionnaire des formes (« transformer » dévoile « Transformers »).
+// Pas pour les mots du dictionnaire, qui décide seul : « mai » ne dévoile pas « mais ».
+function plural(a, b) {
+  return a.plain.length >= 4 && !b.known && (b.plain === `${a.plain}s` || b.plain === `${a.plain}x`);
+}
+
+// Un mot caché se dévoile s'il s'écrit pareil, accents mis à part, s'il a la même forme de base,
+// ou s'il en est le pluriel hors dictionnaire.
 function uncover(page, keys, run, g, key) {
   const plain = normalize(key);
   const out = [];
   for (const e of keys.values()) {
-    if (run.revealed.has(e.key) || (e.plain !== plain && !shares(e.lemmas, g.lemmas))) continue;
+    const same = e.plain === plain || shares(e.lemmas, g.lemmas) || plural(g, e) || plural(e, g);
+    if (run.revealed.has(e.key) || !same) continue;
     run.revealed.add(e.key);
     run.hints.delete(e.key);
     for (const i of e.pos) out.push([i, page.words[i].text]);

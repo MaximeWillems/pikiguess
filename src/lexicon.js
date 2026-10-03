@@ -3,8 +3,10 @@ const VALID = /^[a-z0-9]+$/;
 
 export class Lexicon {
   constructor(words, vectors) {
+    // words.bin : « PKW1 », ou « PKW2 » qui dit en plus, pour chaque mot, s'il vient du dictionnaire des formes
     const w = new DataView(words);
-    if (w.getUint32(0, true) !== 0x31574b50) throw new Error('words.bin invalide');
+    const version = w.getUint32(0, true);
+    if (version !== 0x31574b50 && version !== 0x32574b50) throw new Error('words.bin invalide');
     const [n, size, poolSize, lemmaCount] = [4, 8, 12, 16].map(o => w.getUint32(o, true));
     let o = 20;
     const take = (Type, len) => {
@@ -18,6 +20,7 @@ export class Lexicon {
     this.lemmaPool = take(Uint32Array, lemmaCount);
     this.table = take(Uint32Array, size);
     this.pool = take(Uint8Array, poolSize);
+    this.lexique = version === 0x32574b50 ? take(Uint8Array, n) : null;
     this.mask = size - 1;
 
     // vectors.bin : « PKV1 » les vecteurs seuls, « PKV2 » suivis de 3 seuils de proximité par mot
@@ -35,6 +38,11 @@ export class Lexicon {
     if (!this.cut) return null;
     const c = this.cut, j = row * 3;
     return [c[j] / 127, c[j + 1] / 127, c[j + 2] / 127];
+  }
+
+  // Le mot vient-il du dictionnaire des formes ? Sans l'information (anciennes données), on le suppose.
+  known(i) {
+    return this.lexique ? this.lexique[i] === 1 : true;
   }
 
   keyAt(i) {
