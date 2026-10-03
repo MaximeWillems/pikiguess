@@ -41,6 +41,7 @@ LEXIQUE = [
     ("le", "le"), ("la", "le"), ("les", "le"),
     ("planète", "planète"), ("planètes", "planète"),
     ("a", "avoir"), ("ont", "avoir"), ("avoir", "avoir"), ("s", "avoir"),
+    ("américain", "américain"), ("américaine", "américain"), ("américains", "américain"), ("britannique", "britannique"),
     ("c'est-à-dire", "c'est-à-dire"),
 ]
 

@@ -1,0 +1,42 @@
+{
+  "Monstre (série télévisée)": {
+    "sujet": ["tueur", "crime", "assassin", "psychopathe", "cannibale", "horreur", "enquête", "cadavre", "policier", "sang"],
+    "pièges": ["guerre", "nazi", "soldat", "bataille", "football", "cuisine", "voiture", "mariage"]
+  },
+  "Tour Eiffel": {
+    "sujet": ["acier", "métal", "ingénieur", "touristes", "construction", "structure", "antenne", "pylône", "architecte", "tourisme"],
+    "pièges": ["montagne", "océan", "football", "chanson", "guerre", "cuisine", "médecin", "roi"]
+  },
+  "Napoléon Ier": {
+    "sujet": ["conquête", "couronne", "soldats", "monarque", "victoire", "maréchal", "dictateur", "trône", "stratège", "invasion"],
+    "pièges": ["football", "internet", "cuisine", "musique", "voiture", "ordinateur", "chat", "plage"]
+  },
+  "Lionel Messi": {
+    "sujet": ["ballon", "but", "dribble", "stade", "ronaldo", "championnat", "sportif", "gardien", "penalty", "maillot"],
+    "pièges": ["guerre", "roi", "peinture", "cuisine", "avion", "église", "tracteur", "médecin"]
+  },
+  "Seconde Guerre mondiale": {
+    "sujet": ["hitler", "soldats", "bataille", "occupation", "débarquement", "armée", "front", "occupant", "fusil", "envahisseur"],
+    "pièges": ["football", "cuisine", "musique", "mariage", "ordinateur", "plage", "chat", "peinture"]
+  },
+  "Chat": {
+    "sujet": ["souris", "ronronner", "chaton", "fourrure", "minou", "tigre", "lion", "croquettes", "litière", "miauler"],
+    "pièges": ["guerre", "voiture", "politique", "football", "ordinateur", "roi", "banque", "élection"]
+  },
+  "Wolfgang Amadeus Mozart": {
+    "sujet": ["concert", "partition", "orchestre", "mélodie", "chef", "beethoven", "requiem", "clavecin", "baroque", "virtuose"],
+    "pièges": ["guerre", "football", "voiture", "cuisine", "politique", "avion", "plage", "ordinateur"]
+  },
+  "Soleil": {
+    "sujet": ["lumière", "chaleur", "lune", "ciel", "rayons", "astre", "galaxie", "chaud", "éclipse", "aurore"],
+    "pièges": ["guerre", "roi", "football", "cuisine", "voiture", "musique", "élection", "banque"]
+  },
+  "Pizza": {
+    "sujet": ["fromage", "restaurant", "pâtes", "pain", "olive", "jambon", "basilic", "spaghetti", "lasagne", "boulanger"],
+    "pièges": ["guerre", "football", "ordinateur", "voiture", "politique", "musique", "planète", "église"]
+  },
+  "Albert Einstein": {
+    "sujet": ["atome", "lumière", "mathématiques", "univers", "chercheur", "newton", "laboratoire", "savant", "professeur", "gravité"],
+    "pièges": ["football", "cuisine", "voiture", "peinture", "chanson", "plage", "chat", "mariage"]
+  }
+}

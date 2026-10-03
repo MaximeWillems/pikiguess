@@ -20,10 +20,27 @@ export class Lexicon {
     this.pool = take(Uint8Array, poolSize);
     this.mask = size - 1;
 
+    // vectors.bin : « PKV1 » les vecteurs seuls, « PKV2 » suivis de 3 seuils de proximité par mot
     const v = new DataView(vectors);
-    if (v.getUint32(0, true) !== 0x31564b50) throw new Error('vectors.bin invalide');
+    const magic = v.getUint32(0, true);
+    if (magic !== 0x31564b50 && magic !== 0x32564b50) throw new Error('vectors.bin invalide');
+    const count = v.getUint32(4, true);
     this.dims = v.getUint32(8, true);
-    this.vectors = new Int8Array(vectors, 12, v.getUint32(4, true) * this.dims);
+    this.vectors = new Int8Array(vectors, 12, count * this.dims);
+    this.cut = magic === 0x32564b50 ? new Int8Array(vectors, 12 + count * this.dims, count * 3) : null;
+  }
+
+  // Similarité du 10e, du 100e et du 500e voisin le plus proche de ce mot.
+  cutoffs(row) {
+    if (!this.cut) return null;
+    const c = this.cut, j = row * 3;
+    return [c[j] / 127, c[j + 1] / 127, c[j + 2] / 127];
+  }
+
+  keyAt(i) {
+    let s = '';
+    for (let j = this.keyOffset[i]; j < this.keyOffset[i + 1]; j++) s += String.fromCharCode(this.pool[j]);
+    return s;
   }
 
   find(key) {

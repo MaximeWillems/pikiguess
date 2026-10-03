@@ -1,10 +1,13 @@
 """Prépare les données de Pikiguess : vecteurs de mots (Fauconnier) et formes des mots (Lexique 3.83).
 
-Usage : python tools/prepare_data.py <modèle word2vec .bin> <Lexique383.tsv> <dossier de sortie>
+Usage : python tools/prepare_data.py <modèle word2vec .bin> <Lexique383.tsv> <dossier de sortie> [--dims N]
 
 Produit words.bin et vectors.bin, lus par src/lexicon.js.
 Les mots y sont normalisés (minuscules, sans accents), comme dans src/game.js.
+vectors.bin contient aussi, pour chaque mot, la similarité de son 10e, 100e et 500e voisin le plus proche :
+c'est ce qui calibre les mots proches (tiède, chaud, brûlant) mot par mot.
 """
+import argparse
 import csv
 import io
 import re
@@ -16,6 +19,7 @@ import numpy as np
 
 MAX_VECTORS = 100_000
 MAX_FILE = 25 * 1024 * 1024
+RANKS = (10, 100, 500)
 VALID = re.compile(r"[a-z0-9]+")
 ELISIONS = {
     "l": {"le"}, "d": {"de"}, "j": {"je"}, "m": {"me"}, "t": {"te"}, "s": {"se", "si"},
@@ -76,12 +80,39 @@ def read_lexique(path):
     return forms
 
 
-def report(q, rows):
+def unit(m):
+    return m / np.maximum(np.linalg.norm(m, axis=1, keepdims=True), 1e-9)
+
+
+def reduce_dims(m, dims):
+    """Garde les « dims » directions principales des vecteurs, pour que le fichier tienne en ligne."""
+    m = m - m.mean(axis=0)
+    _, axes = np.linalg.eigh(m.T @ m)
+    return m @ axes[:, -dims:]
+
+
+def neighbour_cutoffs(q):
+    """Pour chaque mot, la similarité de son 10e, 100e et 500e voisin le plus proche (lui-même exclu)."""
+    f = unit(q.astype(np.float32))
+    n = len(f)
+    if n < 2:
+        return np.zeros((n, len(RANKS)), dtype=np.int8)
+    kth = [min(r, n - 1) - 1 for r in RANKS]
+    out = np.zeros((n, len(RANKS)), dtype=np.float32)
+    for start in range(0, n, 1000):
+        s = f[start:start + 1000] @ f.T
+        s[np.arange(len(s)), np.arange(start, start + len(s))] = -2
+        out[start:start + len(s)] = -np.partition(-s, kth, axis=1)[:, kth]
+    return np.clip(np.rint(out * 127), -127, 127).astype(np.int8)
+
+
+def report(q, rows, cut):
     if len(q) < 2:
         return
-    f = q.astype(np.float32)
-    f /= np.maximum(np.linalg.norm(f, axis=1, keepdims=True), 1e-9)
+    f = unit(q.astype(np.float32))
     by_row = {r: k for k, r in rows.items()}
+    for j, r in enumerate(RANKS):
+        print(f"Similarité du {r}e voisin : médiane {np.median(cut[:, j]) / 127:.2f}, 10e centile {np.percentile(cut[:, j], 10) / 127:.2f}, 90e centile {np.percentile(cut[:, j], 90) / 127:.2f}")
     a, b = np.random.default_rng(0).integers(0, len(f), (2, 20000))
     sims = np.sum(f[a] * f[b], axis=1)
     print("Proximité de mots pris au hasard : " + ", ".join(f"{p}e centile {np.percentile(sims, p):.2f}" for p in (50, 90, 99, 99.9)))
@@ -95,7 +126,7 @@ def report(q, rows):
         print(f"{probe} : " + ", ".join(f"{by_row[t]} {s[t]:.2f}" for t in top))
 
 
-def main(model_path, lexique_path, out_dir):
+def main(model_path, lexique_path, out_dir, dims=None, max_vectors=MAX_VECTORS):
     words, vectors = read_word2vec(model_path)
     forms = read_lexique(lexique_path)
     for form, lemmas in ELISIONS.items():
@@ -107,7 +138,7 @@ def main(model_path, lexique_path, out_dir):
         if VALID.fullmatch(k) and k not in rows:
             rows[k] = len(order)
             order.append(i)
-            if len(order) == MAX_VECTORS:
+            if len(order) == max_vectors:
                 break
 
     keys = list(rows)
@@ -148,10 +179,12 @@ def main(model_path, lexique_path, out_dir):
         pool,
     ])
 
-    m = vectors[order]
-    m /= np.maximum(np.linalg.norm(m, axis=1, keepdims=True), 1e-9)
+    m = unit(vectors[order])
+    if dims and m.shape[1] > dims:
+        m = unit(reduce_dims(m, dims))
     q = np.clip(np.rint(m * 127), -127, 127).astype(np.int8)
-    vectors_bin = b"PKV1" + np.array([len(order), q.shape[1]], dtype="<u4").tobytes() + q.tobytes()
+    cut = neighbour_cutoffs(q)
+    vectors_bin = b"PKV2" + np.array([len(order), q.shape[1]], dtype="<u4").tobytes() + q.tobytes() + cut.tobytes()
 
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -161,11 +194,16 @@ def main(model_path, lexique_path, out_dir):
         (out / name).write_bytes(content)
         print(f"{name} : {len(content) / 1e6:.1f} Mo")
 
-    print(f"{len(words)} mots dans le modèle, {len(order)} vecteurs gardés, {len(keys)} mots connus, {len(forms)} formes")
-    report(q, rows)
+    print(f"{len(words)} mots dans le modèle, {len(order)} vecteurs gardés de {q.shape[1]} dimensions, {len(keys)} mots connus, {len(forms)} formes")
+    report(q, rows, cut)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        sys.exit(__doc__)
-    main(*sys.argv[1:])
+    args = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    args.add_argument("model")
+    args.add_argument("lexique")
+    args.add_argument("out")
+    args.add_argument("--dims", type=int, help="réduire les vecteurs à ce nombre de dimensions")
+    args.add_argument("--max-vectors", type=int, default=MAX_VECTORS)
+    a = args.parse_args()
+    main(a.model, a.lexique, a.out, a.dims, a.max_vectors)

@@ -15,7 +15,6 @@ const store = {
   },
 };
 
-const HINT_MIN = 0.4;
 const params = new URLSearchParams(location.search);
 const solo = params.has('solo');
 const asked = (params.get('salon') || params.get('solo') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10);
@@ -39,10 +38,9 @@ const nameOf = id => st.players.find(p => p.id === id)?.name ?? '?';
 const isMeneur = () => st.you === st.meneurId;
 const isBoss = () => st.you === st.hostId || !st.players.find(p => p.id === st.hostId)?.online;
 const plural = (n, word) => `${n} ${word}${n > 1 ? 's' : ''}`;
-// Proximité affichée : 0 % au seuil (0,4), 100 % vers 0,85. La couleur ne vire au vert qu'en fin d'échelle.
-const level = s => Math.min(1, Math.max(0, (s - HINT_MIN) / 0.45));
-const pct = s => Math.min(99, Math.max(1, Math.round(level(s) * 100)));
-const heat = s => level(s) ** 2;
+// Niveau d'un mot proche (de 0,3 à 1) : tiède, chaud, brûlant. Sa couleur va du rouge au vert.
+const temp = s => (s >= 0.9 ? 'brûlant' : s >= 0.6 ? 'chaud' : 'tiède');
+const heat = s => Math.min(1, Math.max(0, (s - 0.3) / 0.65)) ** 2;
 const baseTitle = () => (solo ? 'Pikiguess · solo' : `Pikiguess · ${code}`);
 const duration = ms => {
   const s = Math.round(ms / 1000);
@@ -264,7 +262,7 @@ function feedback(items) {
       const w = `« ${esc(x.w)} »`;
       if (x.dup) return `${w} déjà proposé`;
       if (x.n) return `${w} : <b class="plus">${plural(x.n, 'mot')} dévoilé${x.n > 1 ? 's' : ''}</b>`;
-      if (x.s) return `${w} n'est pas dans le texte, mais proche à <b class="heat" style="--h:${heat(x.s).toFixed(2)}">${pct(x.s)} %</b>`;
+      if (x.s) return `${w} n'est pas dans le texte, mais c'est <b class="heat" style="--h:${heat(x.s).toFixed(2)}">${temp(x.s)}</b>`;
       return `${w} n'est pas dans le texte, et rien de proche`;
     })
     .join(' · ');
@@ -518,10 +516,10 @@ function renderProgress() {
 
 // Case d'un mot caché, vide ou avec le mot proche le plus proche ; « secret » : le vrai mot, montré au meneur au survol.
 function boxHtml(i, n, h, id, fresh, secret) {
-  const tip = `${secret ? `${secret} · ` : ''}${plural(n, 'lettre')}${h ? ` · « ${h.w} » proche à ${pct(h.s)} %` : ''}`;
+  const tip = `${secret ? `${secret} · ` : ''}${plural(n, 'lettre')}${h ? ` · « ${h.w} » : ${temp(h.s)}` : ''}`;
   const cls = `w${glued.has(i) ? ' glued' : ''}`;
   if (!h) return `<span id="${id}" class="${cls}" data-i="${i}" data-n="${n}" style="--n:${n}" title="${esc(tip)}"></span>`;
-  return `<span id="${id}" class="${cls}${level(h.s) >= 0.7 ? ' hot' : ''}" data-i="${i}" data-n="${n}" data-g="${esc(h.w)}" style="--n:${n};--h:${heat(h.s).toFixed(2)}" title="${esc(tip)}"><i${fresh ? ' class="pop"' : ''}>${esc(h.w)}</i></span>`;
+  return `<span id="${id}" class="${cls}${h.s >= 0.9 ? ' hot' : ''}" data-i="${i}" data-n="${n}" data-g="${esc(h.w)}" style="--n:${n};--h:${heat(h.s).toFixed(2)}" title="${esc(tip)}"><i${fresh ? ' class="pop"' : ''}>${esc(h.w)}</i></span>`;
 }
 
 function wordHtml(i) {
@@ -652,7 +650,7 @@ function guessList(items, from, byHeat, mine, added = 0) {
     .map(
       g => `<li${mine ? ` data-g="${esc(g.w)}" title="Retrouver ce mot dans le texte"` : ''}${cls(g) ? ` class="${cls(g)}"` : ''}>
         <span class="k">${g.k}</span><span class="gw">${esc(g.w)}</span>
-        ${g.n ? `<span class="plus">+${g.n}</span>` : g.s ? `<span class="heat" style="--h:${heat(g.s).toFixed(2)}">${pct(g.s)} %</span>` : ''}
+        ${g.n ? `<span class="plus">+${g.n}</span>` : g.s ? `<span class="heat" style="--h:${heat(g.s).toFixed(2)}">${temp(g.s)}</span>` : ''}
       </li>`,
     )
     .join('')}</ul>`;

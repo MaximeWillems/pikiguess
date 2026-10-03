@@ -15,9 +15,16 @@ Sans ces données, le jeu marche quand même, mais sans mots grisés ni formes :
 - On affiche l'intro d'une page Wikipédia telle quelle, titre compris, chaque mot caché sous une case noire de la taille du mot. Au départ rien n'est dévoilé, même pas les petits mots (le, de, et…).
 - Le joueur propose un mot : s'il est dans le texte, il se dévoile partout et sous toutes ses formes (pluriel, féminin, conjugaisons : « naître » dévoile « né », « naquit »…). Majuscules et accents ignorés : « egypte » dévoile « Égypte ».
 - Les petits mots se dévoilent aussi ensemble : « le » dévoile « la, les, l' », « de » dévoile « du, des, d' », « à » dévoile « au, aux », de même pour « un/une », « ce/cette/ces », « son/sa/ses », « il/elle/ils/elles »… (liste `GROUPS` dans `src/game.js`).
-- Sinon, il s'affiche dans les cases des mots proches par le sens, en couleur : du rouge (un peu proche) au vert (très proche). Chaque case garde le mot le plus proche proposé jusque-là.
+- Sinon, il s'affiche dans les cases des mots proches par le sens : **tiède** (rouge) s'il fait partie des 500 mots les plus proches du mot caché, **chaud** des 100, **brûlant** (vert) des 10. Le calcul se fait mot par mot : un mot courant comme « guerre » ne s'allume plus partout. Chaque case garde le mot le plus proche proposé jusque-là.
 - Un mot trouvé apparaît sur fond vert, qui s'efface en fondu.
-- Nombres et dates : entre deux nombres, seul l'écart compte, pour s'approcher petit à petit (« 1790 » s'affiche en vert dans la case de « 1789 »). Les dates s'affichent jusqu'à ~120 ans d'écart, les autres nombres jusqu'à un facteur 6 environ.
+- Nombres et dates : entre deux nombres, seul l'écart compte, pour s'approcher petit à petit. Chaque nombre du texte est reconnu d'après les mots autour, avec son échelle :
+  - année (« en 1889 », « 382 av. J.-C. ») : brûlant à 1 ou 2 ans près, visible jusqu'à ~120 ans ;
+  - siècle (« XIXe siècle », « 19e siècle ») : une année du siècle est brûlante (1850 ↔ XIXe) ;
+  - jour (« 21 septembre »), chiffre romain (« Louis XIV », « Ier ») : visible jusqu'à 10 d'écart ;
+  - mois et jours de la semaine : par leur écart (juin ↔ mai), plus par le sens ;
+  - quantité (« 330 m », « 3 000 habitants », « 0,31 % ») : visible jusqu'à un facteur 6 environ.
+  - Les nombres en lettres et les ordinaux (« trois », « premier ») comptent comme des nombres ; « 1er » donne deux mots, « 1 » et « er ».
+- Nationalités : « américain » dévoile aussi « américano- » (de même « franco- », « anglo- », « germano- »…), le pays donne un indice brûlant (« anglais » ↔ « Angleterre »), et deux nationalités différentes ne se ressemblent plus (« américain » sur « britannique », au plus tiède).
 - Le but est juste de trouver le titre : la page est trouvée quand tous les mots du titre sont dévoilés, parenthèse comprise (pour « Mercure (planète) », il faut aussi « planète »).
 
 ## Déroulé d'une partie
@@ -73,7 +80,8 @@ L'hôte règle la partie comme il veut :
 [fauconnier.github.io/#data](https://fauconnier.github.io/#data) : modèles word2vec en français. Chaque mot y est une liste de nombres (un vecteur) ; deux mots proches par le sens ont des vecteurs proches. C'est ce qui donne les mots grisés.
 
 - Modèle retenu : `frWac_non_lem_no_postag_no_phrase_200_skip_cut100.bin` (126 Mo, entraîné sur frWaC, 1,6 milliard de mots). Non lemmatisé : il garde les nombres (« 1789 » reste proche de « révolution ») et ses 200 dimensions tiennent en ligne sans réduction.
-- Le script `tools/prepare_data.py` garde les 100 000 mots les plus fréquents et compresse les vecteurs (un octet par nombre) : environ 20 Mo, sous la limite de 25 Mo par fichier de Cloudflare.
+- Le script `tools/prepare_data.py` garde les 100 000 mots les plus fréquents et compresse les vecteurs (un octet par nombre) : environ 20 Mo, sous la limite de 25 Mo par fichier de Cloudflare. Il calcule aussi, pour chaque mot, la similarité de son 10e, 100e et 500e voisin le plus proche : ce sont les seuils de tiède, chaud et brûlant.
+- L'Action « Données » se relance seule quand `tools/` change. Elle prépare aussi le modèle entraîné sur Wikipédia (`frWiki_no_lem_no_postag_no_phrase_1000_skip_cut100.bin`, réduit à 200 dimensions), pour comparer, et écrit `public/data/rapport.txt` : pour dix pages de test (`tools/evaluation.json`), le niveau atteint par des mots du sujet et par des mots pièges, avec chaque modèle.
 - Licence CC-BY 3.0 : auteur cité en bas de page, avec un lien.
 
 ### Dictionnaire des formes (Lexique 3.83)
@@ -95,39 +103,22 @@ L'hôte règle la partie comme il veut :
 | `src/game.js` | les règles : mots dévoilés, mots grisés, classement |
 | `src/lexicon.js` | lecture des données préparées |
 | `tools/prepare_data.py` | préparation des données, lancée par l'Action « Données » |
+| `tools/evaluate.mjs`, `tools/evaluation.json` | mesure des mots proches sur des pages de test (rapport de l'Action) |
 | `test/` | tests des règles sur de fausses données (`npm test`, demande Python et numpy) |
 
 ## À faire
 
-### Améliorer les mots proches (plan, rien de codé)
+### Mots proches : la suite
 
-Constats :
-
-- Un seul seuil fixe (0,4) pour tous les mots : trop bas pour les mots courants (« guerre » paraît proche de beaucoup de mots, d'où des faux indices), trop haut pour les mots rares (vrais indices refusés).
-- Les vecteurs rapprochent les mots qui apparaissent ensemble : mois, jours, nombres en lettres, prénoms et nationalités se « ressemblent » tous (« américain » s'affiche sur « britannique »).
-- Vocabulaire : les 100 000 mots les plus courants du web, peu de noms propres de Wikipédia.
-- Nombres mal découpés (« 3 000 », « 0,31 »), siècles en chiffres romains ignorés, pas de différence entre une année et une quantité.
-
-Plan, dans l'ordre :
-
-1. **Nombres et dates**, par des règles : « 3 000 » et « 0,31 » lus comme un seul nombre ; siècles romains rapprochés des années (XIXe ↔ 1850) ; mois et jours proches par leur écart (septembre ↔ octobre) ; nombres en lettres et ordinaux (« deux », « premier ») traités comme des nombres ; années av. J.-C. ; année, jour ou quantité reconnus d'après les mots autour (« en 1889 », « 21 septembre », « 330 m »), chacun avec son échelle.
-2. **Nationalités** :
-   - les formes en « -o » (« américano- », « franco- », « anglo- », « germano- »…) rattachées à leur nationalité : « américain » dévoile « américano » (aujourd'hui, rien) ;
-   - une table pays ↔ nationalité (« américain » ↔ « Amérique », « États-Unis » ; « français » ↔ « France ») qui donne un indice fort ;
-   - une nationalité ne s'affiche plus comme proche d'une autre (« américain » sur « britannique »), ou seulement faiblement.
-3. **Mesure** : une dizaine de pages de test avec des mots du sujet et des mots pièges. Une Action GitHub compte, pour chaque réglage, les pièges qui s'allument et les bons mots ratés. On règle sur ces chiffres.
-4. **Proximité calibrée mot par mot**, comme Cémantix : brûlant si ton mot est dans les 10 plus proches du mot caché, chaud dans les 100, tiède dans les 1 000, rien au-delà. Seuils calculés une fois par l'Action « Données » (environ 300 Ko en plus).
-5. **Meilleurs vecteurs** : tester le modèle entraîné sur Wikipédia, élargir le vocabulaire, garder le meilleur d'après la mesure.
-6. **Affichage** : un niveau parlant (brûlant, chaud, tiède) à la place du %.
-
-À décider : une flèche ↑/↓ dans la case d'un nombre (plus grand / plus petit) ? « brûlant / chaud / tiède » à la place du % ?
+- Lire `public/data/rapport.txt` : garder le modèle frWaC ou passer à celui de Wikipédia, d'après les mots du sujet trouvés et les pièges allumés.
+- Régler les seuils d'après le rapport et de vraies parties : rangs 10 / 100 / 500 (`RANKS` dans `tools/prepare_data.py`), plancher de similarité 0,25 (`semantic` dans `src/game.js`).
+- Pas fait, à décider : une flèche ↑/↓ dans la case d'un nombre (plus grand / plus petit). Les couleurs guident déjà ; la flèche rendrait les nombres très faciles.
 
 ### Points ouverts
-
-- Régler les mots proches après de vraies parties. Seuil `HINT_MIN` à 0,4 (`src/game.js` et `public/app.js`) : en dessous, rien ne s'affiche. Échelle des couleurs dans `public/app.js` : 0,6 orange (44 %), 0,7 jaune (67 %), vert à partir de 0,8. Mesuré sur « Monstre (série télévisée) » : les mots hors sujet (« guerre », « nazi ») montent à 0,43-0,6, ceux du sujet (« meurtre », « crime ») à 0,65-0,84.
 - À mesurer : après une longue pause, le premier mot semble mettre plus d'une seconde à répondre, le temps que le salon recharge ses 25 Mo de données.
 
 ### Fait
 
 - Actualiser la page sans perdre la partie ni l'historique de ses essais (vérifié le 28/09/2026).
 - Caméras du meneur (voir « Le meneur pendant sa manche »).
+- Mots proches : nombres et dates par sorte, nationalités, proximité calibrée mot par mot, mesure sur des pages de test, affichage tiède / chaud / brûlant (voir « Règles »).

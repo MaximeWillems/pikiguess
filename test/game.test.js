@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { Lexicon } from '../src/lexicon.js';
 import { playable } from '../src/wikipedia.js';
-import { analyze, buildPage, camView, cleanExtract, guess, isFound, newRun, normalize, numberCloseness, playerView, ranking, reveal } from '../src/game.js';
+import { analyze, buildPage, camView, cleanExtract, guess, isFound, newRun, normalize, playerView, ranking, reveal } from '../src/game.js';
 
 const TITLE = 'Mercure (planète)';
 const EXTRACT = "Le roi est né en 1789 ( ). Les rois sont nés à Paris, l'empire naquit.\n\nLa révolution est une fête, là.";
@@ -49,17 +49,40 @@ test('la prononciation est retirée du texte', () => {
   assert.deepEqual(page.words.map(w => w.text), ['Albert', 'Einstein', 'Albert', 'Einstein', 'né', 'le', '14', 'mars', '1879']);
 });
 
-test('écart entre nombres : on peut s\'approcher petit à petit', () => {
-  const years = [1, 5, 10, 25, 50, 100].map(d => numberCloseness(1889, 1889 + d));
-  assert.ok(years.every((s, i) => i === 0 || s < years[i - 1]));
-  assert.ok(numberCloseness(1789, 1790) > 0.75);
-  assert.ok(numberCloseness(1889, 1957) > 0.4);
-  assert.ok(numberCloseness(1500, 1900) < 0.4);
-  assert.ok(numberCloseness(330, 300) > 0.7);
-  assert.ok(numberCloseness(330, 100) > 0.4);
-  assert.ok(numberCloseness(330, 30) < 0.4);
-  assert.ok(numberCloseness(15, 14) > numberCloseness(15, 10));
-  assert.equal(numberCloseness(1888, 337), 0);
+test('nombres et dates : chaque sorte de nombre avec son échelle', () => {
+  const page = buildPage(
+    'Test',
+    'En 1889, la tour de 330 m ouvre le 15 mai 1889. Au XIXe siècle, Louis XIV puis Napoléon Ier. Né en 382 av. J.-C. Elle compte 3 000 habitants, soit 0,31 %.',
+  );
+  const kinds = Object.fromEntries(page.words.filter(w => w.num).map(w => [w.text, w.num.kind]));
+  assert.deepEqual(
+    [kinds['1889'], kinds['330'], kinds['15'], kinds.mai, kinds.XIXe, kinds.XIV, kinds.Ier, kinds['382'], kinds['3 000'], kinds['0,31']],
+    ['year', 'qty', 'day', 'month', 'century', 'roman', 'roman', 'year', 'qty', 'qty'],
+  );
+
+  const keys = analyze(page, null);
+  const best = (w, target) => Math.max(0, ...guess(page, keys, null, newRun(), w).hints.filter(([i]) => page.words[i].text === target).map(h => h[2]));
+  assert.ok(best('1890', '1889') >= 0.9);
+  assert.ok(best('1950', '1889') >= 0.3 && best('1950', '1889') < 0.6);
+  assert.equal(best('2200', '1889'), 0);
+  assert.ok(best('1850', 'XIXe') >= 0.9);
+  assert.ok(best('19', 'XIXe') >= 0.9);
+  assert.ok(best('14', 'XIV') >= 0.9);
+  assert.ok(best('juin', 'mai') >= 0.5);
+  assert.ok(best('380', '382') >= 0.9);
+  assert.ok(best('300', '330') >= 0.6);
+  assert.equal(best('1889', '330'), 0);
+  assert.deepEqual(texts(page, guess(page, keys, null, newRun(), '3000').revealed), ['3 000']);
+});
+
+test('nationalités : formes en « -o », pays, et nationalités voisines', () => {
+  const page = buildPage('Test', 'Un film américano-britannique, tourné par des Américains en Angleterre.');
+  const keys = analyze(page, lex);
+  const go = w => guess(page, keys, lex, newRun(), w);
+  assert.deepEqual(texts(page, go('américaine').revealed).sort(), ['Américains', 'américano']);
+  const r = go('anglais');
+  assert.ok(r.hints.some(([i, , s]) => page.words[i].text === 'Angleterre' && s >= 0.9));
+  assert.ok(!r.hints.some(([i, , s]) => page.words[i].text === 'britannique' && s > 0.35));
 });
 
 test('lexique : recherche, mot de base, doublons de casse', () => {

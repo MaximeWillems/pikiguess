@@ -1,9 +1,17 @@
 name: Données
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["tools/**", ".github/workflows/donnees.yml"]
 
 permissions:
   contents: write
+
+concurrency:
+  group: donnees
+  cancel-in-progress: true
 
 jobs:
   donnees:
@@ -13,18 +21,37 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
       - run: pip install numpy
-      - name: Télécharger les vecteurs (Fauconnier) et Lexique 3.83
+      - uses: actions/cache@v4
+        with:
+          path: data-src
+          key: sources-v2
+      - name: Télécharger les vecteurs (Fauconnier, frWaC et Wikipédia) et Lexique 3.83
         run: |
           mkdir -p data-src
-          curl -fsSL -o data-src/vecteurs.bin https://embeddings.net/embeddings/frWac_non_lem_no_postag_no_phrase_200_skip_cut100.bin
-          curl -fsSL -o data-src/Lexique383.tsv http://www.lexique.org/databases/Lexique383/Lexique383.tsv
+          get() { [ -s "data-src/$1" ] || curl -fsSL -o "data-src/$1" "$2"; }
+          get frwac.bin https://embeddings.net/embeddings/frWac_non_lem_no_postag_no_phrase_200_skip_cut100.bin
+          get frwiki.bin https://embeddings.net/embeddings/frWiki_no_lem_no_postag_no_phrase_1000_skip_cut100.bin
+          get Lexique383.tsv http://www.lexique.org/databases/Lexique383/Lexique383.tsv
           sha256sum data-src/*
-      - run: python tools/prepare_data.py data-src/vecteurs.bin data-src/Lexique383.tsv public/data
+      - name: Préparer les données et mesurer les mots proches
+        run: |
+          {
+            echo "===== Préparation frWaC (données en ligne)"
+            python tools/prepare_data.py data-src/frwac.bin data-src/Lexique383.tsv public/data
+            echo "===== Préparation Wikipédia (pour comparer)"
+            python tools/prepare_data.py data-src/frwiki.bin data-src/Lexique383.tsv data-frwiki --dims 200
+            node tools/evaluate.mjs public/data data-frwiki
+          } 2>&1 | tee rapport.txt
+          mv rapport.txt public/data/rapport.txt
       - name: Ajouter les données au dépôt
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/data
           git diff --cached --quiet || git commit -m "Données préparées"
+          git pull --rebase
           git push
