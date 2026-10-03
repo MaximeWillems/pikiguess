@@ -6,6 +6,11 @@ Similarité du 10e voisin : médiane 0.61, 10e centile 0.48, 90e centile 0.78
 Similarité du 100e voisin : médiane 0.50, 10e centile 0.38, 90e centile 0.65
 Similarité du 500e voisin : médiane 0.39, 10e centile 0.30, 90e centile 0.50
 Proximité de mots pris au hasard : 50e centile -0.02, 90e centile 0.11, 99e centile 0.31, 99.9e centile 0.56
+suite / saga : similarité 0.14 ; saga est le 6513e voisin de suite, suite le 4291e de saga
+suite / trilogie : similarité 0.11 ; trilogie est le 12121e voisin de suite, suite le 16129e de trilogie
+suite / film : similarité 0.06 ; film est le 28344e voisin de suite, suite le 24295e de film
+québec / canadien : similarité 0.60 ; canadien est le 46e voisin de québec, québec le 9e de canadien
+tyrannosaure / dinosaure : similarité 0.74 ; dinosaure est le 2e voisin de tyrannosaure, tyrannosaure le 2e de dinosaure
 roi : trone 0.82, regente 0.80, chambellan 0.77, prince 0.76, duc 0.75, reine 0.75, suzerain 0.74, connetable 0.73, royaume 0.73, vassal 0.73
 napoléon : bonaparte 0.91, imperatrice 0.78, abdication 0.78, napoleonienne 0.77, bourbons 0.77, talleyrand 0.76, empereur 0.75, beauharnais 0.75, imperiale 0.75, persigny 0.74
 paris : nanterre 0.65, vincennes 0.61, sorbonne 0.59, daumesnil 0.59, malesherbes 0.58, caumartin 0.57, montrouge 0.56, rue 0.56, debourg 0.55, boulevard 0.55
@@ -19,6 +24,7 @@ manger : mange 0.75, grignoter 0.72, mangeant 0.70, cuisine 0.64, mangent 0.64, 
 tyrannosaure : dinosaure 0.74, diplodocus 0.66, dinos 0.63, mammouth 0.61, dinosaures 0.60, griffes 0.58, reptile 0.58, gorille 0.58, mammouths 0.58, singes 0.57
 théropode : absent
 spinosaurus : absent
+suite : lire 0.82, janvier 0.66, mardi 0.63, mercredi 0.63, jeudi 0.62, aucun 0.62, commentaires 0.61, publie 0.61, novembre 0.61, fevrier 0.60
 ===== 100 000 mots, vecteurs complets (pour comparer)
 words.bin : 5.8 Mo
 vectors.bin : 20.3 Mo
@@ -27,6 +33,11 @@ Similarité du 10e voisin : médiane 0.65, 10e centile 0.52, 90e centile 0.79
 Similarité du 100e voisin : médiane 0.53, 10e centile 0.42, 90e centile 0.65
 Similarité du 500e voisin : médiane 0.42, 10e centile 0.32, 90e centile 0.53
 Proximité de mots pris au hasard : 50e centile 0.06, 90e centile 0.20, 99e centile 0.40, 99.9e centile 0.59
+suite / saga : similarité 0.19 ; saga est le 16479e voisin de suite, suite le 2476e de saga
+suite / trilogie : similarité 0.23 ; trilogie est le 7724e voisin de suite, suite le 9908e de trilogie
+suite / film : similarité 0.17 ; film est le 21730e voisin de suite, suite le 14861e de film
+québec / canadien : similarité 0.64 ; canadien est le 29e voisin de québec, québec le 5e de canadien
+tyrannosaure / dinosaure : absent
 roi : trone 0.85, regente 0.82, chambellan 0.80, prince 0.80, duc 0.79, reine 0.78, royaume 0.77, suzerain 0.77, vassal 0.76, connetable 0.76
 napoléon : bonaparte 0.92, imperatrice 0.80, abdication 0.80, bourbons 0.79, napoleonienne 0.79, empereur 0.77, talleyrand 0.77, imperiale 0.77, beauharnais 0.77, cambaceres 0.75
 paris : nanterre 0.68, vincennes 0.64, sorbonne 0.62, malesherbes 0.62, daumesnil 0.62, rue 0.61, caumartin 0.61, montrouge 0.60, bd 0.60, marcadet 0.59
@@ -40,6 +51,7 @@ manger : mange 0.77, grignoter 0.74, mangeant 0.72, mangent 0.67, sainement 0.66
 tyrannosaure : absent
 théropode : absent
 spinosaurus : absent
+suite : lire 0.85, mardi 0.69, jeudi 0.68, mercredi 0.68, aucun 0.66, publie 0.66, commentaires 0.63, vendredi 0.63, lundi 0.62, voici 0.62
 
 ===== public/data =====
 
@@ -106,7 +118,7 @@ Napoléon Ier
 Lionel Messi
   sujet   ballon         chaud 0.67 → joueur
   sujet   but            dévoilé
-  sujet   dribble        brûlant 0.9 → joueur
+  sujet   dribble        brûlant 0.95 → dribbleur
   sujet   stade          chaud 0.67 → football
   sujet   ronaldo        brûlant 0.91 → Messi
   sujet   championnat    dévoilé
@@ -229,7 +241,7 @@ Spinosaurus
   sujet   vélociraptor   rien
   sujet   diplodocus     brûlant 0.92 → dinosaure
   sujet   reptile        brûlant 0.92 → dinosaure
-  sujet   crocodile      chaud 0.86 → dinosaure
+  sujet   crocodile      brûlant 0.92 → crocodiliforme
   sujet   préhistoire    chaud 0.66 → dinosaures
   sujet   jurassique     brûlant 0.96 → Crétacé
   sujet   prédateur      brûlant 0.93 → proies
@@ -264,7 +276,7 @@ Albert Einstein
   pièges  mariage        rien
 
 Résumé public/data
-  sujet : dévoilé 18, brûlant 33, chaud 38, tiède 15, rien 6
+  sujet : dévoilé 18, brûlant 34, chaud 37, tiède 15, rien 6
   pièges : dévoilé 0, brûlant 1, chaud 13, tiède 25, rien 49
 
 ===== data-100k =====
@@ -332,7 +344,7 @@ Napoléon Ier
 Lionel Messi
   sujet   ballon         chaud 0.72 → joueur
   sujet   but            dévoilé
-  sujet   dribble        brûlant 0.9 → joueur
+  sujet   dribble        brûlant 0.95 → dribbleur
   sujet   stade          chaud 0.71 → footballeurs
   sujet   ronaldo        brûlant 0.91 → Messi
   sujet   championnat    dévoilé
@@ -455,7 +467,7 @@ Spinosaurus
   sujet   vélociraptor   rien
   sujet   diplodocus     rien
   sujet   reptile        brûlant 0.91 → dinosaure
-  sujet   crocodile      chaud 0.88 → dinosaure
+  sujet   crocodile      brûlant 0.92 → crocodiliforme
   sujet   préhistoire    chaud 0.7 → paléontologues
   sujet   jurassique     brûlant 0.96 → Crétacé
   sujet   prédateur      brûlant 0.94 → proies
@@ -490,5 +502,5 @@ Albert Einstein
   pièges  mariage        rien
 
 Résumé data-100k
-  sujet : dévoilé 18, brûlant 29, chaud 43, tiède 15, rien 5
+  sujet : dévoilé 18, brûlant 30, chaud 42, tiède 15, rien 5
   pièges : dévoilé 0, brûlant 1, chaud 16, tiède 24, rien 47
