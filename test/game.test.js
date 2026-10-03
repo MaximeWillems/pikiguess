@@ -45,6 +45,8 @@ test('la prononciation est retirée du texte', () => {
   assert.equal(cleanExtract('La tour Eiffel [tuʁɛfɛl]  est une tour'), 'La tour Eiffel   est une tour');
   assert.equal(cleanExtract('Albert Einstein (prononcé en allemand [ˈalbɐt ˈaɪnʃtaɪn] ), né'), 'Albert Einstein , né');
   assert.equal(cleanExtract('Mercure (planète) est'), 'Mercure (planète) est');
+  assert.equal(cleanExtract("(en néerlandais : België /ˈbɛlɣiə/ ; en wallon : Beldjike /bɛl'dʒik/), en forme"), '(en néerlandais : België ; en wallon : Beldjike), en forme');
+  assert.equal(cleanExtract('130 km/h, 3/4 et 1/2'), '130 km/h, 3/4 et 1/2');
   const page = buildPage('Albert Einstein', 'Albert Einstein (prononcé en allemand [ˈalbɐt] ), né le 14 mars 1879.');
   assert.deepEqual(page.words.map(w => w.text), ['Albert', 'Einstein', 'Albert', 'Einstein', 'né', 'le', '14', 'mars', '1879']);
 });

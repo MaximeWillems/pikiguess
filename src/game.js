@@ -46,6 +46,7 @@ export function tokenize(text) {
 export function cleanExtract(text) {
   return text
     .replace(/\[[^\]\n]*\]/g, '')
+    .replace(/\s?\/[^/\n]*[ɐ-˿][^/\n]*\//g, '')
     .replace(/\(\s*(?:prononcé|prononciation)[^()\n]*\)/gi, '')
     .replace(/\(\s*[,;:]?\s*\)/g, '');
 }
