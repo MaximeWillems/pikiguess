@@ -15,6 +15,7 @@ const cleanSettings = x => ({
   chrono: int(x?.chrono, 0, 60, 3),
   maxDuration: int(x?.maxDuration, 0, 120, 20),
   meneurStop: x?.meneurStop !== false,
+  rotation: x?.rotation !== false,
   tours: int(x?.tours, 1, 5, 1),
 });
 
@@ -178,7 +179,11 @@ export class Room extends DurableObject {
         return true;
       case 'next':
         if ((!boss && id !== s.meneurId) || s.phase !== 'roundEnd') return false;
-        this.nextRound();
+        this.nextRound(!!m.same);
+        return true;
+      case 'end':
+        if (!boss || s.phase !== 'roundEnd') return false;
+        Object.assign(s, { phase: 'gameEnd', meneurId: null, page: null, runs: {}, results: null });
         return true;
     }
     return false;
@@ -194,24 +199,29 @@ export class Room extends DurableObject {
     for (const p of players) p.score = 0;
     s.tour = 1;
     s.round = 0;
+    s.meneurId = null;
     s.queue = [s.hostId, ...players.map(p => p.id).filter(x => x !== s.hostId)];
     this.nextRound();
   }
 
-  nextRound() {
+  // same : le meneur reste le même (bouton « Garder le même meneur », ou réglage « le meneur ne change pas »)
+  nextRound(same = false) {
     const s = this.s;
     const ids = new Set(s.players.map(p => p.id));
     s.queue = s.queue.filter(x => ids.has(x));
-    if (!s.queue.length) {
-      if (s.tour >= s.settings.tours) {
-        Object.assign(s, { phase: 'gameEnd', meneurId: null, page: null, runs: {}, results: null });
-        this.ctx.storage.deleteAlarm();
-        return;
+    const keep = (same || s.settings.rotation === false) && ids.has(s.meneurId);
+    if (!keep) {
+      if (!s.queue.length) {
+        if (s.tour >= s.settings.tours) {
+          Object.assign(s, { phase: 'gameEnd', meneurId: null, page: null, runs: {}, results: null });
+          this.ctx.storage.deleteAlarm();
+          return;
+        }
+        s.tour++;
+        s.queue = s.players.map(p => p.id);
       }
-      s.tour++;
-      s.queue = s.players.map(p => p.id);
+      s.meneurId = s.queue.shift();
     }
-    s.meneurId = s.queue.shift();
     s.round++;
     Object.assign(s, { phase: 'choosing', page: null, runs: {}, hinted: [], startedAt: null, firstFoundAt: null, results: null });
     this.ctx.storage.deleteAlarm();
@@ -384,7 +394,7 @@ export class Room extends DurableObject {
       settings: s.settings,
       round: s.round,
       tour: s.tour,
-      last: !s.queue.length && s.tour >= s.settings.tours,
+      last: s.settings.rotation !== false && !s.queue.length && s.tour >= s.settings.tours,
       meneurId: s.meneurId,
       startedAt: s.startedAt,
       solo: !!s.solo,

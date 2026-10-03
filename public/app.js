@@ -383,7 +383,8 @@ function settingsForm(editable) {
     <label>Chrono après le 1er gagnant : <input type="number" name="chrono" min="0" max="60" value="${s.chrono}"> min <small>(0 = aucun)</small></label>
     <label>Durée maximale d'une manche : <input type="number" name="maxDuration" min="0" max="120" value="${s.maxDuration}"> min <small>(0 = aucune)</small></label>
     <label><input type="checkbox" name="meneurStop"${s.meneurStop ? ' checked' : ''}> Le meneur peut arrêter la manche</label>
-    <label>Nombre de tours : <input type="number" name="tours" min="1" max="5" value="${s.tours}"> <small>(à chaque tour, chacun est meneur une fois)</small></label>
+    <label><input type="checkbox" name="rotation"${s.rotation !== false ? ' checked' : ''}> Le meneur change à chaque manche <small>(sinon, l'hôte mène toutes les manches)</small></label>
+    <label>Nombre de tours : <input type="number" name="tours" min="1" max="5" value="${s.tours}"> <small>(à chaque tour, chacun est meneur une fois ; si le meneur change)</small></label>
   </fieldset>`;
 }
 
@@ -477,7 +478,13 @@ function renderBar() {
   } else if (st.phase === 'roundEnd') {
     bar.innerHTML = `<h2>C'était « <a href="${esc(st.page.url)}" target="_blank" rel="noopener">${esc(st.page.title)}</a> »</h2>
       ${resultsTable()}
-      ${boss || meneur ? `<button data-send="next">${st.last ? 'Voir le classement final' : 'Manche suivante'}</button>` : '<p class="hint">En attente de la manche suivante…</p>'}`;
+      ${
+        boss || meneur
+          ? `<div class="actions"><button data-send="next">${st.last ? 'Voir le classement final' : 'Manche suivante'}</button>
+              ${st.settings.rotation !== false ? `<button class="alt" data-send="next" data-same>${meneur ? 'Rester meneur' : 'Garder le même meneur'}</button>` : ''}
+              ${boss ? '<button class="alt" data-send="end" data-confirm="Terminer la partie maintenant ?">Terminer la partie</button>' : ''}</div>`
+          : '<p class="hint">En attente de la manche suivante…</p>'
+      }`;
   } else if (st.phase === 'gameEnd') {
     const medals = ['🥇', '🥈', '🥉'];
     const ranked = [...st.players].sort((a, b) => b.score - a.score);
@@ -782,7 +789,7 @@ $('#bar').addEventListener('click', e => {
     if (li) preview(li.dataset.title);
     return;
   }
-  if (b.dataset.send && (!b.dataset.confirm || confirm(b.dataset.confirm))) send({ t: b.dataset.send });
+  if (b.dataset.send && (!b.dataset.confirm || confirm(b.dataset.confirm))) send({ t: b.dataset.send, same: 'same' in b.dataset });
   if (b.dataset.pov) setPov(b.dataset.pov);
   if ('copy' in b.dataset) copyLink(b);
   if ('ideas' in b.dataset) ideas();
@@ -801,8 +808,11 @@ $('#bar').addEventListener('click', e => {
 $('#bar').addEventListener('change', e => {
   const f = e.target.closest('.settings');
   if (!f) return;
-  const { chrono, maxDuration, meneurStop, tours } = f.elements;
-  send({ t: 'settings', settings: { chrono: chrono.value, maxDuration: maxDuration.value, meneurStop: meneurStop.checked, tours: tours.value } });
+  const { chrono, maxDuration, meneurStop, rotation, tours } = f.elements;
+  send({
+    t: 'settings',
+    settings: { chrono: chrono.value, maxDuration: maxDuration.value, meneurStop: meneurStop.checked, rotation: rotation.checked, tours: tours.value },
+  });
 });
 
 $('#bar').addEventListener('input', e => {

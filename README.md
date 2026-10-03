@@ -35,7 +35,7 @@ Sans ces données, le jeu marche quand même, mais sans mots grisés ni formes :
 4. Pendant la manche, on voit seulement qui a trouvé. Le reste (essais, part du texte dévoilée) s'affiche à la fin.
 5. Le premier qui dévoile le titre gagne la manche ; les autres continuent pour le classement.
 6. La manche s'arrête quand tout le monde a trouvé, ou selon les réglages.
-7. Manche suivante : un autre joueur devient meneur.
+7. Manche suivante : un autre joueur devient meneur, sauf si le meneur reste (bouton « Rester meneur » en fin de manche) ou si l'hôte a décoché « Le meneur change à chaque manche » (il mène alors toutes les manches). L'hôte peut « Terminer la partie » à la fin de n'importe quelle manche.
 
 Actualiser la page, ou la rouvrir plus tard, reprend la partie là où on en était : même joueur, mêmes mots dévoilés, même historique de ses essais (gardés par le serveur).
 
@@ -46,7 +46,8 @@ L'hôte règle la partie comme il veut :
 - chrono après le 1er gagnant, ou non : les autres ont X minutes pour finir ;
 - durée maximale de manche, ou non : la page est dévoilée même si personne n'a trouvé ;
 - arrêt de la manche par le meneur, autorisé ou non ;
-- nombre de tours : à chaque tour, chacun est meneur une fois.
+- le meneur change à chaque manche, ou non (l'hôte mène alors toutes les manches, jusqu'à « Terminer la partie ») ;
+- nombre de tours : à chaque tour, chacun est meneur une fois (quand le meneur change).
 
 ## Points
 
@@ -112,6 +113,7 @@ L'hôte règle la partie comme il veut :
 ### Mots proches : la suite
 
 - Lire `public/data/rapport.txt` : vérifier que garder tous les mots (vecteurs réduits) ne dégrade pas les indices par rapport à la version à 100 000 mots.
+- À décider : un deuxième avis du modèle Wikipédia pour les mots dont le sens web domine (« suite » est appris comme « Lire la suite » : « saga » n'est que son 6 513e voisin). Gagnerait ces cas, mais ce modèle allumait seul deux fois plus de pièges : à mesurer avec le rapport avant de le mettre en ligne.
 - Régler les seuils d'après le rapport et de vraies parties : rangs 10 / 100 / 500 (`RANKS` dans `tools/prepare_data.py`), plancher de similarité 0,25 (`semantic` dans `src/game.js`).
 - Pas fait, à décider : une flèche ↑/↓ dans la case d'un nombre (plus grand / plus petit). Les couleurs guident déjà ; la flèche rendrait les nombres très faciles.
 
