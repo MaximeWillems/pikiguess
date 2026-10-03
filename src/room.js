@@ -319,14 +319,15 @@ export class Room extends DurableObject {
       s.firstFoundAt ??= run.foundAt;
     }
     this.sendTo(id, { t: 'guess', ...res });
-    this.sendTo(s.meneurId, {
+    const live = {
       t: 'live',
       id,
       items: res.items.filter(x => !x.unknown || x.s).map(({ sugg, ...x }) => x),
       count: revealedCount(s.page, run),
       revealed: res.revealed.map(([i]) => i),
       hints: res.hints,
-    });
+    };
+    for (const w of this.watchers()) if (w !== id) this.sendTo(w, live);
     if (!found) {
       this.save();
       return false;
@@ -402,6 +403,12 @@ export class Room extends DurableObject {
     return { lex, keys: this.info.keys };
   }
 
+  // Ceux qui regardent l'écran des joueurs : le meneur, et les joueurs qui ont trouvé
+  watchers() {
+    const s = this.s;
+    return [s.meneurId, ...Object.keys(s.runs).filter(pid => s.runs[pid].foundAt != null)].filter(Boolean);
+  }
+
   // Liste pendant la frappe (aide à l'écriture) : réponse au seul joueur qui tape
   async onSuggest(id, m) {
     const s = this.s;
@@ -466,17 +473,23 @@ export class Room extends DurableObject {
       })),
     };
     const run = s.runs[id];
+    // Les écrans des joueurs : leurs essais et ce qu'ils voient du texte
+    const cams = () => {
+      v.live = Object.fromEntries(Object.entries(s.runs).map(([pid, r]) => [pid, { guesses: r.guesses, count: revealedCount(s.page, r) }]));
+      v.cams = Object.fromEntries(Object.entries(s.runs).map(([pid, r]) => [pid, camView(s.page, r)]));
+    };
     if (s.phase === 'playing' && id === s.meneurId) {
       v.page = fullPage(s.page);
       v.hinted = s.page.words.flatMap((w, i) => (s.hinted.includes(w.key) ? [i] : []));
-      v.live = Object.fromEntries(Object.entries(s.runs).map(([pid, r]) => [pid, { guesses: r.guesses, count: revealedCount(s.page, r) }]));
-      v.cams = Object.fromEntries(Object.entries(s.runs).map(([pid, r]) => [pid, camView(s.page, r)]));
+      cams();
     } else if (s.phase === 'playing' && run) {
       const found = run.foundAt != null;
       v.page = found ? fullPage(s.page) : playerView(s.page, run);
       v.guesses = run.guesses;
       v.foundTime = found ? run.foundAt - s.startedAt : null;
       v.rank = found ? 1 + Object.values(s.runs).filter(r => r.foundAt != null && r.foundAt < run.foundAt).length : null;
+      // Qui a trouvé peut regarder l'écran des autres, sans pouvoir donner d'indice
+      if (found && !s.solo) cams();
     } else if (s.phase === 'roundEnd') {
       v.page = fullPage(s.page);
       v.results = s.results;

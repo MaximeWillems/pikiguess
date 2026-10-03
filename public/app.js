@@ -39,6 +39,8 @@ const livePct = new Map();
 const send = msg => ws?.readyState === 1 && ws.send(JSON.stringify(msg));
 const nameOf = id => st.players.find(p => p.id === id)?.name ?? '?';
 const isMeneur = () => st.you === st.meneurId;
+// Regarde l'écran des joueurs : le meneur, ou un joueur qui a trouvé (lui sans pouvoir donner d'indice)
+const watcher = () => st.phase === 'playing' && !st.solo && (isMeneur() || st.foundTime != null);
 const isBoss = () => st.you === st.hostId || !st.players.find(p => p.id === st.hostId)?.online;
 const plural = (n, word) => `${n} ${word}${n > 1 ? 's' : ''}`;
 // Niveau d'un mot proche (de 0,3 à 1) : tiède, chaud, brûlant. Sa couleur va du rouge au vert.
@@ -524,7 +526,8 @@ function renderBar() {
       (!mine?.playing
         ? '<p>Manche en cours : tu joueras à la prochaine.</p>'
         : st.foundTime != null
-          ? `<p class="win">Bravo, trouvé en ${duration(st.foundTime)}${st.rank ? `, ${st.rank === 1 ? '1er' : `${st.rank}e`}` : ''} ! Attends la fin de la manche.</p>`
+          ? `<p class="win">Bravo, trouvé en ${duration(st.foundTime)}${st.rank ? `, ${st.rank === 1 ? '1er' : `${st.rank}e`}` : ''} ! Attends la fin de la manche.</p>
+            ${st.players.some(p => p.playing && p.id !== st.you) ? '<div class="actions"><span class="hint">En attendant, regarde les autres :</span><div id="povs" class="povs"></div></div>' : ''}`
           : '') +
       (random
         ? `<div class="actions"><span class="hint">Page au hasard : tout le monde joue.</span>
@@ -633,7 +636,7 @@ function mosaicHtml() {
   const minis = st.players
     .filter(x => x.playing)
     .map((x, k) =>
-      view.cams[x.id]
+      view.cams[x.id] && x.id !== st.you
         ? `<div class="mini" data-pov="${esc(x.id)}" title="Voir l'écran de ${esc(x.name)}">
             <div class="mini-head"><b>${esc(x.name)}</b><span>${camStats(x.id)}</span></div>
             <div class="mini-page">${gridHtml(p, camWord(view.cams[x.id], `m${k}-`))}</div>
@@ -645,9 +648,9 @@ function mosaicHtml() {
 
 function renderPovs() {
   const el = $('#povs');
-  if (!el || st.phase !== 'playing' || !isMeneur()) return;
+  if (!el || !watcher()) return;
   const tab = (id, label) => `<button type="button" data-pov="${esc(id)}"${pov === id ? ' class="active"' : ''}>${label}</button>`;
-  const players = st.players.filter(p => p.playing && view.cams[p.id]);
+  const players = st.players.filter(p => p.playing && p.id !== st.you && view.cams[p.id]);
   el.innerHTML =
     tab('me', 'Ma vue') +
     tab('all', 'Tous') +
@@ -670,7 +673,7 @@ function setPov(id) {
 // Le texte n'est redessiné en entier que s'il a vraiment changé, pour ne pas couper les animations en cours.
 function currentPageKey() {
   const p = st.page;
-  const watching = st.phase === 'playing' && isMeneur() ? pov : '-';
+  const watching = watcher() ? pov : '-';
   const cams = watching === 'me' || watching === '-' ? '' : Object.values(view.cams).map(c => `${c.revealed.size}/${c.hints.size}/${c.found}`).join(',');
   return [st.phase, st.round, p.texts ? 'full' : 'hidden', watching, view.revealed.size, view.hints.size, hinted.size, cams].join(':');
 }
@@ -686,7 +689,7 @@ function renderPage() {
   if (key === pageKey) return;
   const base = key.split(':').slice(0, 4).join(':');
   const changed = !pageKey.startsWith(`${base}:`);
-  const watching = st.phase === 'playing' && isMeneur() ? pov : 'me';
+  const watching = watcher() ? pov : 'me';
   if (watching === 'all') el.innerHTML = mosaicHtml();
   else if (watching !== 'me') el.innerHTML = `<div id="camHead" class="cam-head">${camHead(watching)}</div>${gridHtml(p, camWord(view.cams[watching], 'c'))}`;
   else
@@ -729,10 +732,10 @@ function guessList(items, from, byHeat, mine, added = 0) {
 
 function renderSide() {
   const el = $('#side');
-  if (st.phase === 'playing' && isMeneur() && view.cams[pov]) {
+  if (watcher() && view.cams[pov]) {
     const l = view.live[pov] || { guesses: [] };
     el.innerHTML = `<h3>Essais de ${esc(nameOf(pov))} (${l.guesses.length})</h3>${guessList(l.guesses, 0, false, false, view.liveNew[pov] || 0)}`;
-  } else if (st.phase === 'playing' && isMeneur()) {
+  } else if (watcher() && (isMeneur() || pov === 'all')) {
     const total = st.page.texts.length;
     el.innerHTML =
       '<h3>En direct</h3>' +

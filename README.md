@@ -34,7 +34,7 @@ Sans ces données, le jeu marche quand même, mais sans mots grisés ni formes :
 1. Un joueur (l'hôte) crée un salon, règle la partie et partage le lien. 5 personnes max : 4 joueurs + le meneur. Pas de compte, juste un pseudo.
 2. À chaque manche, un joueur est meneur : il choisit la page Wikipédia (recherche par titre) et ne joue pas cette manche. L'hôte commence. Tant que la page n'est pas choisie, le meneur (ou l'hôte) peut donner la main à un autre joueur, ou choisir « page au hasard » : une page tirée parmi les plus consultées, sans meneur, tout le monde joue.
 3. Top départ : chacun joue sur sa propre grille, sans voir les mots des autres.
-4. Pendant la manche, on voit seulement qui a trouvé. Le reste (essais, part du texte dévoilée) s'affiche à la fin.
+4. Pendant la manche, on voit seulement qui a trouvé. Le reste (essais, part du texte dévoilée) s'affiche à la fin. Sauf pour qui a trouvé : il regarde l'écran des autres avec les caméras du meneur, sans pouvoir leur donner d'indice.
 5. Le premier qui dévoile le titre gagne la manche ; les autres continuent pour le classement.
 6. La manche s'arrête quand tout le monde a trouvé, ou selon les réglages.
 7. En fin de manche, le meneur choisit qui mène la suivante : lui-même, n'importe quel joueur connecté (ceux qui n'ont pas encore mené sont signalés) ou « tout le monde joue » (page au hasard). L'hôte peut aussi choisir, et il termine la partie quand il veut (« Terminer la partie » : classement final). Après une manche sans meneur, seul l'hôte choisit la suite, et il peut reprendre la main.
@@ -65,6 +65,7 @@ L'hôte règle la partie comme il veut :
   - **Tous** : les grilles de tous les joueurs côte à côte, en réduit, mises à jour en direct (un clic ouvre celle du joueur) ;
   - **un joueur** : sa grille en grand, exactement comme il la voit (mots dévoilés, mots proches en couleur), avec la liste de ses essais.
 - Il peut donner un indice : un mot se dévoile chez tous les joueurs. Il clique sur le mot dans sa vue, ou sur une case dans l'écran d'un joueur (le survol montre le mot caché).
+- Un joueur qui a trouvé a les mêmes caméras (sans la sienne), en attendant la fin de la manche. Lui ne peut pas donner d'indice : le serveur ne l'accepte que du meneur.
 
 ## Mode solo
 
