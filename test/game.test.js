@@ -263,6 +263,6 @@ test('classement et points', () => {
     },
     1000,
   );
-  assert.deepEqual(rows.map(r => [r.id, r.points]), [['b', 1000], ['a', 600], ['c', 300], ['d', 300], ['e', 0]]);
+  assert.deepEqual(rows.map(r => [r.id, r.points]), [['b', 1000], ['a', 600], ['c', 300], ['d', 300], ['e', 50]]);
   assert.equal(rows[0].time, 50);
 });

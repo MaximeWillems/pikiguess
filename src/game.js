@@ -1,5 +1,5 @@
 // Règles du jeu, sans dépendance à Cloudflare : testables avec node --test.
-export const POINTS = [1000, 600, 300, 100];
+export const POINTS = [1000, 600, 300, 100, 50];
 
 // Proximité d'un mot proche, de 0 à 1 : tiède à partir de 0,3, chaud à partir de 0,6, brûlant à partir de 0,9.
 export const HINT_MIN = 0.3;

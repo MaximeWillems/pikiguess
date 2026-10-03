@@ -163,6 +163,10 @@ aside h3 { margin: 14px 0 6px; font-size: 12px; text-transform: uppercase; lette
 #players li.off { opacity: .45; }
 #players li.me .pname { font-weight: 700; }
 .score { margin-left: auto; font-variant-numeric: tabular-nums; }
+#players button.kick { padding: 0 5px; border: 0; background: none; color: var(--muted); font-size: 15px; line-height: 1.4; opacity: 0; transition: opacity .2s var(--ease), color .2s var(--ease); }
+#players li:hover button.kick, #players button.kick:focus-visible { opacity: 1; }
+#players button.kick:hover { color: #c0392b; transform: none; box-shadow: none; }
+@media (hover: none) { #players button.kick { opacity: 1; } }
 .tag { font-size: 11px; padding: 1px 7px; border-radius: 10px; background: var(--line); }
 .tag.meneur { background: var(--new); }
 .tag.ok { background: var(--hinted); }

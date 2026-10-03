@@ -132,7 +132,7 @@ function connect() {
   };
   ws.onmessage = e => e.data !== 'pong' && onMessage(JSON.parse(e.data));
   ws.onclose = e => {
-    if (e.code === 4000) return;
+    if (e.code === 4000 || e.code === 4001) return;
     status('Connexion perdue, reconnexion…');
     setTimeout(connect, Math.min(10000, 500 * 2 ** retry++));
   };
@@ -171,6 +171,8 @@ function onMessage(m) {
       return toast(m.msg, 'bad');
     case 'full':
       return full();
+    case 'kicked':
+      return kicked(m.ban);
   }
 }
 
@@ -317,6 +319,17 @@ function onLive(m) {
   view.liveNew = {};
 }
 
+function kicked(ban) {
+  status('');
+  $('#play').hidden = true;
+  $('#page').innerHTML = '';
+  $('#side').innerHTML = '';
+  $('#bar').innerHTML = ban
+    ? `<h2>Tu as été exclu de ce salon</h2><p>Tu ne peux plus le rejoindre.</p><button type="button" data-href="/">Accueil</button>`
+    : `<h2>L'hôte t'a retiré du salon</h2><p>Tu peux y revenir avec le lien.</p>
+      <div class="actions"><button type="button" data-href="${esc(location.href)}">Revenir dans le salon</button><button type="button" class="alt" data-href="/">Accueil</button></div>`;
+}
+
 function full() {
   status('');
   $('#bar').innerHTML = `<h2>Ce salon est complet</h2><p>5 personnes maximum par salon.</p>
@@ -350,6 +363,12 @@ function renderPlayers() {
         ${p.found ? `<span class="tag ok${found ? ' pop' : ''}">trouvé</span>` : ''}
         ${p.online ? '' : '<span class="tag">hors ligne</span>'}
         <span class="score">${p.score}</span>
+        ${
+          isBoss() && p.id !== st.you && p.id !== st.hostId && !st.solo
+            ? `<button type="button" class="kick" data-kick="${esc(p.id)}" title="Retirer du salon (il peut revenir avec le lien)">×</button>
+              <button type="button" class="kick" data-ban="${esc(p.id)}" title="Exclure du salon (il ne pourra plus revenir)">⊘</button>`
+            : ''
+        }
       </li>`;
     })
     .join('');
@@ -383,7 +402,7 @@ function settingsForm(editable) {
     <label>Chrono après le 1er gagnant : <input type="number" name="chrono" min="0" max="60" value="${s.chrono}"> min <small>(0 = aucun)</small></label>
     <label>Durée maximale d'une manche : <input type="number" name="maxDuration" min="0" max="120" value="${s.maxDuration}"> min <small>(0 = aucune)</small></label>
     <label><input type="checkbox" name="meneurStop"${s.meneurStop ? ' checked' : ''}> Le meneur peut arrêter la manche</label>
-    <small>À la fin de chaque manche, le meneur choisit qui mène la suivante. L'hôte termine la partie quand il veut.</small>
+    <small>À la fin de chaque manche, le meneur choisit qui mène la suivante, ou une page au hasard pour tout le monde. L'hôte termine la partie quand il veut.</small>
   </fieldset>`;
 }
 
@@ -421,13 +440,13 @@ function renderSoloBar() {
   replay($('#bar'), 'rise');
 }
 
-// En début de manche, passer la main à un autre joueur connecté.
+// En début de manche, passer la main à un autre joueur connecté, ou une page au hasard pour tout le monde.
 function handButtons() {
   const others = st.players.filter(p => p.online && p.id !== st.meneurId);
-  if (!others.length) return '';
   const button = p =>
     `<button type="button" class="alt small" data-send="hand" data-meneur="${esc(p.id)}">${esc(p.name)}${st.led.includes(p.id) ? '' : ' <small>(pas encore meneur)</small>'}</button>`;
-  return `<div class="actions" style="margin-top:10px"><span class="hint">Donner la main à :</span>${others.map(button).join('')}</div>`;
+  return `<div class="actions" style="margin-top:10px">${others.length ? `<span class="hint">Donner la main à :</span>${others.map(button).join('')}` : ''}
+    <button type="button" class="alt small" data-send="hand" data-meneur="*">Page au hasard, tout le monde joue</button></div>`;
 }
 
 function renderBar() {
@@ -435,10 +454,12 @@ function renderBar() {
   const boss = isBoss(), meneur = isMeneur();
   const mine = st.players.find(p => p.id === st.you);
   const online = st.players.filter(p => p.online).length;
+  // Page au hasard : pas de meneur, tout le monde joue et l'hôte peut arrêter la manche
+  const random = st.meneurId === null, stopper = random && boss && st.settings.meneurStop;
   const mode = {
     lobby: `lobby:${boss}:${online}:${JSON.stringify(st.settings)}`,
     choosing: `${meneur ? `pick:${pick?.title ?? ''}` : `wait:${boss}`}:${st.round}:${st.meneurId}:${st.players.filter(p => p.online).map(p => p.id)}`,
-    playing: meneur ? `meneur:${st.round}` : !mine?.playing ? 'spectator' : st.foundTime != null ? `found:${st.round}` : 'play',
+    playing: `${meneur ? `meneur:${st.round}` : !mine?.playing ? 'spectator' : st.foundTime != null ? `found:${st.round}` : 'play'}:${random}:${stopper}`,
     roundEnd: `results:${st.round}:${boss || meneur}:${st.players.filter(p => p.online).map(p => p.id)}`,
     gameEnd: `end:${boss}:${st.players.map(p => p.score).join()}`,
   }[st.phase];
@@ -470,6 +491,8 @@ function renderBar() {
       ${handButtons()}`;
     $('#q').focus();
     if (lastQuery) search(lastQuery);
+  } else if (st.phase === 'choosing' && random) {
+    bar.innerHTML = "<p>Recherche d'une page au hasard parmi les plus consultées de Wikipédia…</p><p class=\"hint\">Pas de meneur cette manche : tout le monde joue.</p>";
   } else if (st.phase === 'choosing') {
     bar.innerHTML = `<p><b>${esc(nameOf(st.meneurId))}</b> choisit une page…</p><p class="hint">La manche commence dès que la page est choisie.</p>
       ${boss ? handButtons() : ''}`;
@@ -479,11 +502,16 @@ function renderBar() {
       <div class="actions"><div id="povs" class="povs"></div>
         ${st.settings.meneurStop ? '<button class="alt small" data-send="stop" data-confirm="Arrêter la manche maintenant ?">Arrêter la manche</button>' : ''}</div>`;
   } else if (st.phase === 'playing') {
-    bar.innerHTML = !mine?.playing
-      ? '<p>Manche en cours : tu joueras à la prochaine.</p>'
-      : st.foundTime != null
-        ? `<p class="win">Bravo, trouvé en ${duration(st.foundTime)}${st.rank ? `, ${st.rank === 1 ? '1er' : `${st.rank}e`}` : ''} ! Attends la fin de la manche.</p>`
-        : '';
+    bar.innerHTML =
+      (!mine?.playing
+        ? '<p>Manche en cours : tu joueras à la prochaine.</p>'
+        : st.foundTime != null
+          ? `<p class="win">Bravo, trouvé en ${duration(st.foundTime)}${st.rank ? `, ${st.rank === 1 ? '1er' : `${st.rank}e`}` : ''} ! Attends la fin de la manche.</p>`
+          : '') +
+      (random
+        ? `<div class="actions"><span class="hint">Page au hasard : tout le monde joue.</span>
+            ${stopper ? '<button class="alt small" data-send="stop" data-confirm="Arrêter la manche maintenant ?">Arrêter la manche</button>' : ''}</div>`
+        : '');
   } else if (st.phase === 'roundEnd') {
     bar.innerHTML = `<h2>C'était « <a href="${esc(st.page.url)}" target="_blank" rel="noopener">${esc(st.page.title)}</a> »</h2>
       ${resultsTable()}
@@ -493,13 +521,14 @@ function renderBar() {
             <div class="actions">${st.players
               .filter(p => p.online)
               .map(p => {
-                const label = p.id === st.meneurId ? (meneur ? 'Je reste meneur' : `${esc(p.name)} reste meneur`) : esc(p.name);
+                const label = p.id === st.meneurId ? (meneur ? 'Je reste meneur' : `${esc(p.name)} reste meneur`) : p.id === st.you ? 'Je mène' : esc(p.name);
                 const fresh = st.led.includes(p.id) ? '' : ' <small>(pas encore meneur)</small>';
                 return `<button${p.id === st.meneurId ? '' : ' class="alt"'} data-send="next" data-meneur="${esc(p.id)}">${label}${fresh}</button>`;
               })
               .join('')}
+              <button${random ? '' : ' class="alt"'} data-send="next" data-meneur="*">Tout le monde joue (page au hasard)</button>
               ${boss ? '<button class="alt" data-send="end" data-confirm="Terminer la partie maintenant ?">Terminer la partie</button>' : ''}</div>`
-          : `<p class="hint">${esc(nameOf(st.meneurId))} choisit qui mène la prochaine manche…</p>`
+          : `<p class="hint">${esc(nameOf(st.meneurId ?? st.hostId))} choisit qui mène la prochaine manche…</p>`
       }`;
   } else if (st.phase === 'gameEnd') {
     const medals = ['🥇', '🥈', '🥉'];
@@ -888,6 +917,14 @@ $('#side').addEventListener('click', e => {
   const found = (view.guesses.find(g => g.w === word)?.at ?? []).map(i => document.getElementById(`w${i}`)).filter(Boolean);
   const near = [...document.querySelectorAll(`.w[data-g="${CSS.escape(word)}"]`)];
   if (!spot([...found, ...near])) toast(`« ${word} » n'est affiché dans aucune case pour le moment.`);
+});
+
+$('#players').addEventListener('click', e => {
+  const b = e.target.closest('button[data-kick], button[data-ban]');
+  if (!b) return;
+  const id = b.dataset.kick ?? b.dataset.ban, ban = 'ban' in b.dataset;
+  const question = ban ? `Exclure ${nameOf(id)} du salon ? Il ne pourra plus revenir.` : `Retirer ${nameOf(id)} du salon ? Il pourra revenir avec le lien.`;
+  if (confirm(question)) send({ t: 'kick', id, ban });
 });
 
 $('#copy').addEventListener('click', e => copyLink(e.currentTarget));

@@ -63,7 +63,7 @@ export class Room extends DurableObject {
       if (msg.t === 'join') {
         this.join(ws, msg);
         const stuck = this.s.phase === 'lobby' || (this.s.phase === 'choosing' && !this.busy);
-        if (this.s.solo && stuck && (await this.soloRound())) {
+        if (this.s.solo && stuck && (await this.randomRound())) {
           this.save();
           this.broadcast();
         }
@@ -102,6 +102,11 @@ export class Room extends DurableObject {
     const id = String(msg.id ?? '').slice(0, 40);
     const name = String(msg.name ?? '').trim().slice(0, 20);
     if (!id || !name) return this.send(ws, { t: 'error', msg: 'Choisis un pseudo.' });
+    if (s.banned?.includes(id)) {
+      this.send(ws, { t: 'kicked', ban: true });
+      ws.close(4001, 'Exclu du salon');
+      return;
+    }
     let p = s.players.find(p => p.id === id);
     if (!p) {
       if (msg.solo && !s.players.length) Object.assign(s, { solo: true, settings: { chrono: 0, maxDuration: 0, meneurStop: false } });
@@ -141,7 +146,7 @@ export class Room extends DurableObject {
         this.endRound();
         return true;
       }
-      if (m.t === 'next' && (s.phase === 'roundEnd' || s.phase === 'lobby')) return this.soloRound();
+      if (m.t === 'next' && (s.phase === 'roundEnd' || s.phase === 'lobby')) return this.randomRound();
       return false;
     }
     const boss = id === s.hostId || !this.onlineIds().has(s.hostId);
@@ -162,8 +167,15 @@ export class Room extends DurableObject {
         if (id !== s.meneurId || s.phase !== 'choosing') return false;
         return this.choose(String(m.title ?? '').slice(0, 300), id);
       case 'hand':
-        // Début de manche : le meneur (ou l'hôte) donne la main à un autre joueur avant de choisir la page
-        if ((!boss && id !== s.meneurId) || s.phase !== 'choosing' || !s.players.some(p => p.id === m.meneur)) return false;
+        // Début de manche : le meneur (ou l'hôte) donne la main à un autre joueur avant de choisir la page,
+        // ou « * » : page au hasard, tout le monde joue
+        if ((!boss && id !== s.meneurId) || s.phase !== 'choosing' || s.meneurId === null) return false;
+        if (m.meneur === '*') {
+          if (this.busy) return false;
+          s.round--;
+          return this.randomRound();
+        }
+        if (!s.players.some(p => p.id === m.meneur)) return false;
         s.meneurId = m.meneur;
         return true;
       case 'guess':
@@ -171,14 +183,23 @@ export class Room extends DurableObject {
       case 'hint':
         return this.onHint(id, m.i);
       case 'stop':
-        if (id !== s.meneurId || s.phase !== 'playing' || !s.settings.meneurStop) return false;
+        // Le meneur arrête la manche ; sans meneur (page au hasard), l'hôte
+        if ((id !== s.meneurId && !(s.meneurId === null && boss)) || s.phase !== 'playing' || !s.settings.meneurStop) return false;
         this.endRound();
         return true;
       case 'next':
-        // Le meneur sortant (ou l'hôte) donne la main à qui il veut, lui compris
+        // Le meneur sortant (ou l'hôte) donne la main à qui il veut, lui compris, ou « * » : tout le monde joue
         if ((!boss && id !== s.meneurId) || s.phase !== 'roundEnd') return false;
-        this.nextRound(s.players.some(p => p.id === m.meneur) ? m.meneur : s.meneurId);
+        if (m.meneur === '*') return this.randomRound();
+        this.nextRound(s.players.some(p => p.id === m.meneur) ? m.meneur : (s.meneurId ?? s.hostId));
         return true;
+      case 'kick': {
+        // L'hôte retire un joueur ; « ban » : exclu, il ne pourra plus revenir. Personne ne retire l'hôte
+        const target = s.players.find(p => p.id === m.id);
+        if (!boss || !target || target.id === id || target.id === s.hostId) return false;
+        this.removePlayer(target.id, !!m.ban);
+        return true;
+      }
       case 'end':
         if (!boss || s.phase !== 'roundEnd') return false;
         Object.assign(s, { phase: 'gameEnd', meneurId: null, page: null, runs: {}, results: null });
@@ -228,29 +249,49 @@ export class Room extends DurableObject {
     }
   }
 
-  // Mode solo : une page au hasard parmi les plus consultées, sans meneur.
-  async soloRound() {
+  // Tout le monde joue (et le mode solo) : une page au hasard parmi les plus consultées, sans meneur.
+  async randomRound() {
     if (this.busy) return false;
     this.busy = true;
     const s = this.s;
     s.round++;
     Object.assign(s, { phase: 'choosing', meneurId: null, page: null, runs: {}, hinted: [], results: null, startedAt: null, firstFoundAt: null });
+    this.ctx.storage.deleteAlarm();
     this.save();
     this.broadcast();
     try {
       const p = await randomPopularPage();
+      if (s.phase !== 'choosing' || s.meneurId !== null) return false;
       s.page = { title: p.title, url: p.url, ...buildPage(p.title, p.extract) };
-      s.runs = { [s.players[0].id]: newRun() };
+      s.runs = Object.fromEntries(s.players.map(x => [x.id, newRun()]));
       Object.assign(s, { phase: 'playing', startedAt: Date.now() });
+      this.schedule();
       return true;
     } catch (e) {
-      s.phase = 'lobby';
+      // Pas de page : en solo on revient au départ, sinon l'hôte choisit une page à la main
+      if (s.solo) s.phase = 'lobby';
+      else s.meneurId = s.hostId;
       this.save();
       this.broadcast();
       throw e;
     } finally {
       this.busy = false;
     }
+  }
+
+  removePlayer(pid, ban) {
+    const s = this.s;
+    s.players = s.players.filter(p => p.id !== pid);
+    delete s.runs[pid];
+    if (ban) (s.banned ??= []).push(pid);
+    if (!s.players.some(p => p.id === s.hostId)) s.hostId = s.players[0]?.id ?? null;
+    if (s.meneurId === pid) s.meneurId = s.phase === 'choosing' ? s.hostId : null;
+    for (const ws of this.sockets()) {
+      if (ws.deserializeAttachment()?.id !== pid) continue;
+      this.send(ws, { t: 'kicked', ban });
+      ws.close(4001, 'Retiré du salon');
+    }
+    if (s.phase === 'playing' && this.allFound()) this.endRound();
   }
 
   async onGuess(id, word) {

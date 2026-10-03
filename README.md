@@ -31,12 +31,14 @@ Sans ces données, le jeu marche quand même, mais sans mots grisés ni formes :
 ## Déroulé d'une partie
 
 1. Un joueur (l'hôte) crée un salon, règle la partie et partage le lien. 5 personnes max : 4 joueurs + le meneur. Pas de compte, juste un pseudo.
-2. À chaque manche, un joueur est meneur : il choisit la page Wikipédia (recherche par titre) et ne joue pas cette manche. L'hôte commence. Tant que la page n'est pas choisie, le meneur (ou l'hôte) peut donner la main à un autre joueur.
+2. À chaque manche, un joueur est meneur : il choisit la page Wikipédia (recherche par titre) et ne joue pas cette manche. L'hôte commence. Tant que la page n'est pas choisie, le meneur (ou l'hôte) peut donner la main à un autre joueur, ou choisir « page au hasard » : une page tirée parmi les plus consultées, sans meneur, tout le monde joue.
 3. Top départ : chacun joue sur sa propre grille, sans voir les mots des autres.
 4. Pendant la manche, on voit seulement qui a trouvé. Le reste (essais, part du texte dévoilée) s'affiche à la fin.
 5. Le premier qui dévoile le titre gagne la manche ; les autres continuent pour le classement.
 6. La manche s'arrête quand tout le monde a trouvé, ou selon les réglages.
-7. En fin de manche, le meneur choisit qui mène la suivante : lui-même ou n'importe quel joueur connecté (ceux qui n'ont pas encore mené sont signalés). L'hôte peut aussi choisir, et il termine la partie quand il veut (« Terminer la partie » : classement final).
+7. En fin de manche, le meneur choisit qui mène la suivante : lui-même, n'importe quel joueur connecté (ceux qui n'ont pas encore mené sont signalés) ou « tout le monde joue » (page au hasard). L'hôte peut aussi choisir, et il termine la partie quand il veut (« Terminer la partie » : classement final). Après une manche sans meneur, seul l'hôte choisit la suite, et il peut reprendre la main.
+
+L'hôte peut retirer un joueur du salon (×, il peut revenir avec le lien) ou l'exclure (⊘, il ne peut plus revenir). Personne ne peut retirer l'hôte.
 
 Actualiser la page, ou la rouvrir plus tard, reprend la partie là où on en était : même joueur, mêmes mots dévoilés, même historique de ses essais (gardés par le serveur).
 
@@ -46,12 +48,13 @@ L'hôte règle la partie comme il veut :
 
 - chrono après le 1er gagnant, ou non : les autres ont X minutes pour finir ;
 - durée maximale de manche, ou non : la page est dévoilée même si personne n'a trouvé ;
-- arrêt de la manche par le meneur, autorisé ou non.
+- arrêt de la manche par le meneur, autorisé ou non (sans meneur, c'est l'hôte qui peut arrêter).
 
 ## Points
 
 - Classement de chaque manche : d'abord ceux qui ont trouvé le titre, par ordre d'arrivée, puis les autres selon le nombre de mots dévoilés.
-- Points par place, qu'on ait trouvé ou non : 1000, 600, 300, 100. Gros écarts, car une partie compte peu de manches.
+- Points par place, qu'on ait trouvé ou non : 1000, 600, 300, 100, 50 (5e place possible quand tout le monde joue). Gros écarts, car une partie compte peu de manches.
+- Les manches « tout le monde joue » comptent comme les autres.
 - Le meneur ne marque rien pendant sa manche. Pour que ce soit équitable, ceux qui n'ont pas encore mené sont signalés quand le meneur choisit le suivant.
 
 ## Le meneur pendant sa manche
