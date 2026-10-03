@@ -24,7 +24,7 @@ Sans ces données, le jeu marche quand même, mais sans mots grisés ni formes :
   - mois et jours de la semaine : par leur écart (juin ↔ mai), plus par le sens ;
   - quantité (« 330 m », « 3 000 habitants », « 0,31 % ») : visible jusqu'à un facteur 6 environ.
   - Les nombres en lettres et les ordinaux (« trois », « premier ») comptent comme des nombres ; « 1er » donne deux mots, « 1 » et « er ».
-- Nationalités : « américain » dévoile aussi « américano- » (de même « franco- », « anglo- », « germano- »…), le pays donne un indice brûlant (« anglais » ↔ « Angleterre »), et deux nationalités différentes ne se ressemblent plus (« américain » sur « britannique », au plus tiède).
+- Nationalités : « américain » dévoile aussi « américano- » (de même « franco- », « anglo- », « germano- »…), le pays donne un indice brûlant (« anglais » ↔ « Angleterre »), une région aussi avec son pays (« Québec » ↔ « canadien », « anglais » ↔ « britannique », liste `PARENT` dans `src/game.js`), et deux nationalités sans lien ne se ressemblent plus (« américain » sur « britannique », au plus tiède).
 - Le but est juste de trouver le titre : la page est trouvée quand tous les mots du titre sont dévoilés, parenthèse comprise (pour « Mercure (planète) », il faut aussi « planète »).
 
 ## Déroulé d'une partie
