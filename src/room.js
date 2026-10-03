@@ -15,8 +15,6 @@ const cleanSettings = x => ({
   chrono: int(x?.chrono, 0, 60, 3),
   maxDuration: int(x?.maxDuration, 0, 120, 20),
   meneurStop: x?.meneurStop !== false,
-  rotation: x?.rotation !== false,
-  tours: int(x?.tours, 1, 5, 1),
 });
 
 // Un salon : ses joueurs, la partie en cours et les connexions WebSocket.
@@ -30,8 +28,7 @@ export class Room extends DurableObject {
         phase: 'lobby',
         settings: cleanSettings({}),
         players: [],
-        queue: [],
-        tour: 0,
+        led: [],
         round: 0,
         meneurId: null,
         page: null,
@@ -107,7 +104,7 @@ export class Room extends DurableObject {
     if (!id || !name) return this.send(ws, { t: 'error', msg: 'Choisis un pseudo.' });
     let p = s.players.find(p => p.id === id);
     if (!p) {
-      if (msg.solo && !s.players.length) Object.assign(s, { solo: true, settings: { chrono: 0, maxDuration: 0, meneurStop: false, tours: 1 } });
+      if (msg.solo && !s.players.length) Object.assign(s, { solo: true, settings: { chrono: 0, maxDuration: 0, meneurStop: false } });
       const on = this.onlineIds();
       if (s.players.length >= MAX_PEOPLE && ['lobby', 'gameEnd'].includes(s.phase)) s.players = s.players.filter(p => on.has(p.id));
       if (s.players.length >= (s.solo ? 1 : MAX_PEOPLE)) {
@@ -117,7 +114,6 @@ export class Room extends DurableObject {
       }
       p = { id, name, score: 0 };
       s.players.push(p);
-      if (s.phase !== 'lobby' && s.phase !== 'gameEnd') s.queue.push(id);
     }
     p.name = name;
     if (!s.players.some(q => q.id === s.hostId)) s.hostId = s.players[0].id;
@@ -165,10 +161,15 @@ export class Room extends DurableObject {
       case 'page':
         if (id !== s.meneurId || s.phase !== 'choosing') return false;
         return this.choose(String(m.title ?? '').slice(0, 300));
-      case 'skip':
+      case 'skip': {
+        // Meneur absent : la main passe au joueur connecté suivant
         if (!boss || s.phase !== 'choosing') return false;
-        this.nextRound();
+        const on = this.onlineIds();
+        const order = s.players.map(p => p.id);
+        const k = order.indexOf(s.meneurId);
+        this.nextRound([...order.slice(k + 1), ...order.slice(0, k)].find(x => on.has(x)) ?? s.meneurId);
         return true;
+      }
       case 'guess':
         return this.onGuess(id, m.word);
       case 'hint':
@@ -178,8 +179,9 @@ export class Room extends DurableObject {
         this.endRound();
         return true;
       case 'next':
+        // Le meneur sortant (ou l'hôte) donne la main à qui il veut, lui compris
         if ((!boss && id !== s.meneurId) || s.phase !== 'roundEnd') return false;
-        this.nextRound(!!m.same);
+        this.nextRound(s.players.some(p => p.id === m.meneur) ? m.meneur : s.meneurId);
         return true;
       case 'end':
         if (!boss || s.phase !== 'roundEnd') return false;
@@ -197,31 +199,17 @@ export class Room extends DurableObject {
     s.players = players;
     if (!on.has(s.hostId)) s.hostId = id;
     for (const p of players) p.score = 0;
-    s.tour = 1;
     s.round = 0;
-    s.meneurId = null;
-    s.queue = [s.hostId, ...players.map(p => p.id).filter(x => x !== s.hostId)];
-    this.nextRound();
+    s.led = [];
+    this.nextRound(s.hostId);
   }
 
-  // same : le meneur reste le même (bouton « Garder le même meneur », ou réglage « le meneur ne change pas »)
-  nextRound(same = false) {
+  // Manche suivante, menée par « meneur ». « led » : ceux qui ont déjà mené, pour que le meneur sortant le sache.
+  nextRound(meneur) {
     const s = this.s;
-    const ids = new Set(s.players.map(p => p.id));
-    s.queue = s.queue.filter(x => ids.has(x));
-    const keep = (same || s.settings.rotation === false) && ids.has(s.meneurId);
-    if (!keep) {
-      if (!s.queue.length) {
-        if (s.tour >= s.settings.tours) {
-          Object.assign(s, { phase: 'gameEnd', meneurId: null, page: null, runs: {}, results: null });
-          this.ctx.storage.deleteAlarm();
-          return;
-        }
-        s.tour++;
-        s.queue = s.players.map(p => p.id);
-      }
-      s.meneurId = s.queue.shift();
-    }
+    s.meneurId = meneur;
+    s.led ??= [];
+    if (!s.led.includes(meneur)) s.led.push(meneur);
     s.round++;
     Object.assign(s, { phase: 'choosing', page: null, runs: {}, hinted: [], startedAt: null, firstFoundAt: null, results: null });
     this.ctx.storage.deleteAlarm();
@@ -393,8 +381,7 @@ export class Room extends DurableObject {
       phase: s.phase,
       settings: s.settings,
       round: s.round,
-      tour: s.tour,
-      last: s.settings.rotation !== false && !s.queue.length && s.tour >= s.settings.tours,
+      led: s.led ?? [],
       meneurId: s.meneurId,
       startedAt: s.startedAt,
       solo: !!s.solo,

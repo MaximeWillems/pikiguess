@@ -365,7 +365,7 @@ function renderTimers() {
   let html = st.solo
     ? `Page ${st.round}`
     : st.round
-      ? `Manche ${st.round}${st.settings.tours > 1 ? ` · tour ${st.tour}/${st.settings.tours}` : ''}`
+      ? `Manche ${st.round}`
       : 'En attente des joueurs';
   if (playing) html += ` · ${clock(now - st.startedAt)}`;
   if (end < Infinity) html += `<br>${st.chronoEnd ? '<b>' : ''}Fin dans ${clock(left)}${st.chronoEnd ? '</b>' : ''}`;
@@ -383,8 +383,7 @@ function settingsForm(editable) {
     <label>Chrono après le 1er gagnant : <input type="number" name="chrono" min="0" max="60" value="${s.chrono}"> min <small>(0 = aucun)</small></label>
     <label>Durée maximale d'une manche : <input type="number" name="maxDuration" min="0" max="120" value="${s.maxDuration}"> min <small>(0 = aucune)</small></label>
     <label><input type="checkbox" name="meneurStop"${s.meneurStop ? ' checked' : ''}> Le meneur peut arrêter la manche</label>
-    <label><input type="checkbox" name="rotation"${s.rotation !== false ? ' checked' : ''}> Le meneur change à chaque manche <small>(sinon, l'hôte mène toutes les manches)</small></label>
-    <label>Nombre de tours : <input type="number" name="tours" min="1" max="5" value="${s.tours}"> <small>(à chaque tour, chacun est meneur une fois ; si le meneur change)</small></label>
+    <small>À la fin de chaque manche, le meneur choisit qui mène la suivante. L'hôte termine la partie quand il veut.</small>
   </fieldset>`;
 }
 
@@ -431,7 +430,7 @@ function renderBar() {
     lobby: `lobby:${boss}:${online}:${JSON.stringify(st.settings)}`,
     choosing: meneur ? `pick:${st.round}:${pick?.title ?? ''}` : `wait:${st.meneurId}:${boss}`,
     playing: meneur ? `meneur:${st.round}` : !mine?.playing ? 'spectator' : st.foundTime != null ? `found:${st.round}` : 'play',
-    roundEnd: `results:${st.round}:${boss || meneur}`,
+    roundEnd: `results:${st.round}:${boss || meneur}:${st.players.filter(p => p.online).map(p => p.id)}`,
     gameEnd: `end:${boss}:${st.players.map(p => p.score).join()}`,
   }[st.phase];
   if (mode === barMode) return;
@@ -480,10 +479,17 @@ function renderBar() {
       ${resultsTable()}
       ${
         boss || meneur
-          ? `<div class="actions"><button data-send="next">${st.last ? 'Voir le classement final' : 'Manche suivante'}</button>
-              ${st.settings.rotation !== false ? `<button class="alt" data-send="next" data-same>${meneur ? 'Rester meneur' : 'Garder le même meneur'}</button>` : ''}
+          ? `<p>Qui mène la prochaine manche ?</p>
+            <div class="actions">${st.players
+              .filter(p => p.online)
+              .map(p => {
+                const label = p.id === st.meneurId ? (meneur ? 'Je reste meneur' : `${esc(p.name)} reste meneur`) : esc(p.name);
+                const fresh = st.led.includes(p.id) ? '' : ' <small>(pas encore meneur)</small>';
+                return `<button${p.id === st.meneurId ? '' : ' class="alt"'} data-send="next" data-meneur="${esc(p.id)}">${label}${fresh}</button>`;
+              })
+              .join('')}
               ${boss ? '<button class="alt" data-send="end" data-confirm="Terminer la partie maintenant ?">Terminer la partie</button>' : ''}</div>`
-          : '<p class="hint">En attente de la manche suivante…</p>'
+          : `<p class="hint">${esc(nameOf(st.meneurId))} choisit qui mène la prochaine manche…</p>`
       }`;
   } else if (st.phase === 'gameEnd') {
     const medals = ['🥇', '🥈', '🥉'];
@@ -789,7 +795,7 @@ $('#bar').addEventListener('click', e => {
     if (li) preview(li.dataset.title);
     return;
   }
-  if (b.dataset.send && (!b.dataset.confirm || confirm(b.dataset.confirm))) send({ t: b.dataset.send, same: 'same' in b.dataset });
+  if (b.dataset.send && (!b.dataset.confirm || confirm(b.dataset.confirm))) send({ t: b.dataset.send, meneur: b.dataset.meneur });
   if (b.dataset.pov) setPov(b.dataset.pov);
   if ('copy' in b.dataset) copyLink(b);
   if ('ideas' in b.dataset) ideas();
@@ -808,11 +814,8 @@ $('#bar').addEventListener('click', e => {
 $('#bar').addEventListener('change', e => {
   const f = e.target.closest('.settings');
   if (!f) return;
-  const { chrono, maxDuration, meneurStop, rotation, tours } = f.elements;
-  send({
-    t: 'settings',
-    settings: { chrono: chrono.value, maxDuration: maxDuration.value, meneurStop: meneurStop.checked, rotation: rotation.checked, tours: tours.value },
-  });
+  const { chrono, maxDuration, meneurStop } = f.elements;
+  send({ t: 'settings', settings: { chrono: chrono.value, maxDuration: maxDuration.value, meneurStop: meneurStop.checked } });
 });
 
 $('#bar').addEventListener('input', e => {

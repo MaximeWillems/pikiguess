@@ -35,7 +35,7 @@ Sans ces données, le jeu marche quand même, mais sans mots grisés ni formes :
 4. Pendant la manche, on voit seulement qui a trouvé. Le reste (essais, part du texte dévoilée) s'affiche à la fin.
 5. Le premier qui dévoile le titre gagne la manche ; les autres continuent pour le classement.
 6. La manche s'arrête quand tout le monde a trouvé, ou selon les réglages.
-7. Manche suivante : un autre joueur devient meneur, sauf si le meneur reste (bouton « Rester meneur » en fin de manche) ou si l'hôte a décoché « Le meneur change à chaque manche » (il mène alors toutes les manches). L'hôte peut « Terminer la partie » à la fin de n'importe quelle manche.
+7. En fin de manche, le meneur choisit qui mène la suivante : lui-même ou n'importe quel joueur connecté (ceux qui n'ont pas encore mené sont signalés). L'hôte peut aussi choisir, et il termine la partie quand il veut (« Terminer la partie » : classement final).
 
 Actualiser la page, ou la rouvrir plus tard, reprend la partie là où on en était : même joueur, mêmes mots dévoilés, même historique de ses essais (gardés par le serveur).
 
@@ -45,15 +45,13 @@ L'hôte règle la partie comme il veut :
 
 - chrono après le 1er gagnant, ou non : les autres ont X minutes pour finir ;
 - durée maximale de manche, ou non : la page est dévoilée même si personne n'a trouvé ;
-- arrêt de la manche par le meneur, autorisé ou non ;
-- le meneur change à chaque manche, ou non (l'hôte mène alors toutes les manches, jusqu'à « Terminer la partie ») ;
-- nombre de tours : à chaque tour, chacun est meneur une fois (quand le meneur change).
+- arrêt de la manche par le meneur, autorisé ou non.
 
 ## Points
 
 - Classement de chaque manche : d'abord ceux qui ont trouvé le titre, par ordre d'arrivée, puis les autres selon le nombre de mots dévoilés.
 - Points par place, qu'on ait trouvé ou non : 1000, 600, 300, 100. Gros écarts, car une partie compte peu de manches.
-- Le meneur ne marque rien pendant sa manche : chacun est meneur à son tour, c'est équitable.
+- Le meneur ne marque rien pendant sa manche. Pour que ce soit équitable, ceux qui n'ont pas encore mené sont signalés quand le meneur choisit le suivant.
 
 ## Le meneur pendant sa manche
 
