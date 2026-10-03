@@ -160,16 +160,12 @@ export class Room extends DurableObject {
         return true;
       case 'page':
         if (id !== s.meneurId || s.phase !== 'choosing') return false;
-        return this.choose(String(m.title ?? '').slice(0, 300));
-      case 'skip': {
-        // Meneur absent : la main passe au joueur connecté suivant
-        if (!boss || s.phase !== 'choosing') return false;
-        const on = this.onlineIds();
-        const order = s.players.map(p => p.id);
-        const k = order.indexOf(s.meneurId);
-        this.nextRound([...order.slice(k + 1), ...order.slice(0, k)].find(x => on.has(x)) ?? s.meneurId);
+        return this.choose(String(m.title ?? '').slice(0, 300), id);
+      case 'hand':
+        // Début de manche : le meneur (ou l'hôte) donne la main à un autre joueur avant de choisir la page
+        if ((!boss && id !== s.meneurId) || s.phase !== 'choosing' || !s.players.some(p => p.id === m.meneur)) return false;
+        s.meneurId = m.meneur;
         return true;
-      }
       case 'guess':
         return this.onGuess(id, m.word);
       case 'hint':
@@ -204,26 +200,26 @@ export class Room extends DurableObject {
     this.nextRound(s.hostId);
   }
 
-  // Manche suivante, menée par « meneur ». « led » : ceux qui ont déjà mené, pour que le meneur sortant le sache.
+  // Manche suivante, menée par « meneur » (il peut encore passer la main tant que la page n'est pas choisie).
   nextRound(meneur) {
     const s = this.s;
     s.meneurId = meneur;
-    s.led ??= [];
-    if (!s.led.includes(meneur)) s.led.push(meneur);
     s.round++;
     Object.assign(s, { phase: 'choosing', page: null, runs: {}, hinted: [], startedAt: null, firstFoundAt: null, results: null });
     this.ctx.storage.deleteAlarm();
   }
 
-  async choose(title) {
+  async choose(title, by) {
     if (this.busy) return false;
     this.busy = true;
     try {
       const p = await fetchPage(title);
       const s = this.s;
-      if (s.phase !== 'choosing') return false;
+      if (s.phase !== 'choosing' || s.meneurId !== by) return false;
       s.page = { title: p.title, url: p.url, ...buildPage(p.title, p.extract) };
       s.runs = Object.fromEntries(s.players.filter(x => x.id !== s.meneurId).map(x => [x.id, newRun()]));
+      s.led ??= [];
+      if (!s.led.includes(by)) s.led.push(by);
       Object.assign(s, { phase: 'playing', startedAt: Date.now(), firstFoundAt: null, hinted: [] });
       this.schedule();
       return true;

@@ -212,7 +212,7 @@ function onState(m) {
 function events(prev, m) {
   if (!prev || m.solo) return;
   const changed = prev.phase !== m.phase || prev.round !== m.round;
-  if (changed && m.phase === 'choosing' && m.meneurId === m.you) notify('À toi de choisir la page !', 'good');
+  if ((changed || prev.meneurId !== m.meneurId) && m.phase === 'choosing' && m.meneurId === m.you) notify('À toi de choisir la page !', 'good');
   if (changed && m.phase === 'playing' && m.meneurId !== m.you && m.page) notify(`Manche ${m.round} : c'est parti !`, 'good');
   if (changed && m.phase === 'roundEnd') notify('Manche terminée.');
   if (changed && m.phase === 'gameEnd') notify('Partie terminée !');
@@ -421,6 +421,15 @@ function renderSoloBar() {
   replay($('#bar'), 'rise');
 }
 
+// En début de manche, passer la main à un autre joueur connecté.
+function handButtons() {
+  const others = st.players.filter(p => p.online && p.id !== st.meneurId);
+  if (!others.length) return '';
+  const button = p =>
+    `<button type="button" class="alt small" data-send="hand" data-meneur="${esc(p.id)}">${esc(p.name)}${st.led.includes(p.id) ? '' : ' <small>(pas encore meneur)</small>'}</button>`;
+  return `<div class="actions" style="margin-top:10px"><span class="hint">Donner la main à :</span>${others.map(button).join('')}</div>`;
+}
+
 function renderBar() {
   if (st.solo) return renderSoloBar();
   const boss = isBoss(), meneur = isMeneur();
@@ -428,7 +437,7 @@ function renderBar() {
   const online = st.players.filter(p => p.online).length;
   const mode = {
     lobby: `lobby:${boss}:${online}:${JSON.stringify(st.settings)}`,
-    choosing: meneur ? `pick:${st.round}:${pick?.title ?? ''}` : `wait:${st.meneurId}:${boss}`,
+    choosing: `${meneur ? `pick:${pick?.title ?? ''}` : `wait:${boss}`}:${st.round}:${st.meneurId}:${st.players.filter(p => p.online).map(p => p.id)}`,
     playing: meneur ? `meneur:${st.round}` : !mine?.playing ? 'spectator' : st.foundTime != null ? `found:${st.round}` : 'play',
     roundEnd: `results:${st.round}:${boss || meneur}:${st.players.filter(p => p.online).map(p => p.id)}`,
     gameEnd: `end:${boss}:${st.players.map(p => p.score).join()}`,
@@ -457,12 +466,13 @@ function renderBar() {
       <form id="pick" class="row"><input id="q" placeholder="Chercher une page Wikipédia…" autocomplete="off" spellcheck="false" value="${esc(lastQuery)}"><button>Chercher</button></form>
       <div class="actions" style="margin-top:8px"><button type="button" class="alt small" data-ideas>Des idées ?</button>
         <span class="hint">Pages au hasard parmi les plus consultées de Wikipédia.</span></div>
-      <ul id="suggest" class="suggest"></ul>`;
+      <ul id="suggest" class="suggest"></ul>
+      ${handButtons()}`;
     $('#q').focus();
     if (lastQuery) search(lastQuery);
   } else if (st.phase === 'choosing') {
     bar.innerHTML = `<p><b>${esc(nameOf(st.meneurId))}</b> choisit une page…</p><p class="hint">La manche commence dès que la page est choisie.</p>
-      ${boss ? '<button class="alt small" data-send="skip" data-confirm="Passer au meneur suivant ?">Passer son tour</button>' : ''}`;
+      ${boss ? handButtons() : ''}`;
   } else if (st.phase === 'playing' && meneur) {
     bar.innerHTML = `<p>Tu es le meneur : les autres cherchent « <b>${esc(st.page.title)}</b> ».</p>
       <p class="hint">Passe d'un écran à l'autre avec les onglets, comme des caméras. Clique sur un mot, ou sur une case chez un joueur, pour le donner en indice à tous.</p>

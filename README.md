@@ -30,7 +30,7 @@ Sans ces données, le jeu marche quand même, mais sans mots grisés ni formes :
 ## Déroulé d'une partie
 
 1. Un joueur (l'hôte) crée un salon, règle la partie et partage le lien. 5 personnes max : 4 joueurs + le meneur. Pas de compte, juste un pseudo.
-2. À chaque manche, un joueur est meneur : il choisit la page Wikipédia (recherche par titre) et ne joue pas cette manche. L'hôte commence.
+2. À chaque manche, un joueur est meneur : il choisit la page Wikipédia (recherche par titre) et ne joue pas cette manche. L'hôte commence. Tant que la page n'est pas choisie, le meneur (ou l'hôte) peut donner la main à un autre joueur.
 3. Top départ : chacun joue sur sa propre grille, sans voir les mots des autres.
 4. Pendant la manche, on voit seulement qui a trouvé. Le reste (essais, part du texte dévoilée) s'affiche à la fin.
 5. Le premier qui dévoile le titre gagne la manche ; les autres continuent pour le classement.
