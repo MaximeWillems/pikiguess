@@ -99,6 +99,29 @@ L'hôte règle la partie comme il veut :
 
 ## À faire
 
+### Améliorer les mots proches (plan, rien de codé)
+
+Constats :
+
+- Un seul seuil fixe (0,4) pour tous les mots : trop bas pour les mots courants (« guerre » paraît proche de beaucoup de mots, d'où des faux indices), trop haut pour les mots rares (vrais indices refusés).
+- Les vecteurs rapprochent les mots qui apparaissent ensemble : mois, jours, nombres en lettres, prénoms et nationalités se « ressemblent » tous (« américain » s'affiche sur « britannique »).
+- Vocabulaire : les 100 000 mots les plus courants du web, peu de noms propres de Wikipédia.
+- Nombres mal découpés (« 3 000 », « 0,31 »), siècles en chiffres romains ignorés, pas de différence entre une année et une quantité.
+
+Plan, dans l'ordre :
+
+1. **Nombres et dates**, par des règles : « 3 000 » et « 0,31 » lus comme un seul nombre ; siècles romains rapprochés des années (XIXe ↔ 1850) ; mois et jours proches par leur écart (septembre ↔ octobre) ; nombres en lettres et ordinaux (« deux », « premier ») traités comme des nombres ; années av. J.-C. ; année, jour ou quantité reconnus d'après les mots autour (« en 1889 », « 21 septembre », « 330 m »), chacun avec son échelle.
+2. **Nationalités** :
+   - les formes en « -o » (« américano- », « franco- », « anglo- », « germano- »…) rattachées à leur nationalité : « américain » dévoile « américano » (aujourd'hui, rien) ;
+   - une table pays ↔ nationalité (« américain » ↔ « Amérique », « États-Unis » ; « français » ↔ « France ») qui donne un indice fort ;
+   - une nationalité ne s'affiche plus comme proche d'une autre (« américain » sur « britannique »), ou seulement faiblement.
+3. **Mesure** : une dizaine de pages de test avec des mots du sujet et des mots pièges. Une Action GitHub compte, pour chaque réglage, les pièges qui s'allument et les bons mots ratés. On règle sur ces chiffres.
+4. **Proximité calibrée mot par mot**, comme Cémantix : brûlant si ton mot est dans les 10 plus proches du mot caché, chaud dans les 100, tiède dans les 1 000, rien au-delà. Seuils calculés une fois par l'Action « Données » (environ 300 Ko en plus).
+5. **Meilleurs vecteurs** : tester le modèle entraîné sur Wikipédia, élargir le vocabulaire, garder le meilleur d'après la mesure.
+6. **Affichage** : un niveau parlant (brûlant, chaud, tiède) à la place du %.
+
+À décider : une flèche ↑/↓ dans la case d'un nombre (plus grand / plus petit) ? « brûlant / chaud / tiède » à la place du % ?
+
 ### Points ouverts
 
 - Régler les mots proches après de vraies parties. Seuil `HINT_MIN` à 0,4 (`src/game.js` et `public/app.js`) : en dessous, rien ne s'affiche. Échelle des couleurs dans `public/app.js` : 0,6 orange (44 %), 0,7 jaune (67 %), vert à partir de 0,8. Mesuré sur « Monstre (série télévisée) » : les mots hors sujet (« guerre », « nazi ») montent à 0,43-0,6, ceux du sujet (« meurtre », « crime ») à 0,65-0,84.
