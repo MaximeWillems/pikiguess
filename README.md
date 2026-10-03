@@ -123,6 +123,7 @@ Une case « Aide à l'écriture » sous la saisie, que chaque joueur coche pour 
 | `src/spell.js` | aide à l'écriture : son des mots, mots proches, liste pendant la frappe |
 | `tools/prepare_data.py`, `tools/prepare_help.mjs` | préparation des données, lancée par l'Action « Données » |
 | `tools/evaluate.mjs`, `tools/evaluation.json` | mesure des mots proches sur des pages de test (rapport de l'Action) |
+| `scripts/attendre_donnees.py` | attend la fin de l'Action « Données » après un push, puis affiche son rapport (ou une section) |
 | `test/` | tests des règles sur de fausses données (`npm test`, demande Python et numpy) |
 
 ## À faire

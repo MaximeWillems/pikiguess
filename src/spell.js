@@ -7,7 +7,7 @@ const MAGIC = 0x31414b50; // « PKA1 »
 const LETTERS = 'abcdefghijklmnopqrstuvwxyz';
 // Lettres d'un son : majuscules pour les sons qui s'écrivent de plusieurs façons (an, in, on, eu, ou, ch, g dur, w de « oi »)
 const SOUNDS = 'abdefijklmnoprstuvzAEGIOSUW';
-// Dans la liste pendant la frappe, les mots hors du dictionnaire des formes (noms propres…) doivent être courants
+// Les mots hors du dictionnaire des formes (noms propres, mots étrangers, fautes du web) ne sont proposés que s'ils sont courants
 const FREQUENT = 50000;
 const decoder = new TextDecoder();
 
@@ -39,13 +39,13 @@ export function sound(word, end = true) {
     .replace(/t(?=ion)/g, 's')
     .replace(/eau|au/g, 'o')
     .replace(/oeu|eu|oe/g, 'E')
-    .replace(/oin(?![aeiouynm])/g, 'WI')
+    .replace(/oin(?![aeiouynmAEIOUW])/g, 'WI')
     .replace(/oi|oy/g, 'Wa')
     .replace(/ou/g, 'U')
-    .replace(/ien(?![aeiouynm])/g, 'iI')
-    .replace(/(?:ai|ei)[nm](?![aeiouynm])|[iuy][nm](?![aeiouynm])/g, 'I')
-    .replace(/[ae][nm](?![aeiouynm])/g, 'A')
-    .replace(/o[nm](?![aeiouynm])/g, 'O')
+    .replace(/ien(?![aeiouynmAEIOUW])/g, 'iI')
+    .replace(/(?:ai|ei)[nm](?![aeiouynmAEIOUW])|[iuy][nm](?![aeiouynmAEIOUW])/g, 'I')
+    .replace(/[ae][nm](?![aeiouynmAEIOUW])/g, 'A')
+    .replace(/o[nm](?![aeiouynmAEIOUW])/g, 'O')
     .replace(/ai|ei|ay|ey/g, 'e')
     .replace(/y/g, 'i');
   if (end) s = s.replace(/[stdzp]+$/, '').replace(/e+$/, '');
@@ -160,14 +160,21 @@ export class Help {
     for (const e of edits1(plain)) add(lex.find(e), false);
     if (snd.length >= 3) for (const e of edits1(snd, SOUNDS)) for (const i of this.sameSound(e).subarray(0, 10)) add(i, true);
 
-    // Même son d'abord, puis le moins de fautes ; à égalité, les mots du dictionnaire des formes, puis les plus fréquents
-    return [...found]
+    // Rangés par sorte : même son, une lettre de différence, puis un son de différence (3 fautes au plus)
+    const all = [...found]
       .map(([i, near]) => {
-        const d = distance(plain, lex.keyAt(i)), same = compare(this.soundPool, this.soundOffset, i, snd) === 0;
-        return { i, ok: same || d <= 1 || (near && d <= 3), score: d - (same ? 1.5 : near ? 0.5 : 0) };
+        const d = distance(plain, lex.keyAt(i));
+        const kind = compare(this.soundPool, this.soundOffset, i, snd) === 0 ? 0 : d <= 1 ? 1 : near && d <= 3 ? 2 : 3;
+        return { i, d, kind, known: lex.known(i) };
       })
-      .filter(c => c.ok)
-      .sort((a, b) => a.score - b.score || lex.known(b.i) - lex.known(a.i) || this.rank[a.i] - this.rank[b.i])
+      .filter(c => c.kind < 3);
+
+    // Un mot hors du dictionnaire des formes passe s'il est courant, ou faute de mieux ; jamais pour un son de différence.
+    // Dans chaque sorte : les mots du dictionnaire d'abord, puis le moins de fautes, puis les plus fréquents
+    const some = all.some(c => c.known);
+    return all
+      .filter(c => c.known || (c.kind < 2 && (!some || this.rank[c.i] < FREQUENT)))
+      .sort((a, b) => a.kind - b.kind || b.known - a.known || a.d - b.d || this.rank[a.i] - this.rank[b.i])
       .slice(0, max)
       .map(c => this.shown(lex, c.i));
   }
@@ -186,8 +193,11 @@ export class Help {
       if (best.length > max) best.pop();
     };
     for (const i of this.find(this.alpha, lex.pool, lex.keyOffset, p, false)) offer(i);
-    const sp = sound(text, false);
-    if (sp.length >= 2) for (const i of this.find(this.bySound, this.soundPool, this.soundOffset, sp, false)) offer(i);
+
+    // Par le son du début ; s'il finit par « an », « om »… le mot n'est peut-être pas fini : on essaie aussi sans son nasal
+    const starts = [sound(text, false)];
+    if (/[aeiouy][nm]$/.test(p)) starts.push(sound(p.slice(0, -1), false) + p.slice(-1));
+    for (const sp of starts) if (sp.length >= 2) for (const i of this.find(this.bySound, this.soundPool, this.soundOffset, sp, false)) offer(i);
     return best.map(i => this.shown(lex, i));
   }
 }
