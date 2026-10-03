@@ -136,7 +136,7 @@ Une case « Aide à l'écriture » sous la saisie, que chaque joueur coche pour 
 - Pas fait, à décider : une flèche ↑/↓ dans la case d'un nombre (plus grand / plus petit). Les couleurs guident déjà ; la flèche rendrait les nombres très faciles.
 
 ### Points ouverts
-- À vérifier dans `rapport.txt` : les propositions de l'aide à l'écriture sur de vraies fautes ; régler `sound` (`src/spell.js`) au besoin.
+- À surveiller en vraie partie : les propositions de l'aide à l'écriture (exemples de fautes dans `rapport.txt`, bons le 03/10/2026) ; régler `sound` (`src/spell.js`) au besoin.
 - À mesurer : après une longue pause, le premier mot semble mettre plus d'une seconde à répondre, le temps que le salon recharge ses 25 Mo de données.
 
 ### Fait
