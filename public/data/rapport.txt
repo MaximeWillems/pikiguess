@@ -6,11 +6,11 @@ Similarité du 10e voisin : médiane 0.61, 10e centile 0.48, 90e centile 0.78
 Similarité du 100e voisin : médiane 0.50, 10e centile 0.38, 90e centile 0.65
 Similarité du 500e voisin : médiane 0.39, 10e centile 0.30, 90e centile 0.50
 Proximité de mots pris au hasard : 50e centile -0.02, 90e centile 0.11, 99e centile 0.31, 99.9e centile 0.56
-suite / saga : similarité 0.14 ; saga est le 6513e voisin de suite, suite le 4291e de saga
-suite / trilogie : similarité 0.11 ; trilogie est le 12121e voisin de suite, suite le 16129e de trilogie
-suite / film : similarité 0.06 ; film est le 28344e voisin de suite, suite le 24295e de film
+suite / saga : similarité 0.14 ; saga est le 6514e voisin de suite, suite le 4291e de saga
+suite / trilogie : similarité 0.11 ; trilogie est le 12123e voisin de suite, suite le 16129e de trilogie
+suite / film : similarité 0.06 ; film est le 28344e voisin de suite, suite le 24296e de film
 québec / canadien : similarité 0.60 ; canadien est le 46e voisin de québec, québec le 9e de canadien
-tyrannosaure / dinosaure : similarité 0.74 ; dinosaure est le 2e voisin de tyrannosaure, tyrannosaure le 2e de dinosaure
+tyrannosaure / dinosaure : similarité 0.74 ; dinosaure est le 1e voisin de tyrannosaure, tyrannosaure le 1e de dinosaure
 roi : trone 0.82, regente 0.80, chambellan 0.77, prince 0.76, duc 0.75, reine 0.75, suzerain 0.74, connetable 0.73, royaume 0.73, vassal 0.73
 napoléon : bonaparte 0.91, imperatrice 0.78, abdication 0.78, napoleonienne 0.77, bourbons 0.77, talleyrand 0.76, empereur 0.75, beauharnais 0.75, imperiale 0.75, persigny 0.74
 paris : nanterre 0.65, vincennes 0.61, sorbonne 0.59, daumesnil 0.59, malesherbes 0.58, caumartin 0.57, montrouge 0.56, rue 0.56, debourg 0.55, boulevard 0.55
@@ -31,26 +31,26 @@ Mots mal écrits et propositions :
   fonétik → phonétique, phonétiques
   otomobil → automobile, automobiles
   porblème → problème, problèmes
-  bocou → book, bocaux, beaucoup, boxe, boxer
+  bocou → beaucoup, book, bocaux, boxe, boxer
   dinosor → dinosaure, dinosaures
-  téléfone → téléphone, teléfono, téléphones, téléphoner, téléphonez
+  téléfone → téléphone, téléphones, téléphoner, téléphonez, téléphonée
   ortograf → orthographe
-  sinéma → cinéma, cinémas, sitemap, sinequa, sitemaps
-  anfan → enfan, enfant, antan, fanfan, enfans
+  sinéma → cinéma, cinémas
+  anfan → enfant, enfants, enfans, antan, fanfan
   rinocéros → rhinocéros
   spinosorus → (rien)
-  farmassie → pharmacie, pharmacies, pharmacy
+  farmassie → pharmacie, pharmacies
   lavion → lavions, avion, avions, savions, lavis
-  kestion → gestion, question, questions, session, cession
-  shato → shako, sato, shao, scato, stato
-  fotografi → fotografía, fotografías, photographie, photography, photographies
-  cheuval → cheval, chaval, chevalet, chevaler, chevalée
-  pingouain → pingouin, pingouins, pinguin, guingouin
-  bibliotèque → bibliothèque, bibliothèques, biblioteca, bibliothek, bibliotecas
-  élefan → élégant, éléphant, élevant, eleven, elegans
+  kestion → question, questions, gestion, session, cession
+  shato → château, châteaux, scato, shako, sato
+  fotografi → photographie, photographies, photographier, photographiée, photographiez
+  cheuval → cheval, chevalet, chevaler, chevalée
+  pingouain → pingouin, pingouins
+  bibliotèque → bibliothèque, bibliothèques
+  élefan → éléphant, éléphants, élégant, élevant, élément
 Liste pendant la frappe :
   fonet… → phonétique, phonétiques, phonétiquement, phonéticien
-  otom… → ottoman, ottomans, ôtons
+  otom… → automobile, automatique, automatiquement, automne, automobiles, automatiques
   dino… → dinosaures, dinosaure, dînons, dino
   pharm… → pharmacie, pharmaceutique, pharmaceutiques, pharmacien, pharmaciens, pharmacies
   bibli… → bibliothèque, bibliothèques, bibliographie, bibliographiques, bibliographique, bibliothécaires
@@ -64,7 +64,7 @@ Similarité du 10e voisin : médiane 0.65, 10e centile 0.52, 90e centile 0.79
 Similarité du 100e voisin : médiane 0.53, 10e centile 0.42, 90e centile 0.65
 Similarité du 500e voisin : médiane 0.42, 10e centile 0.32, 90e centile 0.53
 Proximité de mots pris au hasard : 50e centile 0.06, 90e centile 0.20, 99e centile 0.40, 99.9e centile 0.59
-suite / saga : similarité 0.19 ; saga est le 16479e voisin de suite, suite le 2476e de saga
+suite / saga : similarité 0.19 ; saga est le 16480e voisin de suite, suite le 2477e de saga
 suite / trilogie : similarité 0.23 ; trilogie est le 7724e voisin de suite, suite le 9908e de trilogie
 suite / film : similarité 0.17 ; film est le 21730e voisin de suite, suite le 14861e de film
 québec / canadien : similarité 0.64 ; canadien est le 29e voisin de québec, québec le 5e de canadien
