@@ -160,6 +160,15 @@ test('caméra du meneur : ce que voit un joueur', () => {
   assert.equal(cam.found, false);
 });
 
+test('« 1er » compte pour deux mots, « 1 » et « er »', () => {
+  const page = buildPage('Test', 'Le 1er janvier, le 7e jour.');
+  assert.deepEqual(page.words.map(w => w.text), ['Test', 'Le', '1', 'er', 'janvier', 'le', '7', 'e', 'jour']);
+  const keys = analyze(page, lex);
+  const r = guess(page, keys, lex, newRun(), '1er');
+  assert.deepEqual(r.items.map(x => x.w), ['1', 'er']);
+  assert.deepEqual(texts(page, r.revealed), ['1', 'er']);
+});
+
 test('plusieurs mots en une saisie', () => {
   const { go } = play();
   assert.equal(go('Grande-Bretagne').items.length, 2);

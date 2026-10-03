@@ -247,6 +247,7 @@ main { grid-area: main; min-width: 0; }
   transition: filter .2s var(--ease), outline-color .5s var(--ease);
 }
 .w:hover { filter: brightness(1.25); }
+.w.glued { margin-left: 2px; }
 .w i { font-style: normal; }
 .w i.pop { animation: fade .45s var(--ease) both; }
 .w.hot { font-weight: 700; }

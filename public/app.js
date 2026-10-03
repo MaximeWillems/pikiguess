@@ -27,7 +27,7 @@ let sortByHeat = store.get('pikiguess.sort') === 'heat';
 
 let ws, st, offset = 0, retry = 0, barMode = '', unread = 0;
 let pick = null, lastQuery = '', searchTimer, searchSeq = 0;
-let hinted = new Set(), pageKey = '';
+let hinted = new Set(), glued = new Set(), pageKey = '';
 // Ce que regarde le meneur : sa vue (texte complet), tous les joueurs, ou l'écran d'un joueur (son id).
 let pov = 'me';
 const view = { revealed: new Map(), hints: new Map(), fresh: new Set(), freshHints: new Set(), guesses: [], added: 0, live: {}, liveNew: {}, cams: {}, last: null };
@@ -200,6 +200,12 @@ function onState(m) {
   );
   if (prev?.round !== m.round || prev?.phase !== m.phase || (pov !== 'me' && pov !== 'all' && !view.cams[pov])) pov = 'me';
   hinted = new Set(m.hinted || []);
+
+  // Mots collés sans séparateur (« 1 » et « er » dans « 1er ») : leurs cases sont un peu écartées pour rester distinctes
+  glued = new Set();
+  for (const tokens of m.page ? [m.page.titleTokens, ...m.page.paragraphs] : [])
+    tokens.forEach((t, k) => typeof t === 'number' && typeof tokens[k - 1] === 'number' && glued.add(t));
+
   events(prev, m);
   if (prev && (prev.phase !== m.phase || prev.round !== m.round)) window.scrollTo({ top: 0, behavior: 'smooth' });
   render();
@@ -513,8 +519,9 @@ function renderProgress() {
 // Case d'un mot caché, vide ou avec le mot proche le plus proche ; « secret » : le vrai mot, montré au meneur au survol.
 function boxHtml(i, n, h, id, fresh, secret) {
   const tip = `${secret ? `${secret} · ` : ''}${plural(n, 'lettre')}${h ? ` · « ${h.w} » proche à ${pct(h.s)} %` : ''}`;
-  if (!h) return `<span id="${id}" class="w" data-i="${i}" data-n="${n}" style="--n:${n}" title="${esc(tip)}"></span>`;
-  return `<span id="${id}" class="w${level(h.s) >= 0.7 ? ' hot' : ''}" data-i="${i}" data-n="${n}" data-g="${esc(h.w)}" style="--n:${n};--h:${heat(h.s).toFixed(2)}" title="${esc(tip)}"><i${fresh ? ' class="pop"' : ''}>${esc(h.w)}</i></span>`;
+  const cls = `w${glued.has(i) ? ' glued' : ''}`;
+  if (!h) return `<span id="${id}" class="${cls}" data-i="${i}" data-n="${n}" style="--n:${n}" title="${esc(tip)}"></span>`;
+  return `<span id="${id}" class="${cls}${level(h.s) >= 0.7 ? ' hot' : ''}" data-i="${i}" data-n="${n}" data-g="${esc(h.w)}" style="--n:${n};--h:${heat(h.s).toFixed(2)}" title="${esc(tip)}"><i${fresh ? ' class="pop"' : ''}>${esc(h.w)}</i></span>`;
 }
 
 function wordHtml(i) {

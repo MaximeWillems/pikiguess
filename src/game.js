@@ -1,7 +1,8 @@
 // Règles du jeu, sans dépendance à Cloudflare : testables avec node --test.
 export const HINT_MIN = 0.4;
 export const POINTS = [1000, 600, 300, 100];
-const WORD = /[\p{L}\p{N}]+/gu;
+// Un mot : une suite de lettres, ou une suite de chiffres. « 1er » donne deux mots, « 1 » et « er ».
+const WORD = /\p{N}+|[\p{L}\p{M}]+/gu;
 
 // Petits mots très fréquents : ils se dévoilent normalement mais ne grisent rien, sinon « le » s'afficherait partout.
 const STOP = new Set(
