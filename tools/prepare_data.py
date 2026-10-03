@@ -25,7 +25,9 @@ ELISIONS = {
     "n": {"ne"}, "c": {"ce"}, "qu": {"que"}, "jusqu": {"jusque"}, "lorsqu": {"lorsque"},
     "puisqu": {"puisque"}, "quoiqu": {"quoique"},
 }
-PROBES = ["roi", "napoléon", "paris", "1789", "guerre", "fleuve", "planète", "chat", "borgne", "manger", "tyrannosaure", "théropode", "spinosaurus"]
+PROBES = ["roi", "napoléon", "paris", "1789", "guerre", "fleuve", "planète", "chat", "borgne", "manger", "tyrannosaure", "théropode", "spinosaurus", "suite"]
+# Paires signalées en partie : similarité et rang de chaque mot parmi les voisins de l'autre
+PAIRS = [("suite", "saga"), ("suite", "trilogie"), ("suite", "film"), ("québec", "canadien"), ("tyrannosaure", "dinosaure")]
 
 
 def normalize(s):
@@ -115,6 +117,13 @@ def report(q, rows, cut):
     a, b = np.random.default_rng(0).integers(0, len(f), (2, 20000))
     sims = np.sum(f[a] * f[b], axis=1)
     print("Proximité de mots pris au hasard : " + ", ".join(f"{p}e centile {np.percentile(sims, p):.2f}" for p in (50, 90, 99, 99.9)))
+    for a, b in PAIRS:
+        ra, rb = rows.get(normalize(a)), rows.get(normalize(b))
+        if ra is None or rb is None:
+            print(f"{a} / {b} : absent")
+            continue
+        cos = float(f[ra] @ f[rb])
+        print(f"{a} / {b} : similarité {cos:.2f} ; {b} est le {int((f @ f[ra] > cos).sum())}e voisin de {a}, {a} le {int((f @ f[rb] > cos).sum())}e de {b}")
     for probe in PROBES:
         r = rows.get(normalize(probe))
         if r is None:
