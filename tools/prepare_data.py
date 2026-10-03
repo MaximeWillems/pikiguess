@@ -17,7 +17,6 @@ from pathlib import Path
 
 import numpy as np
 
-MAX_VECTORS = 100_000
 MAX_FILE = 25 * 1024 * 1024
 RANKS = (10, 100, 500)
 VALID = re.compile(r"[a-z0-9]+")
@@ -26,7 +25,7 @@ ELISIONS = {
     "n": {"ne"}, "c": {"ce"}, "qu": {"que"}, "jusqu": {"jusque"}, "lorsqu": {"lorsque"},
     "puisqu": {"puisque"}, "quoiqu": {"quoique"},
 }
-PROBES = ["roi", "napoléon", "paris", "1789", "guerre", "fleuve", "planète", "chat", "borgne", "manger"]
+PROBES = ["roi", "napoléon", "paris", "1789", "guerre", "fleuve", "planète", "chat", "borgne", "manger", "tyrannosaure", "théropode", "spinosaurus"]
 
 
 def normalize(s):
@@ -126,7 +125,7 @@ def report(q, rows, cut):
         print(f"{probe} : " + ", ".join(f"{by_row[t]} {s[t]:.2f}" for t in top))
 
 
-def main(model_path, lexique_path, out_dir, dims=None, max_vectors=MAX_VECTORS):
+def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
     words, vectors = read_word2vec(model_path)
     forms = read_lexique(lexique_path)
     for form, lemmas in ELISIONS.items():
@@ -179,8 +178,11 @@ def main(model_path, lexique_path, out_dir, dims=None, max_vectors=MAX_VECTORS):
         pool,
     ])
 
+    # Autant de dimensions que la limite de 25 Mio le permet (vecteurs + 3 seuils par mot), « dims » au plus
     m = unit(vectors[order])
-    if dims and m.shape[1] > dims:
+    fit = (MAX_FILE - 12 - 3 * len(order)) // max(1, len(order))
+    dims = min(m.shape[1], dims or m.shape[1], fit)
+    if dims < m.shape[1]:
         m = unit(reduce_dims(m, dims))
     q = np.clip(np.rint(m * 127), -127, 127).astype(np.int8)
     cut = neighbour_cutoffs(q)
@@ -204,6 +206,6 @@ if __name__ == "__main__":
     args.add_argument("lexique")
     args.add_argument("out")
     args.add_argument("--dims", type=int, help="réduire les vecteurs à ce nombre de dimensions")
-    args.add_argument("--max-vectors", type=int, default=MAX_VECTORS)
+    args.add_argument("--max-vectors", type=int, help="ne garder que les N mots les plus fréquents (par défaut : tous)")
     a = args.parse_args()
     main(a.model, a.lexique, a.out, a.dims, a.max_vectors)

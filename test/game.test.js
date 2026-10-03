@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { Lexicon } from '../src/lexicon.js';
 import { playable } from '../src/wikipedia.js';
-import { analyze, buildPage, camView, cleanExtract, guess, isFound, newRun, normalize, playerView, ranking, reveal } from '../src/game.js';
+import { analyze, buildPage, camView, cleanExtract, guess, isFound, newRun, normalize, playerView, ranking, reveal, spelling } from '../src/game.js';
 
 const TITLE = 'Mercure (planète)';
 const EXTRACT = "Le roi est né en 1789 ( ). Les rois sont nés à Paris, l'empire naquit.\n\nLa révolution est une fête, là.";
@@ -171,6 +171,16 @@ test('chaque essai garde sa proximité avec le mot caché le plus proche', () =>
   assert.deepEqual(r.items[0].at, r.revealed.map(([i]) => i));
   assert.ok(go('reine').items[0].s > 0.3);
   assert.equal(go('xyz').items[0].s, 0);
+});
+
+test("mots sans vecteur : l'orthographe donne un indice", () => {
+  const page = buildPage('Spinosaurus', 'Le Spinosaurus est un genre de dinosaures.');
+  const keys = analyze(page, lex);
+  const r = guess(page, keys, lex, newRun(), 'tyrannosaure');
+  const s = Object.fromEntries(r.hints.map(([i, , v]) => [page.words[i].text, v]));
+  assert.ok(s.Spinosaurus >= 0.3 && s.Spinosaurus <= 0.7);
+  assert.ok(s.dinosaures >= 0.5);
+  assert.equal(spelling('chaton', 'chateau'), 0);
 });
 
 test('caméra du meneur : ce que voit un joueur', () => {

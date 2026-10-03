@@ -15,7 +15,7 @@ Sans ces données, le jeu marche quand même, mais sans mots grisés ni formes :
 - On affiche l'intro d'une page Wikipédia telle quelle, titre compris, chaque mot caché sous une case noire de la taille du mot. Au départ rien n'est dévoilé, même pas les petits mots (le, de, et…).
 - Le joueur propose un mot : s'il est dans le texte, il se dévoile partout et sous toutes ses formes (pluriel, féminin, conjugaisons : « naître » dévoile « né », « naquit »…). Majuscules et accents ignorés : « egypte » dévoile « Égypte ».
 - Les petits mots se dévoilent aussi ensemble : « le » dévoile « la, les, l' », « de » dévoile « du, des, d' », « à » dévoile « au, aux », de même pour « un/une », « ce/cette/ces », « son/sa/ses », « il/elle/ils/elles »… (liste `GROUPS` dans `src/game.js`).
-- Sinon, il s'affiche dans les cases des mots proches par le sens : **tiède** (rouge) s'il fait partie des 500 mots les plus proches du mot caché, **chaud** des 100, **brûlant** (vert) des 10. Le calcul se fait mot par mot : un mot courant comme « guerre » ne s'allume plus partout. Chaque case garde le mot le plus proche proposé jusque-là.
+- Sinon, il s'affiche dans les cases des mots proches par le sens : **tiède** (rouge) s'il fait partie des 500 mots les plus proches du mot caché, **chaud** des 100, **brûlant** (vert) des 10. Le calcul se fait mot par mot : un mot courant comme « guerre » ne s'allume plus partout. Pour un mot inconnu des vecteurs (rare, nom savant), on compare l'orthographe : un morceau commun d'au moins 5 lettres donne un indice, au plus chaud (« tyrannosaure » ↔ « Spinosaurus »). Chaque case garde le mot le plus proche proposé jusque-là.
 - Un mot trouvé apparaît sur fond vert, qui s'efface en fondu.
 - Nombres et dates : entre deux nombres, seul l'écart compte, pour s'approcher petit à petit. Chaque nombre du texte est reconnu d'après les mots autour, avec son échelle :
   - année (« en 1889 », « 382 av. J.-C. ») : brûlant à 1 ou 2 ans près, visible jusqu'à ~120 ans ;
@@ -80,8 +80,9 @@ L'hôte règle la partie comme il veut :
 [fauconnier.github.io/#data](https://fauconnier.github.io/#data) : modèles word2vec en français. Chaque mot y est une liste de nombres (un vecteur) ; deux mots proches par le sens ont des vecteurs proches. C'est ce qui donne les mots grisés.
 
 - Modèle retenu : `frWac_non_lem_no_postag_no_phrase_200_skip_cut100.bin` (126 Mo, entraîné sur frWaC, 1,6 milliard de mots). Non lemmatisé : il garde les nombres (« 1789 » reste proche de « révolution ») et ses 200 dimensions tiennent en ligne sans réduction.
-- Le script `tools/prepare_data.py` garde les 100 000 mots les plus fréquents et compresse les vecteurs (un octet par nombre) : environ 20 Mo, sous la limite de 25 Mo par fichier de Cloudflare. Il calcule aussi, pour chaque mot, la similarité de son 10e, 100e et 500e voisin le plus proche : ce sont les seuils de tiède, chaud et brûlant.
-- L'Action « Données » se relance seule quand `tools/` change. Elle prépare aussi le modèle entraîné sur Wikipédia (`frWiki_no_lem_no_postag_no_phrase_1000_skip_cut100.bin`, réduit à 200 dimensions), pour comparer, et écrit `public/data/rapport.txt` : pour dix pages de test (`tools/evaluation.json`), le niveau atteint par des mots du sujet et par des mots pièges, avec chaque modèle.
+- Le script `tools/prepare_data.py` garde tous les mots du modèle (environ 155 000, mots rares compris comme « tyrannosaure ») et compresse les vecteurs : un octet par nombre, et autant de dimensions que la limite de 25 Mo par fichier de Cloudflare le permet (environ 165 au lieu de 200). Il calcule aussi, pour chaque mot, la similarité de son 10e, 100e et 500e voisin le plus proche : ce sont les seuils de tiède, chaud et brûlant.
+- L'Action « Données » se relance seule quand `tools/` change. Elle écrit `public/data/rapport.txt` : pour des pages de test (`tools/evaluation.json`), le niveau atteint par des mots du sujet et par des mots pièges, avec les données en ligne et avec la version à 100 000 mots, pour comparer.
+- Comparé le 03/10/2026 : le modèle entraîné sur Wikipédia (`frWiki_no_lem_no_postag_no_phrase_1000_skip_cut100.bin`) allumait deux fois plus de pièges (36 % contre 18 %) pour autant de mots du sujet : on garde frWaC.
 - Licence CC-BY 3.0 : auteur cité en bas de page, avec un lien.
 
 ### Dictionnaire des formes (Lexique 3.83)
@@ -110,7 +111,7 @@ L'hôte règle la partie comme il veut :
 
 ### Mots proches : la suite
 
-- Lire `public/data/rapport.txt` : garder le modèle frWaC ou passer à celui de Wikipédia, d'après les mots du sujet trouvés et les pièges allumés.
+- Lire `public/data/rapport.txt` : vérifier que garder tous les mots (vecteurs réduits) ne dégrade pas les indices par rapport à la version à 100 000 mots.
 - Régler les seuils d'après le rapport et de vraies parties : rangs 10 / 100 / 500 (`RANKS` dans `tools/prepare_data.py`), plancher de similarité 0,25 (`semantic` dans `src/game.js`).
 - Pas fait, à décider : une flèche ↑/↓ dans la case d'un nombre (plus grand / plus petit). Les couleurs guident déjà ; la flèche rendrait les nombres très faciles.
 

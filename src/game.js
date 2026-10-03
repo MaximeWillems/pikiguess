@@ -259,7 +259,7 @@ const ELIDED = new Set(['l', 'd', 'j', 'm', 't', 's', 'n', 'c', 'qu', 'jusqu', '
 
 export function describe(key, lex) {
   const groups = GROUP_OF.get(key) ?? [];
-  if (ELIDED.has(key)) return { lemmas: new Set(groups), row: -1 };
+  if (ELIDED.has(key)) return { lemmas: new Set(groups), row: -1, stop: true, plain: key };
   const country = COUNTRY_OF.get(key) ?? null;
   const i = lex ? lex.find(key) : -1;
   const ids = i < 0 ? [] : [...lex.lemmas(i)];
@@ -267,12 +267,13 @@ export function describe(key, lex) {
   const nation = COMBO_OF.get(key) ?? bases.find(b => NATION.has(b)) ?? null;
   const lemmas = new Set([...(i < 0 ? [key] : ids.length ? ids : [i]), ...groups]);
   if (nation) lemmas.add(`#nat-${nation}`);
+  const stop = STOP.has(key);
   let row = -1;
-  if (i >= 0 && !STOP.has(key)) {
+  if (i >= 0 && !stop) {
     row = lex.row(i);
     for (let j = 0; row < 0 && j < ids.length; j++) row = lex.row(ids[j]);
   }
-  return { lemmas, row, nation, country };
+  return { lemmas, row, nation, country, stop, plain: normalize(key) };
 }
 
 export function analyze(page, lex) {
@@ -298,11 +299,33 @@ function semantic(g, e, lex) {
   return 0.3 + (0.3 * (cos - c500)) / Math.max(0.01, c100 - c500);
 }
 
+// Longueur du plus long morceau commun à deux mots.
+function common(a, b) {
+  let best = 0;
+  const prev = new Array(b.length + 1).fill(0);
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = b.length; j >= 1; j--) {
+      prev[j] = a[i - 1] === b[j - 1] ? prev[j - 1] + 1 : 0;
+      best = Math.max(best, prev[j]);
+    }
+  }
+  return best;
+}
+
+// Mots sans vecteur (rares, noms savants) : on compare l'orthographe. Un morceau commun d'au moins 5 lettres
+// donne un indice, au plus chaud (« tyrannosaure » et « Spinosaurus » partagent « osaur »).
+export function spelling(a, b) {
+  if (a.length < 6 || b.length < 6) return 0;
+  const n = common(a, b);
+  return n < 5 ? 0 : Math.min(0.7, 0.3 + (0.5 * n) / Math.min(a.length, b.length));
+}
+
 export function closeness(g, e, lex) {
   const n = numberCloseness(g.num, e.num);
   if (n !== null) return n;
   if ((g.nation && g.nation === e.country) || (g.country && g.country === e.nation)) return 0.9;
-  const t = semantic(g, e, lex);
+  let t = semantic(g, e, lex);
+  if (!t && (g.row < 0 || e.row < 0) && !g.stop && !e.stop) t = spelling(g.plain, e.plain);
   return (g.nation || g.country) && (e.nation || e.country) ? Math.min(t, 0.35) : t;
 }
 

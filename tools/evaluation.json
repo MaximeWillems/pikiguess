@@ -35,6 +35,10 @@
     "sujet": ["fromage", "restaurant", "pâtes", "pain", "olive", "jambon", "basilic", "spaghetti", "lasagne", "boulanger"],
     "pièges": ["guerre", "football", "ordinateur", "voiture", "politique", "musique", "planète", "église"]
   },
+  "Spinosaurus": {
+    "sujet": ["tyrannosaure", "tyrannosaurus", "vélociraptor", "diplodocus", "reptile", "crocodile", "préhistoire", "jurassique", "prédateur", "raptor"],
+    "pièges": ["football", "cuisine", "voiture", "politique", "musique", "banque", "mariage", "ordinateur"]
+  },
   "Albert Einstein": {
     "sujet": ["atome", "lumière", "mathématiques", "univers", "chercheur", "newton", "laboratoire", "savant", "professeur", "gravité"],
     "pièges": ["football", "cuisine", "voiture", "peinture", "chanson", "plage", "chat", "mariage"]
