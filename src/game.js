@@ -213,8 +213,16 @@ const NATIONS = [
   ['thailandais', 'thailande', ''], ['indonesien', 'indonesie', ''], ['armenien', 'armenie', 'armeno'],
   ['georgien', 'georgie', ''], ['islandais', 'islande', ''], ['luxembourgeois', 'luxembourg', ''],
   ['sovietique', 'urss', 'sovieto'], ['nigerian', 'nigeria', ''], ['ethiopien', 'ethiopie', ''],
-  ['lituanien', 'lituanie', 'lituano'], ['tibetain', 'tibet', 'tibeto'],
+  ['lituanien', 'lituanie', 'lituano'], ['tibetain', 'tibet', 'tibeto'], ['gallois', 'galles', ''],
+  ['catalan', 'catalogne', ''], ['flamand', 'flandre', ''], ['wallon', 'wallonie', ''], ['bavarois', 'baviere', ''],
+  ['sicilien', 'sicile', ''], ['texan', 'texas', ''], ['californien', 'californie', ''],
 ];
+// Régions dans leur pays (le Québec est au Canada) : brûlantes entre elles, comme un pays et sa nationalité.
+const PARENT = new Map([
+  ['quebecois', 'canadien'], ['ecossais', 'britannique'], ['anglais', 'britannique'], ['gallois', 'britannique'],
+  ['catalan', 'espagnol'], ['flamand', 'belge'], ['wallon', 'belge'], ['bavarois', 'allemand'], ['sicilien', 'italien'],
+  ['texan', 'americain'], ['californien', 'americain'], ['russe', 'sovietique'],
+]);
 const NATION = new Set(NATIONS.map(([n]) => n));
 const COUNTRY_OF = new Map(NATIONS.filter(([, c]) => c).map(([n, c]) => [c, n]));
 const COMBO_OF = new Map(NATIONS.flatMap(([n, , c]) => (c ? c.split(' ').map(x => [x, n]) : [])));
@@ -326,10 +334,11 @@ export function spelling(a, b) {
 export function closeness(g, e, lex) {
   const n = numberCloseness(g.num, e.num);
   if (n !== null) return n;
-  if ((g.nation && g.nation === e.country) || (g.country && g.country === e.nation)) return 0.9;
+  const gn = g.nation ?? g.country, en = e.nation ?? e.country;
+  if (gn && en && (gn === en || PARENT.get(gn) === en || PARENT.get(en) === gn)) return 0.9;
   let t = semantic(g, e, lex);
   if (!t && (g.row < 0 || e.row < 0) && !g.stop && !e.stop) t = spelling(g.plain, e.plain);
-  return (g.nation || g.country) && (e.nation || e.country) ? Math.min(t, 0.35) : t;
+  return gn && en ? Math.min(t, 0.35) : t;
 }
 
 export const newRun = () => ({ revealed: new Set(), hints: new Map(), tried: new Set(), guesses: [], foundAt: null });

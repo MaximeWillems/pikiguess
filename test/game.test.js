@@ -80,9 +80,16 @@ test('nationalités : formes en « -o », pays, et nationalités voisines', () =
   const keys = analyze(page, lex);
   const go = w => guess(page, keys, lex, newRun(), w);
   assert.deepEqual(texts(page, go('américaine').revealed).sort(), ['Américains', 'américano']);
-  const r = go('anglais');
-  assert.ok(r.hints.some(([i, , s]) => page.words[i].text === 'Angleterre' && s >= 0.9));
-  assert.ok(!r.hints.some(([i, , s]) => page.words[i].text === 'britannique' && s > 0.35));
+  const best = (w, target) => Math.max(0, ...go(w).hints.filter(([i]) => page.words[i].text === target).map(h => h[2]));
+  assert.ok(best('anglais', 'Angleterre') >= 0.9);
+  assert.ok(best('anglais', 'britannique') >= 0.9);
+  assert.ok(best('français', 'britannique') <= 0.35);
+
+  const canada = buildPage('Test', 'Un acteur canadien et une chanteuse québécoise.');
+  const near = (w, target) =>
+    Math.max(0, ...guess(canada, analyze(canada, lex), lex, newRun(), w).hints.filter(([i]) => canada.words[i].text === target).map(h => h[2]));
+  assert.ok(near('Québec', 'canadien') >= 0.9);
+  assert.ok(near('Canada', 'québécoise') >= 0.9);
 });
 
 test('lexique : recherche, mot de base, doublons de casse', () => {
