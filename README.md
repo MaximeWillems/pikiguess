@@ -119,6 +119,22 @@ L'hôte règle la partie comme il veut :
 - Régler les seuils d'après le rapport et de vraies parties : rangs 10 / 100 / 500 (`RANKS` dans `tools/prepare_data.py`), plancher de similarité 0,25 (`semantic` dans `src/game.js`).
 - Pas fait, à décider : une flèche ↑/↓ dans la case d'un nombre (plus grand / plus petit). Les couleurs guident déjà ; la flèche rendrait les nombres très faciles.
 
+### Aide à l'écriture (dyslexie)
+
+Décidé le 03/10/2026, pas encore développé :
+
+- **Pour tous.** Un mot absent du dictionnaire du jeu et du texte, qui ne réchauffe aucune case, est signalé « n'existe pas ». Il ne compte pas comme essai et reste dans la case pour être corrigé.
+  - S'il réchauffe une case (orthographe proche d'un mot du texte, comme « spinosaure »), il compte comme aujourd'hui.
+  - Aujourd'hui, le jeu répond « pas dans le texte » même quand le mot y est, mal écrit. Les mots courts ne donnent rien (« otel »).
+- **Option « Aide à l'écriture », choisie par chaque joueur.** C'est une case à cocher près de la saisie, gardée par son navigateur ; les autres ne voient rien. Elle comprend :
+  - **mots proches** : quand le mot n'existe pas, 3 à 5 mots existants à cliquer, les plus courants d'abord. Ils sont proches par l'écriture (lettres inversées, oubliées, en trop) ou par le son (« fonétik » → phonétique, « otomobil » → automobile), confusions b/d, p/q, f/v comprises ;
+  - **liste pendant la frappe** : des mots du dictionnaire s'affichent sous la case pendant qu'on tape, ceux qui commencent ou se prononcent pareil. On choisit avec les flèches et Entrée, ou d'un clic.
+- **Jamais de correction automatique** : le joueur choisit.
+- **Aucun indice** : les propositions viennent du dictionnaire entier, classées par fréquence, jamais du texte de la page.
+- **Écarté : le correcteur du navigateur.** Il dépend de la langue du navigateur, souligne des noms propres justes et se corrige au clic droit.
+- **Technique.** L'Action « Données » prépare un fichier à part : l'orthographe avec accents (les clés de `words.bin` n'en ont pas) et un index des sons. Le salon ne le charge que quand un joueur utilise l'aide, et les propositions passent par la connexion du salon.
+- **À préciser** : une autre aide cochée sans précision.
+
 ### Points ouverts
 - À mesurer : après une longue pause, le premier mot semble mettre plus d'une seconde à répondre, le temps que le salon recharge ses 25 Mo de données.
 
