@@ -7,14 +7,14 @@ Similarité du 100e voisin : médiane 0.50, 10e centile 0.39, 90e centile 0.65
 Similarité du 500e voisin : médiane 0.39, 10e centile 0.30, 90e centile 0.50
 Similarité du 5000e voisin : médiane 0.19, 10e centile 0.15, 90e centile 0.25
 Proximité de mots pris au hasard : 50e centile -0.02, 90e centile 0.11, 99e centile 0.31, 99.9e centile 0.56
-suite / saga : similarité 0.13 ; saga est le 7699e voisin de suite (seuils de suite, 10e / 100e / 500e / 5000e voisin : 0.61 / 0.38 / 0.28 / 0.16), suite le 5047e de saga
-suite / trilogie : similarité 0.11 ; trilogie est le 11761e voisin de suite (seuils de suite, 10e / 100e / 500e / 5000e voisin : 0.61 / 0.38 / 0.28 / 0.16), suite le 15793e de trilogie
-suite / film : similarité 0.06 ; film est le 27481e voisin de suite (seuils de suite, 10e / 100e / 500e / 5000e voisin : 0.61 / 0.38 / 0.28 / 0.16), suite le 23633e de film
+suite / saga : similarité 0.13 ; saga est le 7700e voisin de suite (seuils de suite, 10e / 100e / 500e / 5000e voisin : 0.61 / 0.38 / 0.28 / 0.16), suite le 5049e de saga
+suite / trilogie : similarité 0.11 ; trilogie est le 11763e voisin de suite (seuils de suite, 10e / 100e / 500e / 5000e voisin : 0.61 / 0.38 / 0.28 / 0.16), suite le 15793e de trilogie
+suite / film : similarité 0.06 ; film est le 27483e voisin de suite (seuils de suite, 10e / 100e / 500e / 5000e voisin : 0.61 / 0.38 / 0.28 / 0.16), suite le 23634e de film
 québec / canadien : similarité 0.60 ; canadien est le 46e voisin de québec (seuils de québec, 10e / 100e / 500e / 5000e voisin : 0.78 / 0.44 / 0.28 / 0.16), québec le 8e de canadien
 tyrannosaure / dinosaure : similarité 0.74 ; dinosaure est le 1e voisin de tyrannosaure (seuils de tyrannosaure, 10e / 100e / 500e / 5000e voisin : 0.57 / 0.46 / 0.36 / 0.20), tyrannosaure le 1e de dinosaure
-roche / dur : similarité 0.08 ; dur est le 22487e voisin de roche (seuils de roche, 10e / 100e / 500e / 5000e voisin : 0.65 / 0.53 / 0.38 / 0.20), roche le 23870e de dur
-roches / dur : similarité 0.06 ; dur est le 23518e voisin de roches (seuils de roches, 10e / 100e / 500e / 5000e voisin : 0.85 / 0.73 / 0.47 / 0.19), roches le 30326e de dur
-roche / dure : similarité 0.10 ; dure est le 18120e voisin de roche (seuils de roche, 10e / 100e / 500e / 5000e voisin : 0.65 / 0.53 / 0.38 / 0.20), roche le 22674e de dure
+roche / dur : similarité 0.08 ; dur est le 22488e voisin de roche (seuils de roche, 10e / 100e / 500e / 5000e voisin : 0.65 / 0.53 / 0.38 / 0.20), roche le 23870e de dur
+roches / dur : similarité 0.06 ; dur est le 23520e voisin de roches (seuils de roches, 10e / 100e / 500e / 5000e voisin : 0.85 / 0.73 / 0.47 / 0.19), roches le 30325e de dur
+roche / dure : similarité 0.10 ; dure est le 18119e voisin de roche (seuils de roche, 10e / 100e / 500e / 5000e voisin : 0.65 / 0.53 / 0.38 / 0.20), roche le 22674e de dure
 roche / pierre : similarité 0.39 ; pierre est le 446e voisin de roche (seuils de roche, 10e / 100e / 500e / 5000e voisin : 0.65 / 0.53 / 0.38 / 0.20), roche le 1439e de pierre
 roi : trone 0.82, regente 0.80, chambellan 0.77, prince 0.77, duc 0.75, reine 0.75, suzerain 0.74, connetable 0.73, royaume 0.73, vassal 0.73
 napoléon : bonaparte 0.91, abdication 0.78, imperatrice 0.78, napoleonienne 0.77, bourbons 0.77, talleyrand 0.76, empereur 0.75, beauharnais 0.75, imperiale 0.75, persigny 0.74
@@ -26,12 +26,25 @@ planète : planetaire 0.82, planetaires 0.67, rechauffement 0.65, climatique 0.6
 chat : chats 0.80, minou 0.75, chien 0.74, miaule 0.73, matou 0.72, ronrons 0.71, chatte 0.70, loustic 0.68, toutou 0.67, chattes 0.67
 borgne : batard 0.61, pederaste 0.52, brigand 0.48, mousquetaire 0.47, chetif 0.47, rosse 0.47, fourbe 0.46, metayer 0.45, fripon 0.45, sire 0.45
 manger : mange 0.75, grignoter 0.72, mangeant 0.71, cuisine 0.64, mangent 0.64, sainement 0.64, cuisiner 0.63, goinfrer 0.63, vegetarien 0.62, copieux 0.62
-tyrannosaure : dinosaure 0.74, diplodocus 0.67, dinos 0.63, mammouth 0.61, dinosaures 0.60, griffes 0.58, reptile 0.58, gorille 0.58, mammouths 0.58, singes 0.57
+tyrannosaure : dinosaure 0.74, diplodocus 0.66, dinos 0.63, mammouth 0.61, dinosaures 0.60, griffes 0.58, reptile 0.58, gorille 0.58, mammouths 0.58, singes 0.57
 théropode : absent
 spinosaurus : absent
 suite : lire 0.82, janvier 0.65, mardi 0.62, aucun 0.62, mercredi 0.62, jeudi 0.62, commentaires 0.61, publie 0.61, novembre 0.61, trackback 0.60
 roche : roches 0.70, poudingue 0.69, basalte 0.68, gneiss 0.68, granite 0.68, metamorphique 0.67, gabbro 0.66, gabbros 0.65, feldspath 0.65, affleurement 0.65
 dur : disque 0.73, durs 0.67, defragmenter 0.64, bootable 0.64, partitionner 0.62, disquette 0.62, disquettes 0.62, booter 0.60, go 0.60, floppy 0.60
+« mars » (fréquence 182e) : avril 0.97, octobre 0.96, juin 0.96, février 0.95, mai 0.95, novembre 0.95, septembre 0.94, janvier 0.94
+« pierre » (fréquence 445e) : jean 0.82, michel 0.77, andré 0.76, claude 0.75, jacques 0.73, durand 0.71, bernard 0.71, georges 0.71
+« pïerre » (fréquence 133236e) : sanfroic 0.82, fontra 0.81, squal 0.80, jeroen 0.75, d+ 0.75, skitour 0.74, chamechaude 0.74, dénivellé 0.73
+« lune » (fréquence 3360e) : astre 0.81, astres 0.80, éclipse 0.79, lunaire 0.77, éclipses 0.76, vénus 0.75, lunaires 0.74, soleil 0.73
+« terre » (fréquence 421e) : ciel 0.62, terrestre 0.61, planète 0.61, éparpillant 0.60, telluriques 0.58, labourée 0.58, céleste 0.58, nourricière 0.58
+« terré » (fréquence 93848e) : gaudemet 0.61, domat 0.60, carbonnier 0.60, sirey 0.58, montchrestien 0.57, dalloz 0.57, vauchez 0.56, savatier 0.56
+« paris » (fréquence 98e) : nanterre 0.68, vincennes 0.64, saint-cloud 0.63, sorbonne 0.62, saint-denis 0.62, malesherbes 0.62, franklin-roosevelt 0.61, daumesnil 0.61
+« parís » (fréquence 48289e) : octubre 0.95, durante 0.95, publicación 0.95, dirección 0.95, francés 0.95, institución 0.95, diciembre 0.95, desde 0.95
+« pâris » (fréquence 56721e) : priam 0.87, ménélas 0.86, hécube 0.84, agamemnon 0.82, enée 0.81, thétis 0.81, thésée 0.80, énée 0.80
+« soleil » (fréquence 1020e) : ciel 0.77, couchant 0.75, lune 0.73, astre 0.73, nuages 0.73, couchers 0.71, filantes 0.69, soleils 0.68
+« venus » (fréquence 3368e) : rejoints 0.71, venaient 0.70, accueillaient 0.67, venues 0.67, restés 0.66, enthousiastes 0.66, viennent 0.66, retrouvaient 0.66
+« vénus » (fréquence 11222e) : jupiter 0.88, uranus 0.86, saturne 0.86, pluton 0.86, neptune 0.83, écliptique 0.82, ganymède 0.81, planètes 0.79
+« saturne » (fréquence 16700e) : uranus 0.94, pluton 0.92, jupiter 0.91, neptune 0.88, planètes 0.86, vénus 0.86, encelade 0.86, japet 0.84
 ===== Aide à l'écriture
 aide.bin : 5.4 Mo, 186956 mots proposables
 Mots mal écrits et propositions :
@@ -79,11 +92,11 @@ DETAIL {"page":"Monstre (série télévisée)","kind":"sujet","word":"cannibale"
   sujet   horreur        chaud 0.65 → tueurs
 DETAIL {"page":"Monstre (série télévisée)","kind":"sujet","word":"horreur","level":"chaud","cc":0.485,"near":[{"h":"meurtres","cos":0.583,"rank":82,"c":[0.72,0.57,0.45,0.24]},{"h":"tueurs","cos":0.579,"rank":78,"c":[0.69,0.56,0.44,0.27]},{"h":"terribles","cos":0.546,"rank":182,"c":[0.69,0.58,0.48,0.28]}]}
   sujet   enquête        tiède 0.3 → relate
-DETAIL {"page":"Monstre (série télévisée)","kind":"sujet","word":"enquête","level":"tiède","cc":0.306,"near":[{"h":"relate","cos":0.33,"rank":514,"c":[0.61,0.43,0.33,0.2]},{"h":"arrestation","cos":0.27,"rank":3031,"c":[0.76,0.59,0.46,0.21]},{"h":"diffusee","cos":0.263,"rank":1158,"c":[0.69,0.53,0.35,0.16]}]}
+DETAIL {"page":"Monstre (série télévisée)","kind":"sujet","word":"enquête","level":"tiède","cc":0.306,"near":[{"h":"relate","cos":0.33,"rank":514,"c":[0.61,0.43,0.33,0.2]},{"h":"arrestation","cos":0.27,"rank":3024,"c":[0.76,0.59,0.46,0.21]},{"h":"diffusee","cos":0.263,"rank":1158,"c":[0.69,0.53,0.35,0.16]}]}
   sujet   cadavre        chaud 0.65 → Monstre
 DETAIL {"page":"Monstre (série télévisée)","kind":"sujet","word":"cadavre","level":"chaud","cc":0.276,"near":[{"h":"monstre","cos":0.554,"rank":73,"c":[0.66,0.54,0.45,0.28]},{"h":"meurtres","cos":0.469,"rank":375,"c":[0.72,0.57,0.45,0.24]},{"h":"criminel","cos":0.463,"rank":477,"c":[0.72,0.58,0.46,0.23]}]}
   sujet   policier       chaud 0.69 → meurtres
-DETAIL {"page":"Monstre (série télévisée)","kind":"sujet","word":"policier","level":"chaud","cc":0.517,"near":[{"h":"meurtres","cos":0.612,"rank":54,"c":[0.72,0.57,0.45,0.24]},{"h":"criminel","cos":0.572,"rank":114,"c":[0.72,0.58,0.46,0.23]},{"h":"tueurs","cos":0.545,"rank":137,"c":[0.69,0.56,0.44,0.27]}]}
+DETAIL {"page":"Monstre (série télévisée)","kind":"sujet","word":"policier","level":"chaud","cc":0.517,"near":[{"h":"meurtres","cos":0.612,"rank":54,"c":[0.72,0.57,0.45,0.24]},{"h":"criminel","cos":0.572,"rank":113,"c":[0.72,0.58,0.46,0.23]},{"h":"tueurs","cos":0.545,"rank":137,"c":[0.69,0.56,0.44,0.27]}]}
   sujet   sang           rien
 DETAIL {"page":"Monstre (série télévisée)","kind":"sujet","word":"sang","level":"rien","cc":0.125,"near":[{"h":"monstre","cos":0.303,"rank":4087,"c":[0.66,0.54,0.45,0.28]},{"h":"terribles","cos":0.273,"rank":5736,"c":[0.69,0.58,0.48,0.28]},{"h":"tueurs","cos":0.258,"rank":5379,"c":[0.69,0.56,0.44,0.27]}]}
   pièges  guerre         chaud 0.77 → seconde
@@ -93,27 +106,27 @@ DETAIL {"page":"Monstre (série télévisée)","kind":"pièges","word":"nazi","l
   pièges  soldat         tiède 0.3 → meurtriers
 DETAIL {"page":"Monstre (série télévisée)","kind":"pièges","word":"soldat","level":"tiède","cc":0.298,"near":[{"h":"meurtriers","cos":0.393,"rank":1179,"c":[0.71,0.57,0.46,0.25]},{"h":"assassinat","cos":0.382,"rank":1056,"c":[0.7,0.57,0.45,0.23]},{"h":"tueurs","cos":0.381,"rank":1234,"c":[0.69,0.56,0.44,0.27]}]}
   pièges  bataille       tiède 0.3 → terribles
-DETAIL {"page":"Monstre (série télévisée)","kind":"pièges","word":"bataille","level":"tiède","cc":0.159,"near":[{"h":"terribles","cos":0.377,"rank":1832,"c":[0.69,0.58,0.48,0.28]},{"h":"meurtriers","cos":0.269,"rank":4226,"c":[0.71,0.57,0.46,0.25]},{"h":"relate","cos":0.248,"rank":2328,"c":[0.61,0.43,0.33,0.2]}]}
+DETAIL {"page":"Monstre (série télévisée)","kind":"pièges","word":"bataille","level":"tiède","cc":0.159,"near":[{"h":"terribles","cos":0.377,"rank":1833,"c":[0.69,0.58,0.48,0.28]},{"h":"meurtriers","cos":0.269,"rank":4226,"c":[0.71,0.57,0.46,0.25]},{"h":"relate","cos":0.248,"rank":2328,"c":[0.61,0.43,0.33,0.2]}]}
   pièges  football       chaud 0.66 → saison
-DETAIL {"page":"Monstre (série télévisée)","kind":"pièges","word":"football","level":"chaud","cc":0.067,"near":[{"h":"saison","cos":0.504,"rank":62,"c":[0.59,0.48,0.38,0.19]},{"h":"saisons","cos":0.316,"rank":315,"c":[0.52,0.36,0.29,0.17]},{"h":"diffusee","cos":0.169,"rank":3935,"c":[0.69,0.53,0.35,0.16]}]}
+DETAIL {"page":"Monstre (série télévisée)","kind":"pièges","word":"football","level":"chaud","cc":0.067,"near":[{"h":"saison","cos":0.504,"rank":62,"c":[0.59,0.48,0.38,0.19]},{"h":"saisons","cos":0.316,"rank":315,"c":[0.52,0.36,0.29,0.17]},{"h":"diffusee","cos":0.169,"rank":3936,"c":[0.69,0.53,0.35,0.16]}]}
   pièges  cuisine        rien
-DETAIL {"page":"Monstre (série télévisée)","kind":"pièges","word":"cuisine","level":"rien","cc":-0.024,"near":[{"h":"saisons","cos":0.222,"rank":2110,"c":[0.52,0.36,0.29,0.17]},{"h":"americaine","cos":0.119,"rank":14304,"c":[0.6,0.46,0.36,0.2]},{"h":"saison","cos":0.111,"rank":13863,"c":[0.59,0.48,0.38,0.19]}]}
+DETAIL {"page":"Monstre (série télévisée)","kind":"pièges","word":"cuisine","level":"rien","cc":-0.024,"near":[{"h":"saisons","cos":0.222,"rank":2110,"c":[0.52,0.36,0.29,0.17]},{"h":"americaine","cos":0.119,"rank":14302,"c":[0.6,0.46,0.36,0.2]},{"h":"saison","cos":0.111,"rank":13863,"c":[0.59,0.48,0.38,0.19]}]}
   pièges  voiture        rien
-DETAIL {"page":"Monstre (série télévisée)","kind":"pièges","word":"voiture","level":"rien","cc":0.006,"near":[{"h":"monstre","cos":0.134,"rank":20674,"c":[0.66,0.54,0.45,0.28]},{"h":"parcours","cos":0.095,"rank":16479,"c":[0.58,0.46,0.35,0.17]},{"h":"unis","cos":0.085,"rank":17741,"c":[0.55,0.4,0.31,0.17]}]}
+DETAIL {"page":"Monstre (série télévisée)","kind":"pièges","word":"voiture","level":"rien","cc":0.006,"near":[{"h":"monstre","cos":0.134,"rank":20675,"c":[0.66,0.54,0.45,0.28]},{"h":"parcours","cos":0.095,"rank":16479,"c":[0.58,0.46,0.35,0.17]},{"h":"unis","cos":0.085,"rank":17740,"c":[0.55,0.4,0.31,0.17]}]}
   pièges  mariage        tiède 0.33 → parents
 DETAIL {"page":"Monstre (série télévisée)","kind":"pièges","word":"mariage","level":"tiède","cc":0.044,"near":[{"h":"parents","cos":0.358,"rank":455,"c":[0.66,0.47,0.35,0.17]},{"h":"actes","cos":0.231,"rank":2927,"c":[0.47,0.39,0.32,0.2]},{"h":"lizzie","cos":0.227,"rank":5182,"c":[0.63,0.56,0.45,0.23]}]}
 
 Tour Eiffel
-  sujet   acier          chaud 0.78 → fer
-DETAIL {"page":"Tour Eiffel","kind":"sujet","word":"acier","level":"chaud","cc":0.093,"near":[{"h":"fer","cos":0.47,"rank":26,"c":[0.51,0.41,0.32,0.17]},{"h":"autoportante","cos":0.361,"rank":474,"c":[0.59,0.45,0.35,0.18]},{"h":"hauteur","cos":0.337,"rank":1020,"c":[0.62,0.5,0.39,0.2]}]}
+  sujet   acier          chaud 0.77 → fer
+DETAIL {"page":"Tour Eiffel","kind":"sujet","word":"acier","level":"chaud","cc":0.093,"near":[{"h":"fer","cos":0.469,"rank":26,"c":[0.51,0.41,0.32,0.17]},{"h":"autoportante","cos":0.361,"rank":469,"c":[0.59,0.45,0.35,0.18]},{"h":"hauteur","cos":0.337,"rank":1025,"c":[0.62,0.5,0.39,0.2]}]}
   sujet   métal          chaud 0.73 → fer
-DETAIL {"page":"Tour Eiffel","kind":"sujet","word":"métal","level":"chaud","cc":-0.045,"near":[{"h":"fer","cos":0.453,"rank":37,"c":[0.51,0.41,0.32,0.17]},{"h":"extremite","cos":0.237,"rank":4838,"c":[0.69,0.58,0.46,0.24]},{"h":"sert","cos":0.215,"rank":4515,"c":[0.56,0.45,0.35,0.2]}]}
-  sujet   ingénieur      tiède 0.36 → niveau
-DETAIL {"page":"Tour Eiffel","kind":"sujet","word":"ingénieur","level":"tiède","cc":0.082,"near":[{"h":"niveau","cos":0.361,"rank":403,"c":[0.52,0.43,0.35,0.2]},{"h":"collaborateurs","cos":0.338,"rank":1195,"c":[0.63,0.52,0.41,0.21]},{"h":"scientifiques","cos":0.322,"rank":1525,"c":[0.63,0.5,0.39,0.23]}]}
+DETAIL {"page":"Tour Eiffel","kind":"sujet","word":"métal","level":"chaud","cc":-0.045,"near":[{"h":"fer","cos":0.453,"rank":37,"c":[0.51,0.41,0.32,0.17]},{"h":"extremite","cos":0.237,"rank":4839,"c":[0.69,0.58,0.46,0.24]},{"h":"sert","cos":0.215,"rank":4515,"c":[0.56,0.45,0.35,0.2]}]}
+  sujet   ingénieur      tiède 0.35 → niveau
+DETAIL {"page":"Tour Eiffel","kind":"sujet","word":"ingénieur","level":"tiède","cc":0.082,"near":[{"h":"niveau","cos":0.36,"rank":411,"c":[0.52,0.43,0.35,0.2]},{"h":"collaborateurs","cos":0.338,"rank":1192,"c":[0.63,0.52,0.41,0.21]},{"h":"scientifiques","cos":0.322,"rank":1522,"c":[0.63,0.5,0.39,0.23]}]}
   sujet   touristes      brûlant 0.91 → touristique
 DETAIL {"page":"Tour Eiffel","kind":"sujet","word":"touristes","level":"brûlant","cc":0.238,"near":[{"h":"touristique","cos":0.655,"rank":5,"c":[0.61,0.44,0.35,0.2]},{"h":"visiteurs","cos":0.494,"rank":17,"c":[0.54,0.39,0.31,0.17]},{"h":"capitale","cos":0.462,"rank":71,"c":[0.56,0.45,0.39,0.23]}]}
   sujet   construction   chaud 0.64 → plan
-DETAIL {"page":"Tour Eiffel","kind":"sujet","word":"construction","level":"chaud","cc":0.41,"near":[{"h":"construite","cos":0.52,"rank":246,"c":[0.74,0.61,0.44,0.2]},{"h":"plan","cos":0.415,"rank":78,"c":[0.5,0.4,0.33,0.19]},{"h":"notamment","cos":0.343,"rank":2397,"c":[0.65,0.54,0.45,0.28]}]}
+DETAIL {"page":"Tour Eiffel","kind":"sujet","word":"construction","level":"chaud","cc":0.41,"near":[{"h":"construite","cos":0.52,"rank":246,"c":[0.74,0.61,0.44,0.2]},{"h":"plan","cos":0.415,"rank":78,"c":[0.5,0.4,0.33,0.19]},{"h":"notamment","cos":0.343,"rank":2396,"c":[0.65,0.54,0.45,0.28]}]}
   sujet   structure      tiède 0.33 → Utilisée
 DETAIL {"page":"Tour Eiffel","kind":"sujet","word":"structure","level":"tiède","cc":0.299,"near":[{"h":"agit","cos":0.409,"rank":1140,"c":[0.67,0.57,0.47,0.28]},{"h":"utilisee","cos":0.38,"rank":401,"c":[0.57,0.46,0.37,0.23]},{"h":"champ","cos":0.376,"rank":446,"c":[0.53,0.46,0.37,0.2]}]}
   sujet   antenne        dévoilé
@@ -128,23 +141,23 @@ DETAIL {"page":"Tour Eiffel","kind":"pièges","word":"montagne","level":"chaud",
   pièges  océan          chaud 0.67 → ouest
 DETAIL {"page":"Tour Eiffel","kind":"pièges","word":"océan","level":"chaud","cc":0.17,"near":[{"h":"ouest","cos":0.498,"rank":53,"c":[0.6,0.46,0.37,0.22]},{"h":"nord","cos":0.465,"rank":66,"c":[0.57,0.44,0.36,0.2]},{"h":"culminant","cos":0.336,"rank":1604,"c":[0.72,0.62,0.48,0.2]}]}
   pièges  football       tiède 0.35 → France
-DETAIL {"page":"Tour Eiffel","kind":"pièges","word":"football","level":"tiède","cc":0.094,"near":[{"h":"france","cos":0.294,"rank":398,"c":[0.46,0.35,0.28,0.19]},{"h":"monde","cos":0.27,"rank":1651,"c":[0.47,0.39,0.33,0.21]},{"h":"payant","cos":0.194,"rank":3629,"c":[0.53,0.39,0.31,0.17]}]}
+DETAIL {"page":"Tour Eiffel","kind":"pièges","word":"football","level":"tiède","cc":0.094,"near":[{"h":"france","cos":0.294,"rank":398,"c":[0.46,0.35,0.28,0.19]},{"h":"monde","cos":0.27,"rank":1651,"c":[0.47,0.39,0.33,0.21]},{"h":"payant","cos":0.194,"rank":3628,"c":[0.53,0.39,0.31,0.17]}]}
   pièges  chanson        rien
-DETAIL {"page":"Tour Eiffel","kind":"pièges","word":"chanson","level":"rien","cc":-0.028,"near":[{"h":"radiophoniques","cos":0.313,"rank":669,"c":[0.69,0.5,0.34,0.16]},{"h":"eiffel","cos":0.152,"rank":5747,"c":[0.51,0.39,0.3,0.16]},{"h":"francaise","cos":0.132,"rank":11717,"c":[0.5,0.39,0.31,0.19]}]}
+DETAIL {"page":"Tour Eiffel","kind":"pièges","word":"chanson","level":"rien","cc":-0.028,"near":[{"h":"radiophoniques","cos":0.313,"rank":668,"c":[0.69,0.5,0.34,0.16]},{"h":"eiffel","cos":0.152,"rank":5747,"c":[0.51,0.39,0.3,0.16]},{"h":"francaise","cos":0.132,"rank":11717,"c":[0.5,0.39,0.31,0.19]}]}
   pièges  guerre         tiède 0.42 → Révolution
-DETAIL {"page":"Tour Eiffel","kind":"pièges","word":"guerre","level":"tiède","cc":0.169,"near":[{"h":"revolution","cos":0.485,"rank":286,"c":[0.68,0.56,0.43,0.23]},{"h":"monument","cos":0.324,"rank":1083,"c":[0.67,0.52,0.39,0.19]},{"h":"drapeau","cos":0.306,"rank":564,"c":[0.54,0.4,0.31,0.18]}]}
+DETAIL {"page":"Tour Eiffel","kind":"pièges","word":"guerre","level":"tiède","cc":0.169,"near":[{"h":"revolution","cos":0.485,"rank":286,"c":[0.68,0.56,0.43,0.23]},{"h":"monument","cos":0.324,"rank":1082,"c":[0.67,0.52,0.39,0.19]},{"h":"drapeau","cos":0.306,"rank":564,"c":[0.54,0.4,0.31,0.18]}]}
   pièges  cuisine        tiède 0.54 → étage
-DETAIL {"page":"Tour Eiffel","kind":"pièges","word":"cuisine","level":"tiède","cc":0.06,"near":[{"h":"etage","cos":0.502,"rank":138,"c":[0.73,0.54,0.35,0.16]},{"h":"situee","cos":0.249,"rank":4249,"c":[0.63,0.51,0.39,0.24]},{"h":"situe","cos":0.236,"rank":4032,"c":[0.62,0.5,0.39,0.22]}]}
+DETAIL {"page":"Tour Eiffel","kind":"pièges","word":"cuisine","level":"tiède","cc":0.06,"near":[{"h":"etage","cos":0.502,"rank":138,"c":[0.73,0.54,0.35,0.16]},{"h":"situee","cos":0.249,"rank":4270,"c":[0.63,0.51,0.39,0.24]},{"h":"situe","cos":0.236,"rank":4032,"c":[0.62,0.5,0.39,0.22]}]}
   pièges  médecin        rien
 DETAIL {"page":"Tour Eiffel","kind":"pièges","word":"médecin","level":"rien","cc":0.06,"near":[{"h":"payant","cos":0.224,"rank":2219,"c":[0.53,0.39,0.31,0.17]},{"h":"eleve","cos":0.197,"rank":2952,"c":[0.61,0.47,0.35,0.16]},{"h":"pendant","cos":0.186,"rank":4022,"c":[0.58,0.41,0.31,0.17]}]}
   pièges  roi            rien
-DETAIL {"page":"Tour Eiffel","kind":"pièges","word":"roi","level":"rien","cc":0.003,"near":[{"h":"capitale","cos":0.253,"rank":3751,"c":[0.56,0.45,0.39,0.23]},{"h":"gustave","cos":0.23,"rank":4608,"c":[0.64,0.52,0.41,0.22]},{"h":"symbole","cos":0.221,"rank":3583,"c":[0.61,0.44,0.35,0.2]}]}
+DETAIL {"page":"Tour Eiffel","kind":"pièges","word":"roi","level":"rien","cc":0.003,"near":[{"h":"capitale","cos":0.253,"rank":3752,"c":[0.56,0.45,0.39,0.23]},{"h":"gustave","cos":0.23,"rank":4608,"c":[0.64,0.52,0.41,0.22]},{"h":"symbole","cos":0.221,"rank":3583,"c":[0.61,0.44,0.35,0.2]}]}
 
 Napoléon Ier
   sujet   conquête       chaud 0.8 → reconquérir
 DETAIL {"page":"Napoléon Ier","kind":"sujet","word":"conquête","level":"chaud","cc":0.506,"near":[{"h":"empire","cos":0.657,"rank":57,"c":[0.74,0.62,0.49,0.24]},{"h":"royaumes","cos":0.528,"rank":235,"c":[0.7,0.59,0.46,0.24]},{"h":"monarchies","cos":0.494,"rank":241,"c":[0.68,0.55,0.44,0.24]}]}
   sujet   couronne       chaud 0.65 → revers
-DETAIL {"page":"Napoléon Ier","kind":"sujet","word":"couronne","level":"chaud","cc":0.234,"near":[{"h":"roi","cos":0.458,"rank":673,"c":[0.72,0.61,0.48,0.24]},{"h":"revers","cos":0.455,"rank":64,"c":[0.61,0.43,0.31,0.18]},{"h":"doree","cos":0.419,"rank":367,"c":[0.6,0.49,0.4,0.24]}]}
+DETAIL {"page":"Napoléon Ier","kind":"sujet","word":"couronne","level":"chaud","cc":0.234,"near":[{"h":"roi","cos":0.458,"rank":673,"c":[0.72,0.61,0.48,0.24]},{"h":"revers","cos":0.455,"rank":64,"c":[0.61,0.43,0.31,0.18]},{"h":"doree","cos":0.419,"rank":366,"c":[0.6,0.49,0.4,0.24]}]}
   sujet   soldats        brûlant 0.91 → militaires
 DETAIL {"page":"Napoléon Ier","kind":"sujet","word":"soldats","level":"brûlant","cc":0.299,"near":[{"h":"armee","cos":0.775,"rank":12,"c":[0.8,0.65,0.47,0.21]},{"h":"armees","cos":0.694,"rank":24,"c":[0.76,0.59,0.44,0.2]},{"h":"militaires","cos":0.69,"rank":5,"c":[0.67,0.53,0.41,0.2]}]}
   sujet   monarque       chaud 0.89 → roi
@@ -157,7 +170,7 @@ DETAIL {"page":"Napoléon Ier","kind":"sujet","word":"dictateur","level":"tiède
   sujet   stratège       chaud 0.61 → reconquérir
 DETAIL {"page":"Napoléon Ier","kind":"sujet","word":"stratège","level":"chaud","cc":0.367,"near":[{"h":"abdiquer","cos":0.502,"rank":160,"c":[0.61,0.53,0.44,0.27]},{"h":"vaincu","cos":0.496,"rank":257,"c":[0.65,0.55,0.46,0.28]},{"h":"defaite","cos":0.452,"rank":343,"c":[0.67,0.54,0.43,0.23]}]}
   sujet   invasion       chaud 0.77 → alliés
-DETAIL {"page":"Napoléon Ier","kind":"sujet","word":"invasion","level":"chaud","cc":0.39,"near":[{"h":"allies","cos":0.619,"rank":40,"c":[0.67,0.55,0.45,0.24]},{"h":"guerres","cos":0.585,"rank":52,"c":[0.65,0.54,0.43,0.24]},{"h":"empire","cos":0.563,"rank":241,"c":[0.74,0.62,0.49,0.24]}]}
+DETAIL {"page":"Napoléon Ier","kind":"sujet","word":"invasion","level":"chaud","cc":0.39,"near":[{"h":"allies","cos":0.619,"rank":40,"c":[0.67,0.55,0.45,0.24]},{"h":"guerres","cos":0.585,"rank":52,"c":[0.65,0.54,0.43,0.24]},{"h":"empire","cos":0.563,"rank":240,"c":[0.74,0.62,0.49,0.24]}]}
   pièges  football       tiède 0.35 → France
 DETAIL {"page":"Napoléon Ier","kind":"pièges","word":"football","level":"tiède","cc":0.023,"near":[{"h":"defaite","cos":0.411,"rank":571,"c":[0.67,0.54,0.43,0.23]},{"h":"victoires","cos":0.394,"rank":627,"c":[0.72,0.54,0.42,0.18]},{"h":"remporter","cos":0.373,"rank":819,"c":[0.73,0.57,0.42,0.2]}]}
   pièges  internet       tiède 0.52 → consulte
@@ -167,11 +180,11 @@ DETAIL {"page":"Napoléon Ier","kind":"pièges","word":"cuisine","level":"chaud"
   pièges  musique        rien
 DETAIL {"page":"Napoléon Ier","kind":"pièges","word":"musique","level":"rien","cc":-0.023,"near":[{"h":"romantique","cos":0.336,"rank":1935,"c":[0.64,0.54,0.44,0.25]},{"h":"traditionnels","cos":0.315,"rank":861,"c":[0.52,0.43,0.34,0.2]},{"h":"joachim","cos":0.277,"rank":2456,"c":[0.59,0.51,0.41,0.22]}]}
   pièges  voiture        chaud 0.72 → partir
-DETAIL {"page":"Napoléon Ier","kind":"pièges","word":"voiture","level":"chaud","cc":-0.067,"near":[{"h":"partir","cos":0.433,"rank":51,"c":[0.52,0.38,0.28,0.15]},{"h":"domingue","cos":0.261,"rank":1187,"c":[0.62,0.47,0.34,0.14]},{"h":"arrive","cos":0.252,"rank":7277,"c":[0.71,0.61,0.5,0.3]}]}
+DETAIL {"page":"Napoléon Ier","kind":"pièges","word":"voiture","level":"chaud","cc":-0.067,"near":[{"h":"partir","cos":0.433,"rank":51,"c":[0.52,0.38,0.28,0.15]},{"h":"domingue","cos":0.261,"rank":1187,"c":[0.62,0.47,0.34,0.14]},{"h":"arrive","cos":0.252,"rank":7276,"c":[0.71,0.61,0.5,0.3]}]}
   pièges  ordinateur     rien
 DETAIL {"page":"Napoléon Ier","kind":"pièges","word":"ordinateur","level":"rien","cc":-0.069,"near":[{"h":"centralise","cos":0.317,"rank":528,"c":[0.65,0.51,0.32,0.17]},{"h":"mode","cos":0.305,"rank":549,"c":[0.43,0.37,0.31,0.19]},{"h":"capable","cos":0.289,"rank":1716,"c":[0.57,0.47,0.38,0.21]}]}
   pièges  chat           rien
-DETAIL {"page":"Napoléon Ier","kind":"pièges","word":"chat","level":"rien","cc":-0.162,"near":[{"h":"beau","cos":0.313,"rank":4135,"c":[0.68,0.57,0.49,0.29]},{"h":"coup","cos":0.184,"rank":13783,"c":[0.6,0.52,0.44,0.28]},{"h":"doree","cos":0.178,"rank":9576,"c":[0.6,0.49,0.4,0.24]}]}
+DETAIL {"page":"Napoléon Ier","kind":"pièges","word":"chat","level":"rien","cc":-0.162,"near":[{"h":"beau","cos":0.313,"rank":4135,"c":[0.68,0.57,0.49,0.29]},{"h":"coup","cos":0.184,"rank":13783,"c":[0.6,0.52,0.44,0.28]},{"h":"doree","cos":0.178,"rank":9575,"c":[0.6,0.49,0.4,0.24]}]}
   pièges  plage          brûlant 0.92 → mer
 DETAIL {"page":"Napoléon Ier","kind":"pièges","word":"plage","level":"brûlant","cc":-0.094,"near":[{"h":"mer","cos":0.682,"rank":1,"c":[0.61,0.51,0.41,0.19]},{"h":"ile","cos":0.498,"rank":239,"c":[0.69,0.57,0.43,0.2]},{"h":"restaurant","cos":0.382,"rank":546,"c":[0.72,0.54,0.39,0.19]}]}
 
@@ -196,9 +209,9 @@ DETAIL {"page":"Lionel Messi","kind":"sujet","word":"maillot","level":"tiède","
   pièges  guerre         tiède 0.41 → décennie
 DETAIL {"page":"Lionel Messi","kind":"pièges","word":"guerre","level":"tiède","cc":0.145,"near":[{"h":"decennie","cos":0.403,"rank":289,"c":[0.58,0.46,0.37,0.2]},{"h":"histoire","cos":0.4,"rank":380,"c":[0.61,0.48,0.39,0.21]},{"h":"americain","cos":0.36,"rank":877,"c":[0.61,0.5,0.39,0.22]}]}
   pièges  roi            tiède 0.38 → surnommé
-DETAIL {"page":"Lionel Messi","kind":"pièges","word":"roi","level":"tiède","cc":0.003,"near":[{"h":"surnomme","cos":0.42,"rank":345,"c":[0.59,0.49,0.39,0.24]},{"h":"natale","cos":0.271,"rank":2830,"c":[0.6,0.48,0.38,0.23]},{"h":"espagne","cos":0.258,"rank":1826,"c":[0.65,0.5,0.37,0.17]}]}
+DETAIL {"page":"Lionel Messi","kind":"pièges","word":"roi","level":"tiède","cc":0.003,"near":[{"h":"surnomme","cos":0.42,"rank":345,"c":[0.59,0.49,0.39,0.24]},{"h":"natale","cos":0.271,"rank":2829,"c":[0.6,0.48,0.38,0.23]},{"h":"espagne","cos":0.258,"rank":1826,"c":[0.65,0.5,0.37,0.17]}]}
   pièges  peinture       rien
-DETAIL {"page":"Lionel Messi","kind":"pièges","word":"peinture","level":"rien","cc":-0.035,"near":[{"h":"natale","cos":0.2,"rank":7560,"c":[0.6,0.48,0.38,0.23]},{"h":"talent","cos":0.164,"rank":13220,"c":[0.61,0.5,0.42,0.25]},{"h":"cours","cos":0.128,"rank":8366,"c":[0.55,0.43,0.31,0.16]}]}
+DETAIL {"page":"Lionel Messi","kind":"pièges","word":"peinture","level":"rien","cc":-0.035,"near":[{"h":"natale","cos":0.2,"rank":7562,"c":[0.6,0.48,0.38,0.23]},{"h":"talent","cos":0.164,"rank":13220,"c":[0.61,0.5,0.42,0.25]},{"h":"cours","cos":0.128,"rank":8366,"c":[0.55,0.43,0.31,0.16]}]}
   pièges  cuisine        rien
 DETAIL {"page":"Lionel Messi","kind":"pièges","word":"cuisine","level":"rien","cc":-0.023,"near":[{"h":"ferme","cos":0.278,"rank":1366,"c":[0.52,0.43,0.34,0.18]},{"h":"saisons","cos":0.222,"rank":2110,"c":[0.52,0.36,0.29,0.17]},{"h":"selection","cos":0.192,"rank":2609,"c":[0.47,0.35,0.27,0.16]}]}
   pièges  avion          rien
@@ -206,7 +219,7 @@ DETAIL {"page":"Lionel Messi","kind":"pièges","word":"avion","level":"rien","cc
   pièges  église         tiède 0.58 → Saint
 DETAIL {"page":"Lionel Messi","kind":"pièges","word":"église","level":"tiède","cc":-0.017,"near":[{"h":"saint","cos":0.535,"rank":113,"c":[0.7,0.54,0.44,0.24]},{"h":"ville","cos":0.3,"rank":1706,"c":[0.54,0.44,0.36,0.22]},{"h":"natale","cos":0.297,"rank":1904,"c":[0.6,0.48,0.38,0.23]}]}
   pièges  tracteur       rien
-DETAIL {"page":"Lionel Messi","kind":"pièges","word":"tracteur","level":"rien","cc":-0.033,"near":[{"h":"ferme","cos":0.248,"rank":2083,"c":[0.52,0.43,0.34,0.18]},{"h":"marque","cos":0.138,"rank":7992,"c":[0.51,0.4,0.32,0.17]},{"h":"jeune","cos":0.114,"rank":17471,"c":[0.58,0.46,0.37,0.22]}]}
+DETAIL {"page":"Lionel Messi","kind":"pièges","word":"tracteur","level":"rien","cc":-0.033,"near":[{"h":"ferme","cos":0.248,"rank":2083,"c":[0.52,0.43,0.34,0.18]},{"h":"marque","cos":0.138,"rank":7992,"c":[0.51,0.4,0.32,0.17]},{"h":"jeune","cos":0.114,"rank":17470,"c":[0.58,0.46,0.37,0.22]}]}
   pièges  médecin        rien
 DETAIL {"page":"Lionel Messi","kind":"pièges","word":"médecin","level":"rien","cc":0.083,"near":[{"h":"traitement","cos":0.327,"rank":2033,"c":[0.57,0.5,0.43,0.24]},{"h":"delivre","cos":0.304,"rank":863,"c":[0.74,0.5,0.35,0.15]},{"h":"hormonal","cos":0.288,"rank":2752,"c":[0.81,0.61,0.48,0.2]}]}
 
@@ -230,19 +243,19 @@ DETAIL {"page":"Seconde Guerre mondiale","kind":"sujet","word":"fusil","level":"
   pièges  football       tiède 0.35 → France
 DETAIL {"page":"Seconde Guerre mondiale","kind":"pièges","word":"football","level":"tiède","cc":0.027,"near":[{"h":"vainqueurs","cos":0.4,"rank":471,"c":[0.71,0.54,0.39,0.19]},{"h":"enrolees","cos":0.332,"rank":967,"c":[0.52,0.46,0.37,0.2]},{"h":"affronter","cos":0.311,"rank":1472,"c":[0.6,0.46,0.37,0.23]}]}
   pièges  cuisine        tiède 0.57 → chambres
-DETAIL {"page":"Seconde Guerre mondiale","kind":"pièges","word":"cuisine","level":"tiède","cc":-0.065,"near":[{"h":"chambres","cos":0.543,"rank":122,"c":[0.72,0.56,0.37,0.15]},{"h":"japonaise","cos":0.368,"rank":668,"c":[0.67,0.54,0.4,0.15]},{"h":"entierement","cos":0.319,"rank":551,"c":[0.51,0.42,0.32,0.17]}]}
+DETAIL {"page":"Seconde Guerre mondiale","kind":"pièges","word":"cuisine","level":"tiède","cc":-0.065,"near":[{"h":"chambres","cos":0.543,"rank":122,"c":[0.72,0.56,0.37,0.15]},{"h":"japonaise","cos":0.368,"rank":667,"c":[0.67,0.54,0.4,0.15]},{"h":"entierement","cos":0.319,"rank":551,"c":[0.51,0.42,0.32,0.17]}]}
   pièges  musique        tiède 0.34 → Tziganes
-DETAIL {"page":"Seconde Guerre mondiale","kind":"pièges","word":"musique","level":"tiède","cc":-0.056,"near":[{"h":"theatre","cos":0.446,"rank":529,"c":[0.77,0.65,0.46,0.2]},{"h":"tziganes","cos":0.372,"rank":396,"c":[0.67,0.5,0.35,0.19]},{"h":"italo","cos":0.298,"rank":903,"c":[0.47,0.4,0.33,0.19]}]}
+DETAIL {"page":"Seconde Guerre mondiale","kind":"pièges","word":"musique","level":"tiède","cc":-0.056,"near":[{"h":"theatre","cos":0.446,"rank":529,"c":[0.77,0.65,0.46,0.2]},{"h":"tziganes","cos":0.372,"rank":396,"c":[0.67,0.5,0.35,0.19]},{"h":"italo","cos":0.298,"rank":902,"c":[0.47,0.4,0.33,0.19]}]}
   pièges  mariage        chaud 0.85 → séparation
-DETAIL {"page":"Seconde Guerre mondiale","kind":"pièges","word":"mariage","level":"chaud","cc":-0.03,"near":[{"h":"separation","cos":0.485,"rank":15,"c":[0.5,0.39,0.31,0.2]},{"h":"homosexuels","cos":0.412,"rank":200,"c":[0.7,0.46,0.35,0.19]},{"h":"pacte","cos":0.276,"rank":1063,"c":[0.49,0.39,0.31,0.17]}]}
+DETAIL {"page":"Seconde Guerre mondiale","kind":"pièges","word":"mariage","level":"chaud","cc":-0.03,"near":[{"h":"separation","cos":0.485,"rank":15,"c":[0.5,0.39,0.31,0.2]},{"h":"homosexuels","cos":0.412,"rank":200,"c":[0.7,0.46,0.35,0.19]},{"h":"pacte","cos":0.276,"rank":1062,"c":[0.49,0.39,0.31,0.17]}]}
   pièges  ordinateur     rien
-DETAIL {"page":"Seconde Guerre mondiale","kind":"pièges","word":"ordinateur","level":"rien","cc":-0.006,"near":[{"h":"materiels","cos":0.313,"rank":1388,"c":[0.61,0.48,0.39,0.22]},{"h":"materielles","cos":0.237,"rank":4948,"c":[0.57,0.46,0.39,0.24]},{"h":"etc","cos":0.223,"rank":2991,"c":[0.49,0.39,0.31,0.19]}]}
+DETAIL {"page":"Seconde Guerre mondiale","kind":"pièges","word":"ordinateur","level":"rien","cc":-0.006,"near":[{"h":"materiels","cos":0.313,"rank":1387,"c":[0.61,0.48,0.39,0.22]},{"h":"materielles","cos":0.237,"rank":4948,"c":[0.57,0.46,0.39,0.24]},{"h":"etc","cos":0.223,"rank":2991,"c":[0.49,0.39,0.31,0.19]}]}
   pièges  plage          tiède 0.43 → chambres
 DETAIL {"page":"Seconde Guerre mondiale","kind":"pièges","word":"plage","level":"tiède","cc":-0.084,"near":[{"h":"chambres","cos":0.454,"rank":262,"c":[0.72,0.56,0.37,0.15]},{"h":"kilometres","cos":0.315,"rank":1332,"c":[0.57,0.49,0.39,0.21]},{"h":"plein","cos":0.265,"rank":1764,"c":[0.44,0.38,0.31,0.2]}]}
   pièges  chat           rien
 DETAIL {"page":"Seconde Guerre mondiale","kind":"pièges","word":"chat","level":"rien","cc":-0.165,"near":[{"h":"koa","cos":0.225,"rank":6056,"c":[0.57,0.51,0.45,0.24]},{"h":"vraiment","cos":0.196,"rank":12449,"c":[0.79,0.68,0.57,0.32]},{"h":"donne","cos":0.165,"rank":6719,"c":[0.53,0.43,0.32,0.18]}]}
   pièges  peinture       tiède 0.36 → gomme
-DETAIL {"page":"Seconde Guerre mondiale","kind":"pièges","word":"peinture","level":"tiède","cc":-0.077,"near":[{"h":"gomme","cos":0.425,"rank":351,"c":[0.63,0.51,0.4,0.2]},{"h":"siecle","cos":0.195,"rank":6991,"c":[0.85,0.57,0.44,0.23]},{"h":"japonaises","cos":0.187,"rank":3313,"c":[0.66,0.48,0.35,0.16]}]}
+DETAIL {"page":"Seconde Guerre mondiale","kind":"pièges","word":"peinture","level":"tiède","cc":-0.077,"near":[{"h":"gomme","cos":0.425,"rank":351,"c":[0.63,0.51,0.4,0.2]},{"h":"siecle","cos":0.195,"rank":6992,"c":[0.85,0.57,0.44,0.23]},{"h":"japonaises","cos":0.187,"rank":3313,"c":[0.66,0.48,0.35,0.16]}]}
 
 Chat
   sujet   souris         tiède 0.35 → tactiles
@@ -277,9 +290,9 @@ DETAIL {"page":"Chat","kind":"pièges","word":"ordinateur","level":"tiède","cc"
   pièges  roi            chaud 0.66 → noblesse
 DETAIL {"page":"Chat","kind":"pièges","word":"roi","level":"chaud","cc":-0.066,"near":[{"h":"noblesse","cos":0.574,"rank":79,"c":[0.67,0.55,0.41,0.2]},{"h":"venere","cos":0.418,"rank":683,"c":[0.67,0.54,0.44,0.24]},{"h":"mort","cos":0.374,"rank":1241,"c":[0.65,0.54,0.44,0.26]}]}
   pièges  banque         tiède 0.39 → compte
-DETAIL {"page":"Chat","kind":"pièges","word":"banque","level":"tiède","cc":0.03,"near":[{"h":"compte","cos":0.35,"rank":312,"c":[0.51,0.41,0.32,0.18]},{"h":"populaire","cos":0.296,"rank":748,"c":[0.51,0.41,0.31,0.17]},{"h":"controle","cos":0.263,"rank":3067,"c":[0.6,0.46,0.38,0.23]}]}
+DETAIL {"page":"Chat","kind":"pièges","word":"banque","level":"tiède","cc":0.03,"near":[{"h":"compte","cos":0.35,"rank":312,"c":[0.51,0.41,0.32,0.18]},{"h":"populaire","cos":0.296,"rank":748,"c":[0.51,0.41,0.31,0.17]},{"h":"controle","cos":0.263,"rank":3068,"c":[0.6,0.46,0.38,0.23]}]}
   pièges  élection       rien
-DETAIL {"page":"Chat","kind":"pièges","word":"élection","level":"rien","cc":-0.038,"near":[{"h":"populaire","cos":0.297,"rank":739,"c":[0.51,0.41,0.31,0.17]},{"h":"independance","cos":0.273,"rank":2890,"c":[0.59,0.49,0.39,0.23]},{"h":"diabolise","cos":0.232,"rank":7152,"c":[0.65,0.55,0.46,0.27]}]}
+DETAIL {"page":"Chat","kind":"pièges","word":"élection","level":"rien","cc":-0.038,"near":[{"h":"populaire","cos":0.297,"rank":738,"c":[0.51,0.41,0.31,0.17]},{"h":"independance","cos":0.273,"rank":2890,"c":[0.59,0.49,0.39,0.23]},{"h":"diabolise","cos":0.232,"rank":7151,"c":[0.65,0.55,0.46,0.27]}]}
 
 Wolfgang Amadeus Mozart
   sujet   concert        chaud 0.82 → musique
@@ -291,7 +304,7 @@ DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"sujet","word":"orchestre","leve
   sujet   mélodie        chaud 0.62 → musique
 DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"sujet","word":"mélodie","level":"chaud","cc":0.472,"near":[{"h":"piano","cos":0.732,"rank":139,"c":[0.86,0.76,0.57,0.17]},{"h":"violon","cos":0.687,"rank":219,"c":[0.89,0.76,0.56,0.16]},{"h":"symphonie","cos":0.652,"rank":232,"c":[0.86,0.74,0.51,0.17]}]}
   sujet   chef           tiède 0.3 → reconnu
-DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"sujet","word":"chef","level":"tiède","cc":0.183,"near":[{"h":"reconnu","cos":0.275,"rank":1034,"c":[0.53,0.4,0.31,0.18]},{"h":"ans","cos":0.249,"rank":933,"c":[0.6,0.37,0.28,0.15]},{"h":"considere","cos":0.211,"rank":5432,"c":[0.57,0.48,0.39,0.22]}]}
+DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"sujet","word":"chef","level":"tiède","cc":0.183,"near":[{"h":"reconnu","cos":0.275,"rank":1034,"c":[0.53,0.4,0.31,0.18]},{"h":"ans","cos":0.249,"rank":933,"c":[0.6,0.37,0.28,0.15]},{"h":"considere","cos":0.211,"rank":5431,"c":[0.57,0.48,0.39,0.22]}]}
   sujet   beethoven      dévoilé
   sujet   requiem        tiède 0.56 → symphonie
 DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"sujet","word":"requiem","level":"tiède","cc":0.512,"near":[{"h":"mozart","cos":0.728,"rank":156,"c":[0.87,0.76,0.54,0.17]},{"h":"symphonie","cos":0.71,"rank":143,"c":[0.86,0.74,0.51,0.17]},{"h":"beethoven","cos":0.704,"rank":173,"c":[0.91,0.76,0.51,0.17]}]}
@@ -305,15 +318,15 @@ DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"pièges","word":"guerre","level
   pièges  football       rien
 DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"pièges","word":"football","level":"rien","cc":-0.01,"near":[{"h":"prodige","cos":0.402,"rank":581,"c":[0.57,0.52,0.42,0.24]},{"h":"virtuose","cos":0.161,"rank":9791,"c":[0.76,0.64,0.5,0.23]},{"h":"europe","cos":0.148,"rank":6785,"c":[0.53,0.4,0.31,0.17]}]}
   pièges  voiture        rien
-DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"pièges","word":"voiture","level":"rien","cc":-0.059,"near":[{"h":"assistances","cos":0.263,"rank":1216,"c":[0.48,0.39,0.31,0.17]},{"h":"porte","cos":0.192,"rank":5059,"c":[0.51,0.41,0.33,0.19]},{"h":"salzbourg","cos":0.139,"rank":8639,"c":[0.68,0.57,0.43,0.19]}]}
+DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"pièges","word":"voiture","level":"rien","cc":-0.059,"near":[{"h":"assistances","cos":0.263,"rank":1216,"c":[0.48,0.39,0.31,0.17]},{"h":"porte","cos":0.192,"rank":5058,"c":[0.51,0.41,0.33,0.19]},{"h":"salzbourg","cos":0.139,"rank":8639,"c":[0.68,0.57,0.43,0.19]}]}
   pièges  cuisine        rien
-DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"pièges","word":"cuisine","level":"rien","cc":-0.015,"near":[{"h":"viennoise","cos":0.121,"rank":14489,"c":[0.61,0.54,0.41,0.21]},{"h":"piano","cos":0.106,"rank":10014,"c":[0.86,0.76,0.57,0.17]},{"h":"soeur","cos":0.106,"rank":20978,"c":[0.76,0.56,0.45,0.26]}]}
+DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"pièges","word":"cuisine","level":"rien","cc":-0.015,"near":[{"h":"viennoise","cos":0.121,"rank":14488,"c":[0.61,0.54,0.41,0.21]},{"h":"piano","cos":0.106,"rank":10012,"c":[0.86,0.76,0.57,0.17]},{"h":"soeur","cos":0.106,"rank":20979,"c":[0.76,0.56,0.45,0.26]}]}
   pièges  politique      tiède 0.55 → Europe
 DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"pièges","word":"politique","level":"tiède","cc":0.116,"near":[{"h":"europe","cos":0.386,"rank":130,"c":[0.53,0.4,0.31,0.17]},{"h":"oeuvre","cos":0.32,"rank":1527,"c":[0.57,0.49,0.39,0.23]},{"h":"histoire","cos":0.298,"rank":1634,"c":[0.61,0.48,0.39,0.21]}]}
-  pièges  avion          tiède 0.34 → Amadeus
-DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"pièges","word":"avion","level":"tiède","cc":-0.049,"near":[{"h":"amadeus","cos":0.359,"rank":400,"c":[0.54,0.47,0.34,0.16]},{"h":"salzbourg","cos":0.184,"rank":5301,"c":[0.68,0.57,0.43,0.19]},{"h":"assistances","cos":0.164,"rank":5958,"c":[0.48,0.39,0.31,0.17]}]}
+  pièges  avion          tiède 0.35 → Amadeus
+DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"pièges","word":"avion","level":"tiède","cc":-0.049,"near":[{"h":"amadeus","cos":0.359,"rank":400,"c":[0.54,0.47,0.34,0.16]},{"h":"salzbourg","cos":0.184,"rank":5302,"c":[0.68,0.57,0.43,0.19]},{"h":"assistances","cos":0.164,"rank":5957,"c":[0.48,0.39,0.31,0.17]}]}
   pièges  plage          rien
-DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"pièges","word":"plage","level":"rien","cc":-0.12,"near":[{"h":"courant","cos":0.08,"rank":17006,"c":[0.65,0.53,0.37,0.17]},{"h":"subjugue","cos":0.044,"rank":41839,"c":[0.65,0.56,0.46,0.29]},{"h":"piano","cos":0.041,"rank":28182,"c":[0.86,0.76,0.57,0.17]}]}
+DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"pièges","word":"plage","level":"rien","cc":-0.12,"near":[{"h":"courant","cos":0.08,"rank":17007,"c":[0.65,0.53,0.37,0.17]},{"h":"subjugue","cos":0.044,"rank":41841,"c":[0.65,0.56,0.46,0.29]},{"h":"piano","cos":0.041,"rank":28184,"c":[0.86,0.76,0.57,0.17]}]}
   pièges  ordinateur     rien
 DETAIL {"page":"Wolfgang Amadeus Mozart","kind":"pièges","word":"ordinateur","level":"rien","cc":0.03,"near":[{"h":"passe","cos":0.3,"rank":837,"c":[0.51,0.42,0.33,0.2]},{"h":"musicaux","cos":0.159,"rank":6748,"c":[0.72,0.56,0.44,0.19]},{"h":"langage","cos":0.149,"rank":9865,"c":[0.69,0.57,0.45,0.22]}]}
 
@@ -327,11 +340,11 @@ DETAIL {"page":"Soleil","kind":"sujet","word":"lune","level":"brûlant","cc":0.5
   sujet   ciel           brûlant 0.93 → Soleil
 DETAIL {"page":"Soleil","kind":"sujet","word":"ciel","level":"brûlant","cc":0.427,"near":[{"h":"soleil","cos":0.74,"rank":1,"c":[0.64,0.5,0.38,0.2]},{"h":"etoile","cos":0.615,"rank":76,"c":[0.73,0.58,0.39,0.17]},{"h":"terre","cos":0.564,"rank":2,"c":[0.49,0.4,0.34,0.21]}]}
   sujet   rayons         chaud 0.75 → Soleil
-DETAIL {"page":"Soleil","kind":"sujet","word":"rayons","level":"chaud","cc":0.479,"near":[{"h":"soleil","cos":0.57,"rank":36,"c":[0.64,0.5,0.38,0.2]},{"h":"etoile","cos":0.528,"rank":162,"c":[0.73,0.58,0.39,0.17]},{"h":"lactee","cos":0.512,"rank":238,"c":[0.78,0.62,0.39,0.15]}]}
+DETAIL {"page":"Soleil","kind":"sujet","word":"rayons","level":"chaud","cc":0.479,"near":[{"h":"soleil","cos":0.57,"rank":36,"c":[0.64,0.5,0.38,0.2]},{"h":"etoile","cos":0.527,"rank":162,"c":[0.73,0.58,0.39,0.17]},{"h":"lactee","cos":0.512,"rank":238,"c":[0.78,0.62,0.39,0.15]}]}
   sujet   astre          brûlant 0.91 → Soleil
 DETAIL {"page":"Soleil","kind":"sujet","word":"astre","level":"brûlant","cc":0.626,"near":[{"h":"etoile","cos":0.759,"rank":2,"c":[0.73,0.58,0.39,0.17]},{"h":"jupiter","cos":0.73,"rank":21,"c":[0.77,0.61,0.43,0.16]},{"h":"planetes","cos":0.711,"rank":90,"c":[0.85,0.69,0.43,0.14]}]}
   sujet   galaxie        brûlant 0.95 → galactique
-DETAIL {"page":"Soleil","kind":"sujet","word":"galaxie","level":"brûlant","cc":0.707,"near":[{"h":"galactique","cos":0.923,"rank":1,"c":[0.82,0.68,0.45,0.15]},{"h":"lactee","cos":0.875,"rank":1,"c":[0.78,0.62,0.39,0.15]},{"h":"planetes","cos":0.843,"rank":13,"c":[0.85,0.69,0.43,0.14]}]}
+DETAIL {"page":"Soleil","kind":"sujet","word":"galaxie","level":"brûlant","cc":0.706,"near":[{"h":"galactique","cos":0.923,"rank":1,"c":[0.82,0.68,0.45,0.15]},{"h":"lactee","cos":0.875,"rank":1,"c":[0.78,0.62,0.39,0.15]},{"h":"planetes","cos":0.842,"rank":13,"c":[0.85,0.69,0.43,0.14]}]}
   sujet   chaud          tiède 0.45 → Soleil
 DETAIL {"page":"Soleil","kind":"sujet","word":"chaud","level":"tiède","cc":0.107,"near":[{"h":"soleil","cos":0.44,"rank":230,"c":[0.64,0.5,0.38,0.2]},{"h":"terre","cos":0.317,"rank":752,"c":[0.49,0.4,0.34,0.21]},{"h":"solaire","cos":0.291,"rank":1138,"c":[0.65,0.52,0.39,0.16]}]}
   sujet   éclipse        chaud 0.89 → Soleil
@@ -341,19 +354,19 @@ DETAIL {"page":"Soleil","kind":"sujet","word":"aurore","level":"chaud","cc":0.14
   pièges  guerre         rien
 DETAIL {"page":"Soleil","kind":"pièges","word":"guerre","level":"rien","cc":0.053,"near":[{"h":"annees","cos":0.279,"rank":1374,"c":[0.63,0.45,0.35,0.19]},{"h":"planetaire","cos":0.221,"rank":3810,"c":[0.57,0.45,0.36,0.2]},{"h":"terre","cos":0.142,"rank":12948,"c":[0.49,0.4,0.34,0.21]}]}
   pièges  roi            rien
-DETAIL {"page":"Soleil","kind":"pièges","word":"roi","level":"rien","cc":-0.048,"near":[{"h":"jupiter","cos":0.22,"rank":2435,"c":[0.77,0.61,0.43,0.16]},{"h":"representant","cos":0.109,"rank":13171,"c":[0.6,0.45,0.33,0.17]},{"h":"terre","cos":0.105,"rank":19350,"c":[0.49,0.4,0.34,0.21]}]}
+DETAIL {"page":"Soleil","kind":"pièges","word":"roi","level":"rien","cc":-0.048,"near":[{"h":"jupiter","cos":0.22,"rank":2435,"c":[0.77,0.61,0.43,0.16]},{"h":"representant","cos":0.109,"rank":13174,"c":[0.6,0.45,0.33,0.17]},{"h":"terre","cos":0.105,"rank":19351,"c":[0.49,0.4,0.34,0.21]}]}
   pièges  football       rien
-DETAIL {"page":"Soleil","kind":"pièges","word":"football","level":"rien","cc":-0.029,"near":[{"h":"jaune","cos":0.084,"rank":18839,"c":[0.67,0.5,0.36,0.2]},{"h":"kpc","cos":0.072,"rank":21336,"c":[0.53,0.43,0.31,0.15]},{"h":"centre","cos":0.07,"rank":29145,"c":[0.51,0.4,0.34,0.21]}]}
+DETAIL {"page":"Soleil","kind":"pièges","word":"football","level":"rien","cc":-0.029,"near":[{"h":"jaune","cos":0.084,"rank":18839,"c":[0.67,0.5,0.36,0.2]},{"h":"kpc","cos":0.072,"rank":21342,"c":[0.53,0.43,0.31,0.15]},{"h":"centre","cos":0.07,"rank":29145,"c":[0.51,0.4,0.34,0.21]}]}
   pièges  cuisine        rien
-DETAIL {"page":"Soleil","kind":"pièges","word":"cuisine","level":"rien","cc":0.005,"near":[{"h":"autour","cos":0.245,"rank":1492,"c":[0.42,0.35,0.3,0.17]},{"h":"situe","cos":0.236,"rank":4032,"c":[0.62,0.5,0.39,0.22]},{"h":"autres","cos":0.132,"rank":8559,"c":[0.48,0.36,0.28,0.17]}]}
+DETAIL {"page":"Soleil","kind":"pièges","word":"cuisine","level":"rien","cc":0.005,"near":[{"h":"autour","cos":0.245,"rank":1492,"c":[0.42,0.35,0.3,0.17]},{"h":"situe","cos":0.236,"rank":4032,"c":[0.62,0.5,0.39,0.22]},{"h":"autres","cos":0.132,"rank":8614,"c":[0.48,0.36,0.28,0.17]}]}
   pièges  voiture        tiède 0.48 → km
 DETAIL {"page":"Soleil","kind":"pièges","word":"voiture","level":"tiède","cc":0.091,"near":[{"h":"km","cos":0.415,"rank":193,"c":[0.57,0.45,0.36,0.21]},{"h":"vitesse","cos":0.373,"rank":566,"c":[0.58,0.47,0.38,0.2]},{"h":"ceinture","cos":0.253,"rank":1645,"c":[0.61,0.51,0.37,0.16]}]}
   pièges  musique        rien
-DETAIL {"page":"Soleil","kind":"pièges","word":"musique","level":"rien","cc":-0.043,"near":[{"h":"annee","cos":0.11,"rank":13327,"c":[0.53,0.42,0.34,0.18]},{"h":"annees","cos":0.099,"rank":17913,"c":[0.63,0.45,0.35,0.19]},{"h":"gravitent","cos":0.089,"rank":17960,"c":[0.57,0.44,0.34,0.17]}]}
+DETAIL {"page":"Soleil","kind":"pièges","word":"musique","level":"rien","cc":-0.043,"near":[{"h":"annee","cos":0.11,"rank":13326,"c":[0.53,0.42,0.34,0.18]},{"h":"annees","cos":0.099,"rank":17914,"c":[0.63,0.45,0.35,0.19]},{"h":"gravitent","cos":0.089,"rank":17960,"c":[0.57,0.44,0.34,0.17]}]}
   pièges  élection       rien
-DETAIL {"page":"Soleil","kind":"pièges","word":"élection","level":"rien","cc":-0.026,"near":[{"h":"representant","cos":0.217,"rank":2403,"c":[0.6,0.45,0.33,0.17]},{"h":"tiers","cos":0.144,"rank":10826,"c":[0.57,0.48,0.39,0.21]},{"h":"annee","cos":0.127,"rank":10393,"c":[0.53,0.42,0.34,0.18]}]}
+DETAIL {"page":"Soleil","kind":"pièges","word":"élection","level":"rien","cc":-0.026,"near":[{"h":"representant","cos":0.217,"rank":2403,"c":[0.6,0.45,0.33,0.17]},{"h":"tiers","cos":0.144,"rank":10827,"c":[0.57,0.48,0.39,0.21]},{"h":"annee","cos":0.127,"rank":10393,"c":[0.53,0.42,0.34,0.18]}]}
   pièges  banque         rien
-DETAIL {"page":"Soleil","kind":"pièges","word":"banque","level":"rien","cc":0.05,"near":[{"h":"tiers","cos":0.249,"rank":3461,"c":[0.57,0.48,0.39,0.21]},{"h":"systeme","cos":0.19,"rank":9672,"c":[0.56,0.46,0.39,0.24]},{"h":"notamment","cos":0.149,"rank":15279,"c":[0.65,0.54,0.45,0.28]}]}
+DETAIL {"page":"Soleil","kind":"pièges","word":"banque","level":"rien","cc":0.05,"near":[{"h":"tiers","cos":0.249,"rank":3460,"c":[0.57,0.48,0.39,0.21]},{"h":"systeme","cos":0.19,"rank":9672,"c":[0.56,0.46,0.39,0.24]},{"h":"notamment","cos":0.149,"rank":15280,"c":[0.65,0.54,0.45,0.28]}]}
 
 Pizza
   sujet   fromage        brûlant 0.91 → pain
@@ -374,21 +387,21 @@ DETAIL {"page":"Pizza","kind":"sujet","word":"lasagne","level":"chaud","cc":0.57
   sujet   boulanger      tiède 0.3 → pain
 DETAIL {"page":"Pizza","kind":"sujet","word":"boulanger","level":"tiède","cc":0.332,"near":[{"h":"pain","cos":0.498,"rank":588,"c":[0.69,0.6,0.51,0.17]},{"h":"pate","cos":0.439,"rank":813,"c":[0.8,0.68,0.5,0.17]},{"h":"pizza","cos":0.411,"rank":595,"c":[0.67,0.54,0.43,0.16]}]}
   pièges  guerre         rien
-DETAIL {"page":"Pizza","kind":"pièges","word":"guerre","level":"rien","cc":-0.004,"near":[{"h":"monde","cos":0.218,"rank":4371,"c":[0.47,0.39,0.33,0.21]},{"h":"depuis","cos":0.212,"rank":2809,"c":[0.58,0.43,0.33,0.17]},{"h":"emblematique","cos":0.173,"rank":8345,"c":[0.55,0.43,0.35,0.2]}]}
+DETAIL {"page":"Pizza","kind":"pièges","word":"guerre","level":"rien","cc":-0.004,"near":[{"h":"monde","cos":0.218,"rank":4371,"c":[0.47,0.39,0.33,0.21]},{"h":"depuis","cos":0.212,"rank":2809,"c":[0.58,0.43,0.33,0.17]},{"h":"emblematique","cos":0.173,"rank":8343,"c":[0.55,0.43,0.35,0.2]}]}
   pièges  football       rien
-DETAIL {"page":"Pizza","kind":"pièges","word":"football","level":"rien","cc":0.057,"near":[{"h":"monde","cos":0.27,"rank":1651,"c":[0.47,0.39,0.33,0.21]},{"h":"emblematique","cos":0.136,"rank":14329,"c":[0.55,0.43,0.35,0.2]},{"h":"naples","cos":0.128,"rank":10497,"c":[0.72,0.6,0.43,0.2]}]}
+DETAIL {"page":"Pizza","kind":"pièges","word":"football","level":"rien","cc":0.057,"near":[{"h":"monde","cos":0.27,"rank":1651,"c":[0.47,0.39,0.33,0.21]},{"h":"emblematique","cos":0.136,"rank":14329,"c":[0.55,0.43,0.35,0.2]},{"h":"naples","cos":0.128,"rank":10495,"c":[0.72,0.6,0.43,0.2]}]}
   pièges  ordinateur     rien
 DETAIL {"page":"Pizza","kind":"pièges","word":"ordinateur","level":"rien","cc":0.048,"near":[{"h":"rapide","cos":0.316,"rank":589,"c":[0.52,0.41,0.32,0.2]},{"h":"fabriquer","cos":0.199,"rank":5077,"c":[0.58,0.43,0.35,0.2]},{"h":"immateriel","cos":0.192,"rank":5446,"c":[0.57,0.43,0.35,0.2]}]}
   pièges  voiture        rien
-DETAIL {"page":"Pizza","kind":"pièges","word":"voiture","level":"rien","cc":0.015,"near":[{"h":"autres","cos":0.193,"rank":2848,"c":[0.48,0.36,0.28,0.17]},{"h":"rapide","cos":0.169,"rank":7572,"c":[0.52,0.41,0.32,0.2]},{"h":"pizza","cos":0.113,"rank":9399,"c":[0.67,0.54,0.43,0.16]}]}
+DETAIL {"page":"Pizza","kind":"pièges","word":"voiture","level":"rien","cc":0.015,"near":[{"h":"autres","cos":0.193,"rank":2835,"c":[0.48,0.36,0.28,0.17]},{"h":"rapide","cos":0.169,"rank":7571,"c":[0.52,0.41,0.32,0.2]},{"h":"pizza","cos":0.113,"rank":9399,"c":[0.67,0.54,0.43,0.16]}]}
   pièges  politique      tiède 0.53 → culture
 DETAIL {"page":"Pizza","kind":"pièges","word":"politique","level":"tiède","cc":0.056,"near":[{"h":"culture","cos":0.405,"rank":158,"c":[0.54,0.43,0.34,0.2]},{"h":"culturel","cos":0.357,"rank":479,"c":[0.59,0.46,0.35,0.2]},{"h":"immateriel","cos":0.312,"rank":985,"c":[0.57,0.43,0.35,0.2]}]}
   pièges  musique        tiède 0.32 → culture
-DETAIL {"page":"Pizza","kind":"pièges","word":"musique","level":"tiède","cc":0.14,"near":[{"h":"culture","cos":0.343,"rank":482,"c":[0.54,0.43,0.34,0.2]},{"h":"traditionnelles","cos":0.311,"rank":1135,"c":[0.6,0.45,0.36,0.21]},{"h":"napolitaines","cos":0.31,"rank":874,"c":[0.54,0.43,0.35,0.2]}]}
+DETAIL {"page":"Pizza","kind":"pièges","word":"musique","level":"tiède","cc":0.14,"near":[{"h":"culture","cos":0.343,"rank":482,"c":[0.54,0.43,0.34,0.2]},{"h":"traditionnelles","cos":0.311,"rank":1134,"c":[0.6,0.45,0.36,0.21]},{"h":"napolitaines","cos":0.31,"rank":888,"c":[0.54,0.43,0.35,0.2]}]}
   pièges  planète        chaud 0.8 → monde
 DETAIL {"page":"Pizza","kind":"pièges","word":"planète","level":"chaud","cc":0.062,"near":[{"h":"monde","cos":0.447,"rank":26,"c":[0.47,0.39,0.33,0.21]},{"h":"entier","cos":0.211,"rank":1681,"c":[0.39,0.33,0.27,0.16]},{"h":"unesco","cos":0.201,"rank":3741,"c":[0.51,0.39,0.31,0.18]}]}
   pièges  église         rien
-DETAIL {"page":"Pizza","kind":"pièges","word":"église","level":"rien","cc":0.094,"near":[{"h":"patrimoine","cos":0.193,"rank":4516,"c":[0.65,0.43,0.33,0.19]},{"h":"unesco","cos":0.183,"rank":4998,"c":[0.51,0.39,0.31,0.18]},{"h":"restauration","cos":0.149,"rank":8389,"c":[0.53,0.39,0.31,0.18]}]}
+DETAIL {"page":"Pizza","kind":"pièges","word":"église","level":"rien","cc":0.094,"near":[{"h":"patrimoine","cos":0.193,"rank":4517,"c":[0.65,0.43,0.33,0.19]},{"h":"unesco","cos":0.183,"rank":4998,"c":[0.51,0.39,0.31,0.18]},{"h":"restauration","cos":0.149,"rank":8389,"c":[0.53,0.39,0.31,0.18]}]}
 
 Spinosaurus
   sujet   tyrannosaure   brûlant 0.93 → dinosaure
@@ -396,7 +409,7 @@ DETAIL {"page":"Spinosaurus","kind":"sujet","word":"tyrannosaure","level":"brûl
   sujet   tyrannosaurus  chaud 0.66 → Spinosaurus
   sujet   vélociraptor   rien
   sujet   diplodocus     brûlant 0.92 → dinosaure
-DETAIL {"page":"Spinosaurus","kind":"sujet","word":"diplodocus","level":"brûlant","cc":0.313,"near":[{"h":"dinosaure","cos":0.662,"rank":3,"c":[0.58,0.46,0.35,0.18]},{"h":"dinosaures","cos":0.596,"rank":64,"c":[0.71,0.54,0.37,0.16]},{"h":"carnivore","cos":0.551,"rank":244,"c":[0.76,0.61,0.49,0.2]}]}
+DETAIL {"page":"Spinosaurus","kind":"sujet","word":"diplodocus","level":"brûlant","cc":0.313,"near":[{"h":"dinosaure","cos":0.662,"rank":3,"c":[0.58,0.46,0.35,0.18]},{"h":"dinosaures","cos":0.596,"rank":64,"c":[0.71,0.54,0.37,0.16]},{"h":"carnivore","cos":0.551,"rank":245,"c":[0.76,0.61,0.49,0.2]}]}
   sujet   reptile        brûlant 0.92 → dinosaure
 DETAIL {"page":"Spinosaurus","kind":"sujet","word":"reptile","level":"brûlant","cc":0.266,"near":[{"h":"carnivore","cos":0.762,"rank":11,"c":[0.76,0.61,0.49,0.2]},{"h":"quadrupede","cos":0.683,"rank":3,"c":[0.63,0.51,0.4,0.22]},{"h":"proies","cos":0.679,"rank":65,"c":[0.76,0.65,0.52,0.2]}]}
   sujet   crocodile      brûlant 0.92 → crocodiliforme
@@ -408,21 +421,21 @@ DETAIL {"page":"Spinosaurus","kind":"sujet","word":"jurassique","level":"brûlan
   sujet   prédateur      brûlant 0.93 → proies
 DETAIL {"page":"Spinosaurus","kind":"sujet","word":"prédateur","level":"brûlant","cc":0.27,"near":[{"h":"proies","cos":0.845,"rank":1,"c":[0.76,0.65,0.52,0.2]},{"h":"carnivore","cos":0.793,"rank":7,"c":[0.76,0.61,0.49,0.2]},{"h":"animal","cos":0.634,"rank":16,"c":[0.67,0.52,0.4,0.19]}]}
   sujet   raptor         rien
-DETAIL {"page":"Spinosaurus","kind":"sujet","word":"raptor","level":"rien","cc":-0.089,"near":[{"h":"support","cos":0.178,"rank":10018,"c":[0.54,0.45,0.38,0.24]},{"h":"taille","cos":0.155,"rank":8773,"c":[0.5,0.4,0.32,0.19]},{"h":"dinosaure","cos":0.144,"rank":9238,"c":[0.58,0.46,0.35,0.18]}]}
+DETAIL {"page":"Spinosaurus","kind":"sujet","word":"raptor","level":"rien","cc":-0.089,"near":[{"h":"support","cos":0.178,"rank":10018,"c":[0.54,0.45,0.38,0.24]},{"h":"taille","cos":0.155,"rank":8774,"c":[0.5,0.4,0.32,0.19]},{"h":"dinosaure","cos":0.144,"rank":9238,"c":[0.58,0.46,0.35,0.18]}]}
   pièges  football       rien
-DETAIL {"page":"Spinosaurus","kind":"pièges","word":"football","level":"rien","cc":-0.042,"near":[{"h":"munich","cos":0.392,"rank":785,"c":[0.77,0.57,0.44,0.18]},{"h":"voile","cos":0.257,"rank":1472,"c":[0.77,0.58,0.39,0.14]},{"h":"afrique","cos":0.203,"rank":3431,"c":[0.74,0.57,0.41,0.17]}]}
+DETAIL {"page":"Spinosaurus","kind":"pièges","word":"football","level":"rien","cc":-0.042,"near":[{"h":"munich","cos":0.392,"rank":785,"c":[0.77,0.57,0.44,0.18]},{"h":"voile","cos":0.257,"rank":1472,"c":[0.77,0.58,0.39,0.14]},{"h":"afrique","cos":0.203,"rank":3432,"c":[0.74,0.57,0.41,0.17]}]}
   pièges  cuisine        rien
-DETAIL {"page":"Spinosaurus","kind":"pièges","word":"cuisine","level":"rien","cc":-0.055,"near":[{"h":"semi","cos":0.268,"rank":1024,"c":[0.41,0.35,0.3,0.18]},{"h":"reposerent","cos":0.156,"rank":7787,"c":[0.64,0.56,0.43,0.19]},{"h":"restes","cos":0.146,"rank":10202,"c":[0.58,0.45,0.35,0.2]}]}
+DETAIL {"page":"Spinosaurus","kind":"pièges","word":"cuisine","level":"rien","cc":-0.055,"near":[{"h":"semi","cos":0.268,"rank":1024,"c":[0.41,0.35,0.3,0.18]},{"h":"reposerent","cos":0.156,"rank":7788,"c":[0.64,0.56,0.43,0.19]},{"h":"restes","cos":0.146,"rank":10202,"c":[0.58,0.45,0.35,0.2]}]}
   pièges  voiture        chaud 0.72 → partir
-DETAIL {"page":"Spinosaurus","kind":"pièges","word":"voiture","level":"chaud","cc":0.015,"near":[{"h":"partir","cos":0.433,"rank":51,"c":[0.52,0.38,0.28,0.15]},{"h":"semi","cos":0.25,"rank":1488,"c":[0.41,0.35,0.3,0.18]},{"h":"aerien","cos":0.246,"rank":1348,"c":[0.7,0.53,0.35,0.14]}]}
+DETAIL {"page":"Spinosaurus","kind":"pièges","word":"voiture","level":"chaud","cc":0.015,"near":[{"h":"partir","cos":0.433,"rank":51,"c":[0.52,0.38,0.28,0.15]},{"h":"semi","cos":0.25,"rank":1490,"c":[0.41,0.35,0.3,0.18]},{"h":"aerien","cos":0.246,"rank":1348,"c":[0.7,0.53,0.35,0.14]}]}
   pièges  politique      tiède 0.32 → mondiale
 DETAIL {"page":"Spinosaurus","kind":"pièges","word":"politique","level":"tiède","cc":0.109,"near":[{"h":"agirait","cos":0.358,"rank":1761,"c":[0.68,0.57,0.46,0.27]},{"h":"considerent","cos":0.353,"rank":2122,"c":[0.71,0.57,0.45,0.28]},{"h":"mondiale","cos":0.345,"rank":476,"c":[0.54,0.43,0.34,0.19]}]}
   pièges  musique        rien
-DETAIL {"page":"Spinosaurus","kind":"pièges","word":"musique","level":"rien","cc":-0.109,"near":[{"h":"genre","cos":0.201,"rank":9954,"c":[0.63,0.53,0.45,0.27]},{"h":"jeunes","cos":0.104,"rank":16476,"c":[0.59,0.46,0.37,0.2]},{"h":"annees","cos":0.099,"rank":17913,"c":[0.63,0.45,0.35,0.19]}]}
+DETAIL {"page":"Spinosaurus","kind":"pièges","word":"musique","level":"rien","cc":-0.109,"near":[{"h":"genre","cos":0.201,"rank":9955,"c":[0.63,0.53,0.45,0.27]},{"h":"jeunes","cos":0.104,"rank":16474,"c":[0.59,0.46,0.37,0.2]},{"h":"annees","cos":0.099,"rank":17914,"c":[0.63,0.45,0.35,0.19]}]}
   pièges  banque         rien
-DETAIL {"page":"Spinosaurus","kind":"pièges","word":"banque","level":"rien","cc":0.088,"near":[{"h":"mondiale","cos":0.31,"rank":834,"c":[0.54,0.43,0.34,0.19]},{"h":"informations","cos":0.239,"rank":3947,"c":[0.69,0.53,0.41,0.22]},{"h":"actuellement","cos":0.207,"rank":3662,"c":[0.5,0.39,0.32,0.19]}]}
+DETAIL {"page":"Spinosaurus","kind":"pièges","word":"banque","level":"rien","cc":0.088,"near":[{"h":"mondiale","cos":0.31,"rank":834,"c":[0.54,0.43,0.34,0.19]},{"h":"informations","cos":0.239,"rank":3948,"c":[0.69,0.53,0.41,0.22]},{"h":"actuellement","cos":0.207,"rank":3661,"c":[0.5,0.39,0.32,0.19]}]}
   pièges  mariage        chaud 0.64 → famille
-DETAIL {"page":"Spinosaurus","kind":"pièges","word":"mariage","level":"chaud","cc":-0.062,"near":[{"h":"famille","cos":0.47,"rank":82,"c":[0.62,0.45,0.31,0.16]},{"h":"proches","cos":0.182,"rank":5984,"c":[0.48,0.39,0.32,0.2]},{"h":"mode","cos":0.145,"rank":10637,"c":[0.43,0.37,0.31,0.19]}]}
+DETAIL {"page":"Spinosaurus","kind":"pièges","word":"mariage","level":"chaud","cc":-0.062,"near":[{"h":"famille","cos":0.47,"rank":82,"c":[0.62,0.45,0.31,0.16]},{"h":"proches","cos":0.182,"rank":5983,"c":[0.48,0.39,0.32,0.2]},{"h":"mode","cos":0.145,"rank":10637,"c":[0.43,0.37,0.31,0.19]}]}
   pièges  ordinateur     chaud 0.69 → support
 DETAIL {"page":"Spinosaurus","kind":"pièges","word":"ordinateur","level":"chaud","cc":0.084,"near":[{"h":"support","cos":0.476,"rank":43,"c":[0.54,0.45,0.38,0.24]},{"h":"mode","cos":0.305,"rank":549,"c":[0.43,0.37,0.31,0.19]},{"h":"informations","cos":0.291,"rank":2046,"c":[0.69,0.53,0.41,0.22]}]}
 
@@ -448,35 +461,35 @@ DETAIL {"page":"Albert Einstein","kind":"sujet","word":"professeur","level":"cha
   sujet   gravité        tiède 0.38 → restreinte
 DETAIL {"page":"Albert Einstein","kind":"sujet","word":"gravité","level":"tiède","cc":0.263,"near":[{"h":"gravitation","cos":0.383,"rank":835,"c":[0.78,0.63,0.45,0.17]},{"h":"effet","cos":0.349,"rank":1742,"c":[0.59,0.52,0.44,0.26]},{"h":"considere","cos":0.343,"rank":1005,"c":[0.57,0.48,0.39,0.22]}]}
   pièges  football       rien
-DETAIL {"page":"Albert Einstein","kind":"pièges","word":"football","level":"rien","cc":0.001,"near":[{"h":"maric","cos":0.244,"rank":1959,"c":[0.55,0.47,0.37,0.17]},{"h":"milieu","cos":0.164,"rank":6747,"c":[0.39,0.33,0.28,0.18]},{"h":"populaire","cos":0.136,"rank":9125,"c":[0.51,0.41,0.31,0.17]}]}
+DETAIL {"page":"Albert Einstein","kind":"pièges","word":"football","level":"rien","cc":0.001,"near":[{"h":"maric","cos":0.244,"rank":1959,"c":[0.55,0.47,0.37,0.17]},{"h":"milieu","cos":0.164,"rank":6746,"c":[0.39,0.33,0.28,0.18]},{"h":"populaire","cos":0.136,"rank":9123,"c":[0.51,0.41,0.31,0.17]}]}
   pièges  cuisine        rien
-DETAIL {"page":"Albert Einstein","kind":"pièges","word":"cuisine","level":"rien","cc":-0.064,"near":[{"h":"cousine","cos":0.135,"rank":15096,"c":[0.67,0.53,0.44,0.26]},{"h":"grand","cos":0.128,"rank":11912,"c":[0.48,0.38,0.29,0.17]},{"h":"prix","cos":0.104,"rank":11996,"c":[0.48,0.39,0.29,0.15]}]}
+DETAIL {"page":"Albert Einstein","kind":"pièges","word":"cuisine","level":"rien","cc":-0.064,"near":[{"h":"cousine","cos":0.135,"rank":15096,"c":[0.67,0.53,0.44,0.26]},{"h":"grand","cos":0.128,"rank":11912,"c":[0.48,0.38,0.29,0.17]},{"h":"prix","cos":0.104,"rank":11994,"c":[0.48,0.39,0.29,0.15]}]}
   pièges  voiture        rien
-DETAIL {"page":"Albert Einstein","kind":"pièges","word":"voiture","level":"rien","cc":-0.058,"near":[{"h":"prix","cos":0.217,"rank":1665,"c":[0.48,0.39,0.29,0.15]},{"h":"personne","cos":0.176,"rank":5759,"c":[0.48,0.39,0.31,0.18]},{"h":"cousine","cos":0.168,"rank":11290,"c":[0.67,0.53,0.44,0.26]}]}
+DETAIL {"page":"Albert Einstein","kind":"pièges","word":"voiture","level":"rien","cc":-0.058,"near":[{"h":"prix","cos":0.217,"rank":1665,"c":[0.48,0.39,0.29,0.15]},{"h":"personne","cos":0.176,"rank":5760,"c":[0.48,0.39,0.31,0.18]},{"h":"cousine","cos":0.168,"rank":11290,"c":[0.67,0.53,0.44,0.26]}]}
   pièges  peinture       rien
-DETAIL {"page":"Albert Einstein","kind":"pièges","word":"peinture","level":"rien","cc":0.053,"near":[{"h":"theoricien","cos":0.198,"rank":8095,"c":[0.68,0.58,0.48,0.25]},{"h":"mecanique","cos":0.179,"rank":6198,"c":[0.67,0.54,0.42,0.2]},{"h":"culture","cos":0.155,"rank":8958,"c":[0.54,0.43,0.34,0.2]}]}
+DETAIL {"page":"Albert Einstein","kind":"pièges","word":"peinture","level":"rien","cc":0.053,"near":[{"h":"theoricien","cos":0.198,"rank":8095,"c":[0.68,0.58,0.48,0.25]},{"h":"mecanique","cos":0.179,"rank":6198,"c":[0.67,0.54,0.42,0.2]},{"h":"culture","cos":0.155,"rank":8957,"c":[0.54,0.43,0.34,0.2]}]}
   pièges  chanson        rien
-DETAIL {"page":"Albert Einstein","kind":"pièges","word":"chanson","level":"rien","cc":-0.036,"near":[{"h":"cousine","cos":0.214,"rank":7605,"c":[0.67,0.53,0.44,0.26]},{"h":"populaire","cos":0.184,"rank":4351,"c":[0.51,0.41,0.31,0.17]},{"h":"elsa","cos":0.175,"rank":7584,"c":[0.51,0.43,0.35,0.2]}]}
+DETAIL {"page":"Albert Einstein","kind":"pièges","word":"chanson","level":"rien","cc":-0.036,"near":[{"h":"cousine","cos":0.214,"rank":7605,"c":[0.67,0.53,0.44,0.26]},{"h":"populaire","cos":0.184,"rank":4351,"c":[0.51,0.41,0.31,0.17]},{"h":"elsa","cos":0.175,"rank":7583,"c":[0.51,0.43,0.35,0.2]}]}
   pièges  plage          rien
-DETAIL {"page":"Albert Einstein","kind":"pièges","word":"plage","level":"rien","cc":-0.131,"near":[{"h":"jersey","cos":0.134,"rank":7482,"c":[0.61,0.47,0.35,0.17]},{"h":"grand","cos":0.11,"rank":15989,"c":[0.48,0.38,0.29,0.17]},{"h":"puis","cos":0.078,"rank":20995,"c":[0.52,0.42,0.34,0.19]}]}
+DETAIL {"page":"Albert Einstein","kind":"pièges","word":"plage","level":"rien","cc":-0.131,"near":[{"h":"jersey","cos":0.134,"rank":7482,"c":[0.61,0.47,0.35,0.17]},{"h":"grand","cos":0.11,"rank":15991,"c":[0.48,0.38,0.29,0.17]},{"h":"puis","cos":0.078,"rank":20994,"c":[0.52,0.42,0.34,0.19]}]}
   pièges  chat           rien
-DETAIL {"page":"Albert Einstein","kind":"pièges","word":"chat","level":"rien","cc":-0.073,"near":[{"h":"cousine","cos":0.202,"rank":8553,"c":[0.67,0.53,0.44,0.26]},{"h":"personne","cos":0.121,"rank":12722,"c":[0.48,0.39,0.31,0.18]},{"h":"allemand","cos":0.121,"rank":7325,"c":[0.65,0.51,0.39,0.15]}]}
+DETAIL {"page":"Albert Einstein","kind":"pièges","word":"chat","level":"rien","cc":-0.073,"near":[{"h":"cousine","cos":0.202,"rank":8553,"c":[0.67,0.53,0.44,0.26]},{"h":"personne","cos":0.121,"rank":12721,"c":[0.48,0.39,0.31,0.18]},{"h":"allemand","cos":0.121,"rank":7325,"c":[0.65,0.51,0.39,0.15]}]}
   pièges  mariage        rien
-DETAIL {"page":"Albert Einstein","kind":"pièges","word":"mariage","level":"rien","cc":0.037,"near":[{"h":"cousine","cos":0.275,"rank":4278,"c":[0.67,0.53,0.44,0.26]},{"h":"personne","cos":0.212,"rank":3190,"c":[0.48,0.39,0.31,0.18]},{"h":"marie","cos":0.205,"rank":6651,"c":[0.61,0.48,0.39,0.23]}]}
+DETAIL {"page":"Albert Einstein","kind":"pièges","word":"mariage","level":"rien","cc":0.037,"near":[{"h":"cousine","cos":0.275,"rank":4278,"c":[0.67,0.53,0.44,0.26]},{"h":"personne","cos":0.212,"rank":3191,"c":[0.48,0.39,0.31,0.18]},{"h":"marie","cos":0.205,"rank":6651,"c":[0.61,0.48,0.39,0.23]}]}
 
 Art rupestre
   sujet   dur            rien
-DETAIL {"page":"Art rupestre","kind":"sujet","word":"dur","level":"rien","cc":-0.03,"near":[{"h":"plein","cos":0.229,"rank":3458,"c":[0.44,0.38,0.31,0.2]},{"h":"occupe","cos":0.193,"rank":2439,"c":[0.48,0.37,0.28,0.16]},{"h":"bloc","cos":0.178,"rank":4127,"c":[0.39,0.33,0.28,0.17]}]}
+DETAIL {"page":"Art rupestre","kind":"sujet","word":"dur","level":"rien","cc":-0.03,"near":[{"h":"plein","cos":0.229,"rank":3458,"c":[0.44,0.38,0.31,0.2]},{"h":"occupe","cos":0.193,"rank":2437,"c":[0.48,0.37,0.28,0.16]},{"h":"bloc","cos":0.178,"rank":4126,"c":[0.39,0.33,0.28,0.17]}]}
   sujet   image          tiède 0.3 → forme
-DETAIL {"page":"Art rupestre","kind":"sujet","word":"image","level":"tiède","cc":0.211,"near":[{"h":"forme","cos":0.357,"rank":766,"c":[0.54,0.46,0.38,0.23]},{"h":"expression","cos":0.296,"rank":1442,"c":[0.5,0.41,0.35,0.2]},{"h":"esthetique","cos":0.277,"rank":1693,"c":[0.53,0.43,0.35,0.2]}]}
+DETAIL {"page":"Art rupestre","kind":"sujet","word":"image","level":"tiède","cc":0.212,"near":[{"h":"forme","cos":0.357,"rank":767,"c":[0.54,0.46,0.38,0.23]},{"h":"expression","cos":0.296,"rank":1451,"c":[0.5,0.41,0.35,0.2]},{"h":"esthetique","cos":0.278,"rank":1687,"c":[0.53,0.43,0.35,0.2]}]}
   sujet   dessin         tiède 0.36 → gravures
 DETAIL {"page":"Art rupestre","kind":"sujet","word":"dessin","level":"tiède","cc":0.174,"near":[{"h":"gravures","cos":0.458,"rank":372,"c":[0.66,0.56,0.43,0.2]},{"h":"peintures","cos":0.423,"rank":501,"c":[0.72,0.55,0.43,0.17]},{"h":"oeuvres","cos":0.343,"rank":1026,"c":[0.63,0.53,0.41,0.2]}]}
   sujet   préhistoire    brûlant 0.94 → préhistorique
-DETAIL {"page":"Art rupestre","kind":"sujet","word":"préhistoire","level":"brûlant","cc":0.368,"near":[{"h":"prehistorique","cos":0.884,"rank":2,"c":[0.8,0.57,0.39,0.19]},{"h":"prehistorien","cos":0.775,"rank":3,"c":[0.68,0.5,0.34,0.18]},{"h":"rupestre","cos":0.722,"rank":9,"c":[0.71,0.54,0.39,0.2]}]}
+DETAIL {"page":"Art rupestre","kind":"sujet","word":"préhistoire","level":"brûlant","cc":0.368,"near":[{"h":"prehistorique","cos":0.884,"rank":2,"c":[0.8,0.57,0.39,0.19]},{"h":"prehistorien","cos":0.775,"rank":3,"c":[0.68,0.5,0.35,0.18]},{"h":"rupestre","cos":0.722,"rank":9,"c":[0.71,0.54,0.39,0.2]}]}
   sujet   caverne        tiède 0.39 → grottes
 DETAIL {"page":"Art rupestre","kind":"sujet","word":"caverne","level":"tiède","cc":0.13,"near":[{"h":"rupestre","cos":0.428,"rank":351,"c":[0.71,0.54,0.39,0.2]},{"h":"grottes","cos":0.425,"rank":310,"c":[0.65,0.5,0.39,0.21]},{"h":"rupestres","cos":0.391,"rank":789,"c":[0.68,0.55,0.43,0.2]}]}
   sujet   pierre         tiède 0.51 → Emmanuel
-DETAIL {"page":"Art rupestre","kind":"sujet","word":"pierre","level":"tiède","cc":0.092,"near":[{"h":"emmanuel","cos":0.516,"rank":175,"c":[0.63,0.54,0.47,0.29]},{"h":"roche","cos":0.387,"rank":446,"c":[0.65,0.53,0.38,0.2]},{"h":"prehistorien","cos":0.294,"rank":933,"c":[0.68,0.5,0.34,0.18]}]}
+DETAIL {"page":"Art rupestre","kind":"sujet","word":"pierre","level":"tiède","cc":0.092,"near":[{"h":"emmanuel","cos":0.516,"rank":175,"c":[0.63,0.54,0.47,0.29]},{"h":"roche","cos":0.387,"rank":446,"c":[0.65,0.53,0.38,0.2]},{"h":"prehistorien","cos":0.294,"rank":933,"c":[0.68,0.5,0.35,0.18]}]}
   sujet   fresque        tiède 0.54 → peintures
 DETAIL {"page":"Art rupestre","kind":"sujet","word":"fresque","level":"tiède","cc":0.225,"near":[{"h":"peintures","cos":0.526,"rank":152,"c":[0.72,0.55,0.43,0.17]},{"h":"gravures","cos":0.475,"rank":321,"c":[0.66,0.56,0.43,0.2]},{"h":"oeuvres","cos":0.425,"rank":407,"c":[0.63,0.53,0.41,0.2]}]}
   sujet   lascaux        brûlant 0.9 → grottes
@@ -484,7 +497,7 @@ DETAIL {"page":"Art rupestre","kind":"sujet","word":"lascaux","level":"brûlant"
   sujet   ocre           tiède 0.4 → rupestres
 DETAIL {"page":"Art rupestre","kind":"sujet","word":"ocre","level":"tiède","cc":0.152,"near":[{"h":"rupestres","cos":0.472,"rank":297,"c":[0.68,0.55,0.43,0.2]},{"h":"murs","cos":0.469,"rank":550,"c":[0.76,0.64,0.48,0.21]},{"h":"rochers","cos":0.469,"rank":644,"c":[0.76,0.61,0.5,0.26]}]}
   sujet   symbole        tiède 0.34 → désigne
-DETAIL {"page":"Art rupestre","kind":"sujet","word":"symbole","level":"tiède","cc":0.168,"near":[{"h":"designe","cos":0.36,"rank":422,"c":[0.6,0.45,0.35,0.19]},{"h":"forme","cos":0.357,"rank":756,"c":[0.54,0.46,0.38,0.23]},{"h":"homme","cos":0.307,"rank":2129,"c":[0.54,0.46,0.39,0.24]}]}
+DETAIL {"page":"Art rupestre","kind":"sujet","word":"symbole","level":"tiède","cc":0.168,"near":[{"h":"designe","cos":0.36,"rank":422,"c":[0.6,0.45,0.35,0.19]},{"h":"forme","cos":0.357,"rank":756,"c":[0.54,0.46,0.38,0.23]},{"h":"homme","cos":0.307,"rank":2130,"c":[0.54,0.46,0.39,0.24]}]}
   pièges  football       rien
 DETAIL {"page":"Art rupestre","kind":"pièges","word":"football","level":"rien","cc":-0.03,"near":[{"h":"mondial","cos":0.216,"rank":3609,"c":[0.52,0.41,0.33,0.2]},{"h":"pratique","cos":0.137,"rank":12319,"c":[0.54,0.43,0.35,0.2]},{"h":"debut","cos":0.121,"rank":9963,"c":[0.59,0.45,0.34,0.17]}]}
   pièges  ordinateur     rien
@@ -496,14 +509,14 @@ DETAIL {"page":"Art rupestre","kind":"pièges","word":"politique","level":"tièd
   pièges  cuisine        tiède 0.33 → mobilier
 DETAIL {"page":"Art rupestre","kind":"pièges","word":"cuisine","level":"tiède","cc":0.007,"near":[{"h":"mobilier","cos":0.395,"rank":415,"c":[0.67,0.53,0.38,0.17]},{"h":"plein","cos":0.241,"rank":2759,"c":[0.44,0.38,0.31,0.2]},{"h":"murs","cos":0.202,"rank":5553,"c":[0.76,0.64,0.48,0.21]}]}
   pièges  mariage        rien
-DETAIL {"page":"Art rupestre","kind":"pièges","word":"mariage","level":"rien","cc":-0.018,"near":[{"h":"pasteurs","cos":0.156,"rank":8095,"c":[0.78,0.66,0.5,0.2]},{"h":"motifs","cos":0.148,"rank":8668,"c":[0.54,0.45,0.35,0.19]},{"h":"art","cos":0.147,"rank":7635,"c":[0.54,0.43,0.34,0.17]}]}
+DETAIL {"page":"Art rupestre","kind":"pièges","word":"mariage","level":"rien","cc":-0.018,"near":[{"h":"pasteurs","cos":0.156,"rank":8096,"c":[0.78,0.66,0.5,0.2]},{"h":"motifs","cos":0.148,"rank":8668,"c":[0.54,0.45,0.35,0.19]},{"h":"art","cos":0.147,"rank":7635,"c":[0.54,0.43,0.34,0.17]}]}
   pièges  banque         dévoilé
   pièges  télévision     rien
-DETAIL {"page":"Art rupestre","kind":"pièges","word":"télévision","level":"rien","cc":0.062,"near":[{"h":"culture","cos":0.206,"rank":4375,"c":[0.54,0.43,0.34,0.2]},{"h":"mobilier","cos":0.15,"rank":6845,"c":[0.67,0.53,0.38,0.17]},{"h":"oeuvres","cos":0.145,"rank":9381,"c":[0.63,0.53,0.41,0.2]}]}
+DETAIL {"page":"Art rupestre","kind":"pièges","word":"télévision","level":"rien","cc":0.062,"near":[{"h":"culture","cos":0.206,"rank":4374,"c":[0.54,0.43,0.34,0.2]},{"h":"mobilier","cos":0.15,"rank":6845,"c":[0.67,0.53,0.38,0.17]},{"h":"oeuvres","cos":0.145,"rank":9382,"c":[0.63,0.53,0.41,0.2]}]}
 
 Eiichirō Oda
   sujet   peintre        chaud 0.6 → oeuvres
-DETAIL {"page":"Eiichirō Oda","kind":"sujet","word":"peintre","level":"chaud","cc":0.203,"near":[{"h":"oeuvres","cos":0.528,"rank":96,"c":[0.63,0.53,0.41,0.2]},{"h":"dessine","cos":0.388,"rank":211,"c":[0.55,0.43,0.34,0.2]},{"h":"oeuvre","cos":0.273,"rank":2897,"c":[0.57,0.49,0.39,0.23]}]}
+DETAIL {"page":"Eiichirō Oda","kind":"sujet","word":"peintre","level":"chaud","cc":0.203,"near":[{"h":"oeuvres","cos":0.528,"rank":96,"c":[0.63,0.53,0.41,0.2]},{"h":"dessine","cos":0.388,"rank":211,"c":[0.55,0.43,0.34,0.2]},{"h":"oeuvre","cos":0.273,"rank":2898,"c":[0.57,0.49,0.39,0.23]}]}
   sujet   dessinateur    tiède 0.3 → mangaka
 DETAIL {"page":"Eiichirō Oda","kind":"sujet","word":"dessinateur","level":"tiède","cc":0.221,"near":[{"h":"mangaka","cos":0.409,"rank":762,"c":[0.8,0.65,0.48,0.19]},{"h":"dessine","cos":0.336,"rank":540,"c":[0.55,0.43,0.34,0.2]},{"h":"manga","cos":0.304,"rank":1819,"c":[0.83,0.67,0.49,0.2]}]}
   sujet   illustrateur   tiède 0.57 → Livre
@@ -517,7 +530,7 @@ DETAIL {"page":"Eiichirō Oda","kind":"sujet","word":"dessin","level":"brûlant"
   sujet   bande          tiède 0.3 → manga
 DETAIL {"page":"Eiichirō Oda","kind":"sujet","word":"bande","level":"tiède","cc":0.163,"near":[{"h":"manga","cos":0.323,"rank":1539,"c":[0.83,0.67,0.49,0.2]},{"h":"mangaka","cos":0.307,"rank":1582,"c":[0.8,0.65,0.48,0.19]},{"h":"dessine","cos":0.176,"rank":6781,"c":[0.55,0.43,0.34,0.2]}]}
   sujet   anime          tiède 0.3 → manga
-DETAIL {"page":"Eiichirō Oda","kind":"sujet","word":"anime","level":"tiède","cc":0.277,"near":[{"h":"manga","cos":0.28,"rank":2271,"c":[0.83,0.67,0.49,0.2]},{"h":"mangaka","cos":0.272,"rank":2197,"c":[0.8,0.65,0.48,0.19]},{"h":"dessine","cos":0.237,"rank":2828,"c":[0.55,0.43,0.34,0.2]}]}
+DETAIL {"page":"Eiichirō Oda","kind":"sujet","word":"anime","level":"tiède","cc":0.277,"near":[{"h":"manga","cos":0.28,"rank":2272,"c":[0.83,0.67,0.49,0.2]},{"h":"mangaka","cos":0.272,"rank":2197,"c":[0.8,0.65,0.48,0.19]},{"h":"dessine","cos":0.237,"rank":2828,"c":[0.55,0.43,0.34,0.2]}]}
   sujet   japonais       brûlant 0.9 → Japon
 DETAIL {"page":"Eiichirō Oda","kind":"sujet","word":"japonais","level":"brûlant","cc":0.447,"near":[{"h":"japon","cos":0.751,"rank":2,"c":[0.71,0.52,0.39,0.16]},{"h":"manga","cos":0.502,"rank":452,"c":[0.83,0.67,0.49,0.2]},{"h":"oda","cos":0.501,"rank":238,"c":[0.67,0.57,0.42,0.15]}]}
   sujet   tokyo          chaud 0.85 → Japon
@@ -525,17 +538,17 @@ DETAIL {"page":"Eiichirō Oda","kind":"sujet","word":"tokyo","level":"chaud","cc
   pièges  football       rien
 DETAIL {"page":"Eiichirō Oda","kind":"pièges","word":"football","level":"rien","cc":0.08,"near":[{"h":"monde","cos":0.27,"rank":1651,"c":[0.47,0.39,0.33,0.21]},{"h":"tirage","cos":0.255,"rank":666,"c":[0.5,0.36,0.28,0.14]},{"h":"records","cos":0.175,"rank":5316,"c":[0.48,0.4,0.33,0.18]}]}
   pièges  cuisine        rien
-DETAIL {"page":"Eiichirō Oda","kind":"pièges","word":"cuisine","level":"rien","cc":0.002,"near":[{"h":"piece","cos":0.25,"rank":1299,"c":[0.46,0.37,0.3,0.17]},{"h":"japon","cos":0.154,"rank":5052,"c":[0.71,0.52,0.39,0.16]},{"h":"manga","cos":0.107,"rank":13818,"c":[0.83,0.67,0.49,0.2]}]}
+DETAIL {"page":"Eiichirō Oda","kind":"pièges","word":"cuisine","level":"rien","cc":0.002,"near":[{"h":"piece","cos":0.25,"rank":1298,"c":[0.46,0.37,0.3,0.17]},{"h":"japon","cos":0.154,"rank":5053,"c":[0.71,0.52,0.39,0.16]},{"h":"manga","cos":0.107,"rank":13819,"c":[0.83,0.67,0.49,0.2]}]}
   pièges  voiture        rien
-DETAIL {"page":"Eiichirō Oda","kind":"pièges","word":"voiture","level":"rien","cc":-0.085,"near":[{"h":"prefecture","cos":0.121,"rank":11051,"c":[0.6,0.43,0.33,0.17]},{"h":"vendues","cos":0.11,"rank":14387,"c":[0.54,0.41,0.31,0.18]},{"h":"piece","cos":0.098,"rank":16540,"c":[0.46,0.37,0.3,0.17]}]}
+DETAIL {"page":"Eiichirō Oda","kind":"pièges","word":"voiture","level":"rien","cc":-0.085,"near":[{"h":"prefecture","cos":0.121,"rank":11054,"c":[0.6,0.43,0.33,0.17]},{"h":"vendues","cos":0.11,"rank":14386,"c":[0.54,0.41,0.31,0.18]},{"h":"piece","cos":0.098,"rank":16539,"c":[0.46,0.37,0.3,0.17]}]}
   pièges  politique      tiède 0.58 → XXIe
-DETAIL {"page":"Eiichirō Oda","kind":"pièges","word":"politique","level":"tiède","cc":0.146,"near":[{"h":"oeuvre","cos":0.32,"rank":1527,"c":[0.57,0.49,0.39,0.23]},{"h":"histoire","cos":0.298,"rank":1634,"c":[0.61,0.48,0.39,0.21]},{"h":"monde","cos":0.255,"rank":2262,"c":[0.47,0.39,0.33,0.21]}]}
+DETAIL {"page":"Eiichirō Oda","kind":"pièges","word":"politique","level":"tiède","cc":0.146,"near":[{"h":"oeuvre","cos":0.32,"rank":1527,"c":[0.57,0.49,0.39,0.23]},{"h":"histoire","cos":0.298,"rank":1634,"c":[0.61,0.48,0.39,0.21]},{"h":"monde","cos":0.255,"rank":2261,"c":[0.47,0.39,0.33,0.21]}]}
   pièges  banque         rien
 DETAIL {"page":"Eiichirō Oda","kind":"pièges","word":"banque","level":"rien","cc":0.116,"near":[{"h":"japon","cos":0.151,"rank":5255,"c":[0.71,0.52,0.39,0.16]},{"h":"principalement","cos":0.144,"rank":15263,"c":[0.64,0.5,0.4,0.24]},{"h":"importantes","cos":0.115,"rank":18638,"c":[0.63,0.51,0.42,0.23]}]}
   pièges  mariage        rien
-DETAIL {"page":"Eiichirō Oda","kind":"pièges","word":"mariage","level":"rien","cc":0.031,"near":[{"h":"piece","cos":0.215,"rank":2418,"c":[0.46,0.37,0.3,0.17]},{"h":"prefecture","cos":0.136,"rank":8861,"c":[0.6,0.43,0.33,0.17]},{"h":"manga","cos":0.056,"rank":25599,"c":[0.83,0.67,0.49,0.2]}]}
+DETAIL {"page":"Eiichirō Oda","kind":"pièges","word":"mariage","level":"rien","cc":0.031,"near":[{"h":"piece","cos":0.215,"rank":2418,"c":[0.46,0.37,0.3,0.17]},{"h":"prefecture","cos":0.136,"rank":8861,"c":[0.6,0.43,0.33,0.17]},{"h":"manga","cos":0.056,"rank":25597,"c":[0.83,0.67,0.49,0.2]}]}
   pièges  ordinateur     rien
-DETAIL {"page":"Eiichirō Oda","kind":"pièges","word":"ordinateur","level":"rien","cc":0.048,"near":[{"h":"tirage","cos":0.146,"rank":4617,"c":[0.5,0.36,0.28,0.14]},{"h":"important","cos":0.115,"rank":15894,"c":[0.57,0.46,0.36,0.2]},{"h":"piece","cos":0.096,"rank":17022,"c":[0.46,0.37,0.3,0.17]}]}
+DETAIL {"page":"Eiichirō Oda","kind":"pièges","word":"ordinateur","level":"rien","cc":0.048,"near":[{"h":"tirage","cos":0.146,"rank":4620,"c":[0.5,0.36,0.28,0.14]},{"h":"important","cos":0.115,"rank":15895,"c":[0.57,0.46,0.36,0.2]},{"h":"piece","cos":0.096,"rank":17024,"c":[0.46,0.37,0.3,0.17]}]}
   pièges  guerre         tiède 0.35 → histoire
 DETAIL {"page":"Eiichirō Oda","kind":"pièges","word":"guerre","level":"tiède","cc":0.207,"near":[{"h":"histoire","cos":0.4,"rank":380,"c":[0.61,0.48,0.39,0.21]},{"h":"siecle","cos":0.277,"rank":2904,"c":[0.85,0.57,0.44,0.23]},{"h":"monde","cos":0.218,"rank":4371,"c":[0.47,0.39,0.33,0.21]}]}
 
@@ -552,23 +565,23 @@ DETAIL {"page":"Star Wars","kind":"sujet","word":"sabre","level":"chaud","cc":0.
   sujet   space          dévoilé
   sujet   cinéma         dévoilé
   sujet   vaisseau       tiède 0.33 → Palpatine
-DETAIL {"page":"Star Wars","kind":"sujet","word":"vaisseau","level":"tiède","cc":0.143,"near":[{"h":"galaxie","cos":0.399,"rank":577,"c":[0.83,0.67,0.42,0.13]},{"h":"sith","cos":0.361,"rank":724,"c":[0.71,0.49,0.39,0.2]},{"h":"jedi","cos":0.347,"rank":623,"c":[0.7,0.46,0.36,0.2]}]}
+DETAIL {"page":"Star Wars","kind":"sujet","word":"vaisseau","level":"tiède","cc":0.143,"near":[{"h":"galaxie","cos":0.399,"rank":576,"c":[0.83,0.67,0.42,0.13]},{"h":"sith","cos":0.361,"rank":724,"c":[0.71,0.49,0.39,0.2]},{"h":"jedi","cos":0.347,"rank":623,"c":[0.7,0.46,0.36,0.2]}]}
   sujet   épisode        dévoilé
   pièges  cuisine        rien
-DETAIL {"page":"Star Wars","kind":"pièges","word":"cuisine","level":"rien","cc":-0.04,"near":[{"h":"neuf","cos":0.271,"rank":680,"c":[0.5,0.38,0.29,0.15]},{"h":"situee","cos":0.249,"rank":4249,"c":[0.63,0.51,0.39,0.24]},{"h":"autour","cos":0.245,"rank":1492,"c":[0.42,0.35,0.3,0.17]}]}
+DETAIL {"page":"Star Wars","kind":"pièges","word":"cuisine","level":"rien","cc":-0.04,"near":[{"h":"neuf","cos":0.271,"rank":680,"c":[0.5,0.38,0.29,0.15]},{"h":"situee","cos":0.249,"rank":4270,"c":[0.63,0.51,0.39,0.24]},{"h":"autour","cos":0.245,"rank":1492,"c":[0.42,0.35,0.3,0.17]}]}
   pièges  football       rien
 DETAIL {"page":"Star Wars","kind":"pièges","word":"football","level":"rien","cc":0.036,"near":[{"h":"defensif","cos":0.351,"rank":1312,"c":[0.7,0.6,0.48,0.18]},{"h":"revanche","cos":0.319,"rank":1581,"c":[0.61,0.5,0.39,0.24]},{"h":"fans","cos":0.299,"rank":3757,"c":[0.64,0.54,0.46,0.27]}]}
   pièges  voiture        rien
-DETAIL {"page":"Star Wars","kind":"pièges","word":"voiture","level":"rien","cc":-0.058,"near":[{"h":"ford","cos":0.366,"rank":588,"c":[0.76,0.65,0.39,0.17]},{"h":"neuf","cos":0.2,"rank":2178,"c":[0.5,0.38,0.29,0.15]},{"h":"reveil","cos":0.194,"rank":5079,"c":[0.63,0.46,0.35,0.2]}]}
+DETAIL {"page":"Star Wars","kind":"pièges","word":"voiture","level":"rien","cc":-0.058,"near":[{"h":"ford","cos":0.366,"rank":588,"c":[0.76,0.65,0.39,0.17]},{"h":"neuf","cos":0.2,"rank":2177,"c":[0.5,0.38,0.29,0.15]},{"h":"reveil","cos":0.194,"rank":5079,"c":[0.63,0.46,0.35,0.2]}]}
   pièges  politique      dévoilé
   pièges  banque         chaud 0.66 → financiers
 DETAIL {"page":"Star Wars","kind":"pièges","word":"banque","level":"chaud","cc":0.06,"near":[{"h":"financiers","cos":0.604,"rank":67,"c":[0.73,0.57,0.45,0.23]},{"h":"derives","cos":0.326,"rank":1039,"c":[0.57,0.46,0.38,0.2]},{"h":"biais","cos":0.226,"rank":4504,"c":[0.51,0.43,0.36,0.22]}]}
   pièges  mariage        chaud 0.86 → naissance
 DETAIL {"page":"Star Wars","kind":"pièges","word":"mariage","level":"chaud","cc":0.019,"near":[{"h":"naissance","cos":0.534,"rank":14,"c":[0.55,0.43,0.3,0.14]},{"h":"celebration","cos":0.467,"rank":551,"c":[0.81,0.68,0.48,0.16]},{"h":"descendants","cos":0.377,"rank":281,"c":[0.57,0.45,0.34,0.18]}]}
   pièges  ordinateur     rien
-DETAIL {"page":"Star Wars","kind":"pièges","word":"ordinateur","level":"rien","cc":0.091,"near":[{"h":"video","cos":0.378,"rank":529,"c":[0.61,0.48,0.39,0.19]},{"h":"utilisent","cos":0.329,"rank":1178,"c":[0.6,0.48,0.39,0.22]},{"h":"supports","cos":0.321,"rank":1110,"c":[0.58,0.47,0.37,0.21]}]}
-  pièges  plage          tiède 0.41 → située
-DETAIL {"page":"Star Wars","kind":"pièges","word":"plage","level":"tiède","cc":-0.092,"near":[{"h":"situee","cos":0.43,"rank":279,"c":[0.63,0.51,0.39,0.24]},{"h":"lumineux","cos":0.264,"rank":2181,"c":[0.65,0.5,0.38,0.2]},{"h":"etoiles","cos":0.229,"rank":1936,"c":[0.71,0.56,0.37,0.16]}]}
+DETAIL {"page":"Star Wars","kind":"pièges","word":"ordinateur","level":"rien","cc":0.091,"near":[{"h":"video","cos":0.378,"rank":529,"c":[0.61,0.48,0.39,0.19]},{"h":"utilisent","cos":0.329,"rank":1178,"c":[0.6,0.48,0.39,0.22]},{"h":"supports","cos":0.321,"rank":1109,"c":[0.58,0.47,0.37,0.21]}]}
+  pièges  plage          tiède 0.4 → située
+DETAIL {"page":"Star Wars","kind":"pièges","word":"plage","level":"tiède","cc":-0.092,"near":[{"h":"situee","cos":0.429,"rank":282,"c":[0.63,0.51,0.39,0.24]},{"h":"lumineux","cos":0.264,"rank":2181,"c":[0.65,0.5,0.38,0.2]},{"h":"etoiles","cos":0.229,"rank":1936,"c":[0.71,0.56,0.37,0.16]}]}
 
 Résumé public/data
   sujet : dévoilé 24, brûlant 40, chaud 42, tiède 30, rien 4
