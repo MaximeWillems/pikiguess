@@ -46,5 +46,13 @@
   "Art rupestre": {
     "sujet": ["dur", "image", "dessin", "préhistoire", "caverne", "pierre", "fresque", "lascaux", "ocre", "symbole"],
     "pièges": ["football", "ordinateur", "voiture", "politique", "cuisine", "mariage", "banque", "télévision"]
+  },
+  "Eiichirō Oda": {
+    "sujet": ["peintre", "dessinateur", "illustrateur", "artiste", "auteur", "dessin", "bande", "anime", "japonais", "tokyo"],
+    "pièges": ["football", "cuisine", "voiture", "politique", "banque", "mariage", "ordinateur", "guerre"]
+  },
+  "Star Wars": {
+    "sujet": ["suite", "trilogie", "galaxie", "jedi", "sabre", "lucas", "space", "cinéma", "vaisseau", "épisode"],
+    "pièges": ["cuisine", "football", "voiture", "politique", "banque", "mariage", "ordinateur", "plage"]
   }
 }
