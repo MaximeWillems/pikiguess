@@ -32,6 +32,9 @@ MODEL = [
     ("révolution", vec((6, 1), (7, 0.5))),
     ("empire", vec((2, 1), (3, 0.3))),
     ("naquit", vec((7, 1), (3, 0.3))),
+    # Loin de chaque mot caché, mais l'un colle au sujet de la page et l'autre non
+    ("sceptre", vec((0, 0.9), (1, 0.22), (2, 0.2), (4, 0.2), (7, 0.2))),
+    ("manette", vec((5, 0.98), (1, 0.2))),
 ]
 
 LEXIQUE = [

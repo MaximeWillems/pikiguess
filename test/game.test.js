@@ -243,6 +243,14 @@ test('sans données : seulement les mots exacts', () => {
   assert.equal(go('1790').hints.length, 1);
 });
 
+test('lien plus lâche : tiède sur un seul mot caché, si le mot colle au sujet de la page', () => {
+  const { page, go } = play();
+  const r = go('sceptre');
+  assert.equal(r.items[0].s, 0.3);
+  assert.deepEqual(r.hints.map(([i]) => page.words[i].text), ['roi']);
+  assert.equal(go('manette').items[0].s, 0);
+});
+
 test("mot qui n'existe pas : signalé, et il ne compte pas s'il ne réchauffe rien", () => {
   const { run, go } = play();
   assert.deepEqual(go('zorglub').items, [{ w: 'zorglub', unknown: true }]);

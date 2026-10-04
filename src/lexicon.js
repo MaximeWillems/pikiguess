@@ -23,21 +23,23 @@ export class Lexicon {
     this.lexique = version === 0x32574b50 ? take(Uint8Array, n) : null;
     this.mask = size - 1;
 
-    // vectors.bin : « PKV1 » les vecteurs seuls, « PKV2 » suivis de 3 seuils de proximité par mot
+    // vectors.bin : « PKV1 » les vecteurs seuls, « PKV2 » suivis de 3 seuils de proximité par mot (10e, 100e, 500e voisin),
+    // « PKV3 » d'autant de seuils que l'en-tête l'indique (aujourd'hui 4 : 10e, 100e, 500e, 5 000e voisin)
     const v = new DataView(vectors);
     const magic = v.getUint32(0, true);
-    if (magic !== 0x31564b50 && magic !== 0x32564b50) throw new Error('vectors.bin invalide');
+    if (magic !== 0x31564b50 && magic !== 0x32564b50 && magic !== 0x33564b50) throw new Error('vectors.bin invalide');
     const count = v.getUint32(4, true);
     this.dims = v.getUint32(8, true);
-    this.vectors = new Int8Array(vectors, 12, count * this.dims);
-    this.cut = magic === 0x32564b50 ? new Int8Array(vectors, 12 + count * this.dims, count * 3) : null;
+    this.ncut = magic === 0x33564b50 ? v.getUint32(12, true) : magic === 0x32564b50 ? 3 : 0;
+    const start = magic === 0x33564b50 ? 16 : 12;
+    this.vectors = new Int8Array(vectors, start, count * this.dims);
+    this.cut = this.ncut ? new Int8Array(vectors, start + count * this.dims, count * this.ncut) : null;
   }
 
-  // Similarité du 10e, du 100e et du 500e voisin le plus proche de ce mot.
+  // Similarité du 10e, du 100e, du 500e et (données récentes) du 5 000e voisin le plus proche de ce mot.
   cutoffs(row) {
     if (!this.cut) return null;
-    const c = this.cut, j = row * 3;
-    return [c[j] / 127, c[j + 1] / 127, c[j + 2] / 127];
+    return Array.from(this.cut.subarray(row * this.ncut, (row + 1) * this.ncut), c => c / 127);
   }
 
   // Le mot vient-il du dictionnaire des formes ? Sans l'information (anciennes données), on le suppose.

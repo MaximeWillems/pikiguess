@@ -295,7 +295,59 @@ export function analyze(page, lex) {
     if (!keys.has(w.key)) keys.set(w.key, { key: w.key, plain: normalize(w.key), pos: [], num: wordNum(w), ...describe(w.key, lex) });
     keys.get(w.key).pos.push(i);
   });
+  keys.topic = topicOf(keys, lex);
   return keys;
+}
+
+const norm = (lex, row) => {
+  let s = 0;
+  for (let j = 0, o = row * lex.dims; j < lex.dims; j++) s += lex.vectors[o + j] ** 2;
+  return Math.sqrt(s) || 1;
+};
+
+// Le sujet de la page : la moyenne des mots cachés, hors petits mots et nombres.
+function topicOf(keys, lex) {
+  if (!lex) return null;
+  const d = lex.dims, t = new Float32Array(d);
+  let n = 0;
+  for (const e of keys.values()) {
+    if (e.row < 0 || e.stop || e.num) continue;
+    const len = norm(lex, e.row);
+    for (let j = 0; j < d; j++) t[j] += lex.vectors[e.row * d + j] / len;
+    n++;
+  }
+  return n ? t : null;
+}
+
+// Proximité d'un mot avec le sujet de la page.
+function onTopic(lex, row, topic) {
+  let dot = 0, size = 0;
+  for (let j = 0, o = row * lex.dims; j < lex.dims; j++) {
+    dot += lex.vectors[o + j] * topic[j];
+    size += topic[j] ** 2;
+  }
+  return dot / (norm(lex, row) * Math.sqrt(size));
+}
+
+// Lien plus lâche, quand rien n'est proche : le mot caché dont le mot proposé est parmi les 5 000 plus proches voisins,
+// si le mot proposé colle aussi au sujet de la page (« image » sur « Art rupestre »). Sans le sujet, les mots sans rapport
+// s'allumeraient presque tous (mesuré sur les pages de test : 45 % des pièges allumés au lieu de 42 %, contre 86 % sans).
+const LOOSE = 0.15;
+
+function loose(g, keys, lex, run) {
+  if (!lex || g.row < 0 || g.stop || g.num || !keys.topic || onTopic(lex, g.row, keys.topic) < LOOSE) return null;
+  let pick = null, top = LOOSE;
+  for (const e of keys.values()) {
+    if (run.revealed.has(e.key) || e.row < 0 || e.stop || e.num) continue;
+    const far = lex.cutoffs?.(e.row)?.[3];
+    if (far === undefined) return null;
+    const cos = lex.cosine(g.row, e.row);
+    if (cos >= far && cos >= top) {
+      pick = e;
+      top = cos;
+    }
+  }
+  return pick;
 }
 
 // Proximité de sens, calibrée sur le mot caché : brûlant si le mot proposé est parmi ses 10 plus proches voisins,
@@ -406,6 +458,16 @@ export function guess(page, keys, lex, run, input) {
       if (s < HINT_MIN || s <= (run.hints.get(e.key)?.s ?? 0)) continue;
       run.hints.set(e.key, { w, s });
       for (const i of e.pos) res.hints.push([i, w, round(s)]);
+    }
+
+    // Rien de proche : un lien plus lâche donne un indice tiède, sur ce seul mot caché
+    const far = best < HINT_MIN && !found.length && loose(g, keys, lex, run);
+    if (far) {
+      best = HINT_MIN;
+      if (HINT_MIN > (run.hints.get(far.key)?.s ?? 0)) {
+        run.hints.set(far.key, { w, s: HINT_MIN });
+        for (const i of far.pos) res.hints.push([i, w, HINT_MIN]);
+      }
     }
 
     // Mot absent du dictionnaire et du texte : signalé, et s'il ne réchauffe aucune case, il ne compte pas comme essai

@@ -4,7 +4,7 @@ Usage : python tools/prepare_data.py <modèle word2vec .bin> <Lexique383.tsv> <d
 
 Produit words.bin et vectors.bin, lus par src/lexicon.js, et formes.tsv, que tools/prepare_help.mjs transforme en aide.bin.
 Les mots y sont normalisés (minuscules, sans accents), comme dans src/game.js.
-vectors.bin contient aussi, pour chaque mot, la similarité de son 10e, 100e et 500e voisin le plus proche :
+vectors.bin contient aussi, pour chaque mot, la similarité de son 10e, 100e, 500e et 5 000e voisin le plus proche :
 c'est ce qui calibre les mots proches (tiède, chaud, brûlant) mot par mot.
 """
 import argparse
@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 
 MAX_FILE = 25 * 1024 * 1024
-RANKS = (10, 100, 500)
+RANKS = (10, 100, 500, 5000)
 VALID = re.compile(r"[a-z0-9]+")
 ELISIONS = {
     "l": {"le"}, "d": {"de"}, "j": {"je"}, "m": {"me"}, "t": {"te"}, "s": {"se", "si"},
@@ -104,7 +104,7 @@ def reduce_dims(m, dims):
 
 
 def neighbour_cutoffs(q):
-    """Pour chaque mot, la similarité de son 10e, 100e et 500e voisin le plus proche (lui-même exclu)."""
+    """Pour chaque mot, la similarité de son 10e, 100e, 500e et 5 000e voisin le plus proche (lui-même exclu)."""
     f = unit(q.astype(np.float32))
     n = len(f)
     if n < 2:
@@ -135,7 +135,7 @@ def report(q, rows, cut):
             continue
         cos = float(f[ra] @ f[rb])
         seuils = " / ".join(f"{c / 127:.2f}" for c in cut[ra])
-        print(f"{a} / {b} : similarité {cos:.2f} ; {b} est le {int((f @ f[ra] > cos).sum())}e voisin de {a} (seuils de {a}, 10e / 100e / 500e voisin : {seuils}), {a} le {int((f @ f[rb] > cos).sum())}e de {b}")
+        print(f"{a} / {b} : similarité {cos:.2f} ; {b} est le {int((f @ f[ra] > cos).sum())}e voisin de {a} (seuils de {a}, {' / '.join(f'{r}e' for r in RANKS)} voisin : {seuils}), {a} le {int((f @ f[rb] > cos).sum())}e de {b}")
     for probe in PROBES:
         r = rows.get(normalize(probe))
         if r is None:
@@ -204,15 +204,15 @@ def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
         known.tobytes(),
     ])
 
-    # Autant de dimensions que la limite de 25 Mio le permet (vecteurs + 3 seuils par mot), « dims » au plus
+    # Autant de dimensions que la limite de 25 Mio le permet (vecteurs + un seuil par rang et par mot), « dims » au plus
     m = unit(vectors[order])
-    fit = (MAX_FILE - 12 - 3 * len(order)) // max(1, len(order))
+    fit = (MAX_FILE - 16 - len(RANKS) * len(order)) // max(1, len(order))
     dims = min(m.shape[1], dims or m.shape[1], fit)
     if dims < m.shape[1]:
         m = unit(reduce_dims(m, dims))
     q = np.clip(np.rint(m * 127), -127, 127).astype(np.int8)
     cut = neighbour_cutoffs(q)
-    vectors_bin = b"PKV2" + np.array([len(order), q.shape[1]], dtype="<u4").tobytes() + q.tobytes() + cut.tobytes()
+    vectors_bin = b"PKV3" + np.array([len(order), q.shape[1], len(RANKS)], dtype="<u4").tobytes() + q.tobytes() + cut.tobytes()
 
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
