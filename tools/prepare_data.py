@@ -25,9 +25,9 @@ ELISIONS = {
     "n": {"ne"}, "c": {"ce"}, "qu": {"que"}, "jusqu": {"jusque"}, "lorsqu": {"lorsque"},
     "puisqu": {"puisque"}, "quoiqu": {"quoique"},
 }
-PROBES = ["roi", "napoléon", "paris", "1789", "guerre", "fleuve", "planète", "chat", "borgne", "manger", "tyrannosaure", "théropode", "spinosaurus", "suite"]
+PROBES = ["roi", "napoléon", "paris", "1789", "guerre", "fleuve", "planète", "chat", "borgne", "manger", "tyrannosaure", "théropode", "spinosaurus", "suite", "roche", "dur"]
 # Paires signalées en partie : similarité et rang de chaque mot parmi les voisins de l'autre
-PAIRS = [("suite", "saga"), ("suite", "trilogie"), ("suite", "film"), ("québec", "canadien"), ("tyrannosaure", "dinosaure")]
+PAIRS = [("suite", "saga"), ("suite", "trilogie"), ("suite", "film"), ("québec", "canadien"), ("tyrannosaure", "dinosaure"), ("roche", "dur"), ("roches", "dur"), ("roche", "dure"), ("roche", "pierre")]
 
 
 def normalize(s):
@@ -134,7 +134,8 @@ def report(q, rows, cut):
             print(f"{a} / {b} : absent")
             continue
         cos = float(f[ra] @ f[rb])
-        print(f"{a} / {b} : similarité {cos:.2f} ; {b} est le {int((f @ f[ra] > cos).sum())}e voisin de {a}, {a} le {int((f @ f[rb] > cos).sum())}e de {b}")
+        seuils = " / ".join(f"{c / 127:.2f}" for c in cut[ra])
+        print(f"{a} / {b} : similarité {cos:.2f} ; {b} est le {int((f @ f[ra] > cos).sum())}e voisin de {a} (seuils de {a}, 10e / 100e / 500e voisin : {seuils}), {a} le {int((f @ f[rb] > cos).sum())}e de {b}")
     for probe in PROBES:
         r = rows.get(normalize(probe))
         if r is None:
