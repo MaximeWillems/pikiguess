@@ -9,7 +9,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 import prepare_data  # noqa: E402
 
 OUT = ROOT / "test" / ".data"
-DIMS = 8
+DIMS = 10
 
 
 def vec(*axes):
@@ -35,6 +35,18 @@ MODEL = [
     # Loin de chaque mot caché, mais l'un colle au sujet de la page et l'autre non
     ("sceptre", vec((0, 0.9), (1, 0.22), (2, 0.2), (4, 0.2), (7, 0.2))),
     ("manette", vec((5, 0.98), (1, 0.2))),
+    # Écritures au sens différent (« venus » de venir, plus fréquent, et « vénus » la planète), planètes pour « Mars »,
+    # et des mois (« Avril » le prénom ne doit pas en prendre le sens)
+    ("venus", vec((3, 1), (7, 0.3))),
+    ("vénus", vec((8, 1), (9, 0.3))),
+    ("jupiter", vec((8, 1), (9, 0.2))),
+    ("saturne", vec((8, 1), (9, 0.25))),
+    ("uranus", vec((8, 1), (9, 0.15))),
+    ("neptune", vec((8, 1), (9, 0.1))),
+    ("astre", vec((8, 0.8), (9, 0.6))),
+    ("mars", vec((2, 0.5), (7, 0.6))),
+    ("avril", vec((2, 0.5), (7, 0.5))),
+    ("juin", vec((2, 0.6), (7, 0.5))),
 ]
 
 LEXIQUE = [

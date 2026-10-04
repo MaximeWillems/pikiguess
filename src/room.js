@@ -431,14 +431,19 @@ export class Room extends DurableObject {
   }
 
   lexicon() {
-    this.lex ??= Promise.all(
-      ['words.bin', 'vectors.bin'].map(async f => {
-        const res = await this.env.ASSETS.fetch(new Request(`https://assets.local/data/${f}`));
-        if (!res.ok) throw new Error(`${f} : ${res.status}`);
-        return res.arrayBuffer();
-      }),
-    )
-      .then(([w, v]) => new Lexicon(w, v))
+    const get = async f => {
+      const res = await this.env.ASSETS.fetch(new Request(`https://assets.local/data/${f}`));
+      if (!res.ok) throw new Error(`${f} : ${res.status}`);
+      return res;
+    };
+    this.lex ??= Promise.all([
+      get('words.bin').then(r => r.arrayBuffer()),
+      get('vectors.bin').then(r => r.arrayBuffer()),
+      get('variantes.json')
+        .then(r => r.json())
+        .catch(() => null),
+    ])
+      .then(([w, v, variants]) => new Lexicon(w, v, variants))
       .catch(e => {
         console.warn('Données absentes, mots grisés et formes désactivés :', e.message);
         return null;

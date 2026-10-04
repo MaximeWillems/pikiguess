@@ -1,6 +1,6 @@
 // Mesure la qualité des mots proches sur les pages de tools/evaluation.json : pour chaque essai, son meilleur niveau.
 // Usage : node tools/evaluate.mjs <dossier de données> [<autre dossier>…]. Le rapport s'écrit sur la sortie standard.
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { Lexicon } from '../src/lexicon.js';
 import { analyze, buildPage, describe, guess, keyOf, newRun } from '../src/game.js';
 import { fetchPage } from '../src/wikipedia.js';
@@ -65,11 +65,12 @@ function detail(lex, rank, keys, word) {
     .sort((a, b) => b.cos - a.cos)
     .slice(0, 3)
     .map(({ e }) => ({ h: e.plain, ...rank(e.row, g), c: lex.cutoffs(e.row)?.map(x => Math.round(x * 100) / 100) }));
-  return { cc: Math.round((1000 * dot) / Math.sqrt(cn * gn)) / 1000, near };
+  return { cc: Math.round((1000 * dot) / Math.sqrt(cn * gn)) / 1000, cg: lex.cutoffs(g)?.map(x => Math.round(x * 100) / 100), near };
 }
 
 for (const dir of process.argv.slice(2)) {
-  const lex = new Lexicon(load(dir, 'words.bin'), load(dir, 'vectors.bin'));
+  const variants = existsSync(`${dir}/variantes.json`) ? JSON.parse(readFileSync(`${dir}/variantes.json`, 'utf8')) : null;
+  const lex = new Lexicon(load(dir, 'words.bin'), load(dir, 'vectors.bin'), variants);
   const rank = dir === process.argv[2] ? ranker(lex) : null;
   const total = { sujet: {}, pièges: {} };
   console.log(`\n===== ${dir} =====`);

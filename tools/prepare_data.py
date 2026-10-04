@@ -10,6 +10,7 @@ c'est ce qui calibre les mots proches (tiède, chaud, brûlant) mot par mot.
 import argparse
 import csv
 import io
+import json
 import re
 import sys
 import unicodedata
@@ -27,6 +28,13 @@ ELISIONS = {
 }
 PROBES = ["roi", "napoléon", "paris", "1789", "guerre", "fleuve", "planète", "chat", "borgne", "manger", "tyrannosaure", "théropode", "spinosaurus", "suite", "roche", "dur"]
 # Paires signalées en partie : similarité et rang de chaque mot parmi les voisins de l'autre
+# Une autre écriture d'un mot (accents) garde son propre vecteur quand son sens diffère assez : « vénus » la planète,
+# « venus » de venir. Seulement parmi les 100 000 mots les plus fréquents (au-delà : surtout des fautes ou d'autres langues)
+VARIANT_MAX = 0.6
+VARIANT_RANK = 100000
+# Noms propres que le modèle, tout en minuscules, ne connaît pas : un vecteur fait de mots proches, pour le mot écrit avec
+# une majuscule en milieu de phrase (« la planète Mars », alors que « mars » est le mois)
+PROPER = {"Mars": ["jupiter", "saturne", "uranus", "neptune"]}
 # Mots dont la majuscule change le sens (« mars » le mois, « Mars » la planète) : chaque écriture du modèle et ses voisins
 VARIANTS = ["mars", "pierre", "lune", "terre", "paris", "soleil", "venus", "saturne"]
 PAIRS = [("suite", "saga"), ("suite", "trilogie"), ("suite", "film"), ("québec", "canadien"), ("tyrannosaure", "dinosaure"), ("roche", "dur"), ("roches", "dur"), ("roche", "dure"), ("roche", "pierre")]
@@ -178,6 +186,23 @@ def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
             if len(order) == max_vectors:
                 break
 
+    # Autres écritures d'un mot dont le sens diffère, et noms propres absents du modèle : vecteurs en plus, après les autres
+    def direction(i):
+        return vectors[i] / max(float(np.linalg.norm(vectors[i])), 1e-9)
+
+    extra = {}
+    for i, w in enumerate(words[:VARIANT_RANK]):
+        k = normalize(w)
+        if k not in rows or i == order[rows[k]] or w in extra or w.lower() == words[order[rows[k]]].lower():
+            continue
+        if float(direction(i) @ direction(order[rows[k]])) < VARIANT_MAX:
+            extra[w] = direction(i)
+    for name, anchors in PROPER.items():
+        found = [direction(order[rows[a]]) for a in anchors if a in rows]
+        if found:
+            extra[name] = np.mean(found, axis=0)
+    variant_rows = {w: len(order) + j for j, w in enumerate(extra)}
+
     keys = list(rows)
     index = {k: i for i, k in enumerate(keys)}
     for form, lemmas in forms.items():
@@ -222,14 +247,15 @@ def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
     ])
 
     # Autant de dimensions que la limite de 25 Mio le permet (vecteurs + un seuil par rang et par mot), « dims » au plus
-    m = unit(vectors[order])
-    fit = (MAX_FILE - 16 - len(RANKS) * len(order)) // max(1, len(order))
+    m = unit(np.vstack([vectors[order], np.array(list(extra.values()), dtype=np.float32).reshape(-1, vectors.shape[1])]))
+    total = len(m)
+    fit = (MAX_FILE - 16 - len(RANKS) * total) // max(1, total)
     dims = min(m.shape[1], dims or m.shape[1], fit)
     if dims < m.shape[1]:
         m = unit(reduce_dims(m, dims))
     q = np.clip(np.rint(m * 127), -127, 127).astype(np.int8)
     cut = neighbour_cutoffs(q)
-    vectors_bin = b"PKV3" + np.array([len(order), q.shape[1], len(RANKS)], dtype="<u4").tobytes() + q.tobytes() + cut.tobytes()
+    vectors_bin = b"PKV3" + np.array([total, q.shape[1], len(RANKS)], dtype="<u4").tobytes() + q.tobytes() + cut.tobytes()
 
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -244,6 +270,10 @@ def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
         lines.append(f"{shown if normalize(shown) == k else k}\t{rows[k] if k in rows else rank[k]}\n")
     (out / "formes.tsv").write_text("".join(lines), encoding="utf-8")
 
+    # Écritures au sens propre : leur ligne dans vectors.bin
+    (out / "variantes.json").write_text(json.dumps(variant_rows, ensure_ascii=False), encoding="utf-8")
+    print(f"variantes.json : {len(variant_rows)} écritures au sens propre, dont " + ", ".join(list(variant_rows)[:40]))
+
     for name, content in (("words.bin", words_bin), ("vectors.bin", vectors_bin)):
         if len(content) > MAX_FILE:
             sys.exit(f"{name} dépasse 25 Mio ({len(content)} octets)")
@@ -251,7 +281,7 @@ def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
         print(f"{name} : {len(content) / 1e6:.1f} Mo")
 
     print(f"{len(words)} mots dans le modèle, {len(order)} vecteurs gardés de {q.shape[1]} dimensions, {len(keys)} mots connus, {len(forms)} formes")
-    report(q, rows, cut)
+    report(q, {**rows, **variant_rows}, cut)
     variants(words, vectors)
 
 

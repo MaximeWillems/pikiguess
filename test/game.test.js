@@ -18,7 +18,7 @@ before(() => {
     const b = readFileSync(`test/.data/out/${f}`);
     return b.buffer.slice(b.byteOffset, b.byteOffset + b.length);
   };
-  lex = new Lexicon(load('words.bin'), load('vectors.bin'));
+  lex = new Lexicon(load('words.bin'), load('vectors.bin'), JSON.parse(readFileSync('test/.data/out/variantes.json', 'utf8')));
   help = buildHelp('test/.data/out').help;
 });
 
@@ -249,6 +249,19 @@ test('lien plus lâche : tiède sur un seul mot caché, si le mot colle au sujet
   assert.equal(r.items[0].s, 0.3);
   assert.deepEqual(r.hints.map(([i]) => page.words[i].text), ['roi']);
   assert.equal(go('manette').items[0].s, 0);
+});
+
+test("le sens de l'écriture de la page : « Vénus » la planète, « Mars » la planète, « Avril » sans le sens du mois", () => {
+  const near = (text, word) => {
+    const page = buildPage('Test', text);
+    const r = guess(page, analyze(page, lex), lex, newRun(), word);
+    return r.hints.map(([i]) => page.words[i].text);
+  };
+  assert.deepEqual(near('On voit Vénus et Mars le soir.', 'astre').sort(), ['Mars', 'Vénus']);
+  assert.deepEqual(near('On voit Vénus le soir.', 'naquit'), []);
+  assert.deepEqual(near('Ils sont venus le soir.', 'naquit'), ['venus']);
+  assert.deepEqual(near('Il chante avec Avril.', 'juin'), []);
+  assert.deepEqual(near('Il est parti en avril 2020.', 'naquit'), ['avril']);
 });
 
 test("mot qui n'existe pas : signalé, et il ne compte pas s'il ne réchauffe rien", () => {

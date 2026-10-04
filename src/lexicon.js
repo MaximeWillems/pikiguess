@@ -1,8 +1,8 @@
-// Lit words.bin et vectors.bin, produits par tools/prepare_data.py.
+// Lit words.bin, vectors.bin et variantes.json, produits par tools/prepare_data.py.
 const VALID = /^[a-z0-9]+$/;
 
 export class Lexicon {
-  constructor(words, vectors) {
+  constructor(words, vectors, variants = null) {
     // words.bin : « PKW1 », ou « PKW2 » qui dit en plus, pour chaque mot, s'il vient du dictionnaire des formes
     const w = new DataView(words);
     const version = w.getUint32(0, true);
@@ -34,6 +34,14 @@ export class Lexicon {
     const start = magic === 0x33564b50 ? 16 : 12;
     this.vectors = new Int8Array(vectors, start, count * this.dims);
     this.cut = this.ncut ? new Int8Array(vectors, start + count * this.dims, count * this.ncut) : null;
+
+    // variantes.json : écriture → ligne de son vecteur, pour les écritures dont le sens diffère de la plus courante
+    this.variants = new Map(Object.entries(variants ?? {}));
+  }
+
+  // Ligne du vecteur d'une écriture précise (« vénus » la planète, « Mars »), ou -1 si elle n'a pas de sens à elle.
+  variant(spelling) {
+    return this.variants.get(spelling) ?? -1;
   }
 
   // Similarité du 10e, du 100e, du 500e et (données récentes) du 5 000e voisin le plus proche de ce mot.

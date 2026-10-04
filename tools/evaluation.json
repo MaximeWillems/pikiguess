@@ -54,5 +54,17 @@
   "Star Wars": {
     "sujet": ["suite", "trilogie", "galaxie", "jedi", "sabre", "lucas", "space", "cinéma", "vaisseau", "épisode"],
     "pièges": ["cuisine", "football", "voiture", "politique", "banque", "mariage", "ordinateur", "plage"]
+  },
+  "Mars (planète)": {
+    "sujet": ["lune", "jupiter", "rouge", "orbite", "astéroïde", "sonde", "volcan", "phobos", "martien", "galaxie"],
+    "pièges": ["avril", "juin", "football", "cuisine", "voiture", "banque", "mariage", "politique"]
+  },
+  "Vénus (planète)": {
+    "sujet": ["lune", "étoile", "berger", "nuage", "chaleur", "mercure", "jupiter", "atmosphère", "volcan", "astronome"],
+    "pièges": ["venir", "arrivés", "football", "cuisine", "voiture", "banque", "mariage", "politique"]
+  },
+  "Poussière": {
+    "sujet": ["sable", "saleté", "particule", "aspirateur", "acarien", "fumée", "cendre", "grain", "allergie", "pollen"],
+    "pièges": ["football", "cuisine", "voiture", "banque", "mariage", "politique", "roi", "chanson"]
   }
 }

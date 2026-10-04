@@ -57,6 +57,7 @@ export function buildPage(title, extract) {
   const mark = text => {
     const tokens = tokenize(text).map(t => (typeof t === 'string' ? t : words.push({ text: t.w, key: keyOf(t.w) }) - 1));
     annotateNumbers(tokens, words);
+    markProper(tokens, words);
     return tokens;
   };
   const titleTokens = mark(title);
@@ -66,6 +67,19 @@ export function buildPage(title, extract) {
     .filter(Boolean)
     .map(mark);
   return { titleTokens, paragraphs, words, titleWords: titleTokens.filter(t => typeof t === 'number') };
+}
+
+// Mots écrits avec une majuscule en milieu de phrase : des noms propres (« la planète Mars », pas le mois de mars).
+function markProper(tokens, words) {
+  let start = true;
+  for (const t of tokens) {
+    if (typeof t === 'string') {
+      if (/[.!?…]["»”)\s]*$/.test(t)) start = true;
+      continue;
+    }
+    if (!start && /^\p{Lu}/u.test(words[t].text)) words[t].proper = true;
+    start = false;
+  }
 }
 
 // Nombres, dates et mots qui comptent (mois, jours, nombres en lettres, chiffres romains)
@@ -293,8 +307,21 @@ export function analyze(page, lex) {
   const keys = new Map();
   page.words.forEach((w, i) => {
     if (!keys.has(w.key)) keys.set(w.key, { key: w.key, plain: normalize(w.key), pos: [], num: wordNum(w), ...describe(w.key, lex) });
-    keys.get(w.key).pos.push(i);
+    const e = keys.get(w.key);
+    e.pos.push(i);
+    if (w.proper) e.proper = w.text;
+    else e.lower ??= w.text.toLowerCase();
   });
+
+  // Le sens de l'écriture de la page, quand elle a le sien : « Vénus » la planète et non « venus » (venir), « Mars » la
+  // planète et non le mois. Un mois ou un jour écrit en nom propre sans sens à lui (« Avril » le prénom) n'a plus de sens.
+  if (lex?.variant)
+    for (const e of keys.values()) {
+      if (e.stop || e.num) continue;
+      const own = e.proper && lex.variant(e.proper) >= 0 ? lex.variant(e.proper) : lex.variant((e.proper ?? e.lower ?? '').toLowerCase());
+      if (own >= 0) e.row = own;
+      else if (e.proper && !e.lower && (MONTHS.has(e.key) || WEEKDAYS.has(e.key))) e.row = -1;
+    }
   keys.topic = topicOf(keys, lex);
   return keys;
 }
@@ -444,6 +471,10 @@ export function guess(page, keys, lex, run, input) {
     }
     run.tried.add(k);
     const g = { ...describe(k, lex), num: guessNum(raw) };
+
+    // L'écriture tapée, si elle a son propre sens (« vénus » avec l'accent : la planète)
+    const own = g.stop || !lex?.variant ? -1 : lex.variant(w);
+    if (own >= 0) g.row = own;
 
     // Sans accent, « a » vaut aussi « à » : il en dévoile les formes (« au », « aux »).
     for (const a of ACCENTED) if (normalize(a) === plain) for (const grp of GROUP_OF.get(a) ?? []) g.lemmas.add(grp);
