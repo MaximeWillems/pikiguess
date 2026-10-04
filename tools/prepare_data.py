@@ -27,6 +27,8 @@ ELISIONS = {
 }
 PROBES = ["roi", "napoléon", "paris", "1789", "guerre", "fleuve", "planète", "chat", "borgne", "manger", "tyrannosaure", "théropode", "spinosaurus", "suite", "roche", "dur"]
 # Paires signalées en partie : similarité et rang de chaque mot parmi les voisins de l'autre
+# Mots dont la majuscule change le sens (« mars » le mois, « Mars » la planète) : chaque écriture du modèle et ses voisins
+VARIANTS = ["mars", "pierre", "lune", "terre", "paris", "soleil", "venus", "saturne"]
 PAIRS = [("suite", "saga"), ("suite", "trilogie"), ("suite", "film"), ("québec", "canadien"), ("tyrannosaure", "dinosaure"), ("roche", "dur"), ("roches", "dur"), ("roche", "dure"), ("roche", "pierre")]
 
 
@@ -116,6 +118,21 @@ def neighbour_cutoffs(q):
         s[np.arange(len(s)), np.arange(start, start + len(s))] = -2
         out[start:start + len(s)] = -np.partition(-s, kth, axis=1)[:, kth]
     return np.clip(np.rint(out * 127), -127, 127).astype(np.int8)
+
+
+def variants(words, vectors):
+    """Les écritures d'un même mot dans le modèle (majuscule, accents), avec leur rang de fréquence et leurs voisins."""
+    f = unit(vectors)
+    seen = {}
+    for i, w in enumerate(words):
+        k = normalize(w)
+        if k in VARIANTS and len(seen.setdefault(k, [])) < 3:
+            seen[k].append(i)
+    for k in VARIANTS:
+        for i in seen.get(k, []):
+            s = f @ f[i]
+            top = [t for t in np.argsort(-s)[:9] if t != i][:8]
+            print(f"« {words[i]} » (fréquence {i + 1}e) : " + ", ".join(f"{words[t]} {s[t]:.2f}" for t in top))
 
 
 def report(q, rows, cut):
@@ -235,6 +252,7 @@ def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
 
     print(f"{len(words)} mots dans le modèle, {len(order)} vecteurs gardés de {q.shape[1]} dimensions, {len(keys)} mots connus, {len(forms)} formes")
     report(q, rows, cut)
+    variants(words, vectors)
 
 
 if __name__ == "__main__":
