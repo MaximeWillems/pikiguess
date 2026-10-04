@@ -29,8 +29,9 @@ ELISIONS = {
 PROBES = ["roi", "napoléon", "paris", "1789", "guerre", "fleuve", "planète", "chat", "borgne", "manger", "tyrannosaure", "théropode", "spinosaurus", "suite", "roche", "dur"]
 # Paires signalées en partie : similarité et rang de chaque mot parmi les voisins de l'autre
 # Une autre écriture d'un mot (accents) garde son propre vecteur quand son sens diffère assez : « vénus » la planète,
-# « venus » de venir. Seulement parmi les 100 000 mots les plus fréquents (au-delà : surtout des fautes ou d'autres langues)
-VARIANT_MAX = 0.6
+# « venus » de venir. Seulement parmi les 100 000 mots les plus fréquents, et si elle a un accent ou existe dans Lexique
+# (« marche » à côté de « marché ») : sinon c'est surtout une faute du web (« tres », « etre »)
+VARIANT_MAX = 0.5
 VARIANT_RANK = 100000
 # Noms propres que le modèle, tout en minuscules, ne connaît pas : un vecteur fait de mots proches, pour le mot écrit avec
 # une majuscule en milieu de phrase (« la planète Mars », alors que « mars » est le mois)
@@ -91,15 +92,16 @@ def read_lexique(path):
     rows = csv.DictReader(io.StringIO(text), delimiter="\t", quoting=csv.QUOTE_NONE)
     if not {"ortho", "lemme"} <= set(rows.fieldnames or []):
         sys.exit(f"Colonnes ortho et lemme absentes de {path} : {rows.fieldnames}")
-    forms, spelled = {}, {}
+    forms, spelled, orthos = {}, {}, set()
     for row in rows:
         form, lemma = normalize(row["ortho"]), normalize(row["lemme"] or row["ortho"])
+        orthos.add(row["ortho"].lower())
         if VALID.fullmatch(form) and VALID.fullmatch(lemma):
             forms.setdefault(form, set()).add(lemma)
             freq = number(row.get("freqfilms2")) + number(row.get("freqlivres"))
             best, top, total = spelled.get(form, (row["ortho"], -1.0, 0.0))
             spelled[form] = (row["ortho"], freq, total + freq) if freq > top else (best, top, total + freq)
-    return forms, spelled
+    return forms, spelled, orthos
 
 
 def unit(m):
@@ -143,11 +145,11 @@ def variants(words, vectors):
             print(f"« {words[i]} » (fréquence {i + 1}e) : " + ", ".join(f"{words[t]} {s[t]:.2f}" for t in top))
 
 
-def report(q, rows, cut):
+def report(q, rows, cut, names=None):
     if len(q) < 2:
         return
     f = unit(q.astype(np.float32))
-    by_row = {r: k for k, r in rows.items()}
+    by_row = {r: k for k, r in rows.items()} | (names or {})
     for j, r in enumerate(RANKS):
         print(f"Similarité du {r}e voisin : médiane {np.median(cut[:, j]) / 127:.2f}, 10e centile {np.percentile(cut[:, j], 10) / 127:.2f}, 90e centile {np.percentile(cut[:, j], 90) / 127:.2f}")
     a, b = np.random.default_rng(0).integers(0, len(f), (2, 20000))
@@ -173,7 +175,7 @@ def report(q, rows, cut):
 
 def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
     words, vectors = read_word2vec(model_path)
-    forms, spelled = read_lexique(lexique_path)
+    forms, spelled, orthos = read_lexique(lexique_path)
     for form, lemmas in ELISIONS.items():
         forms.setdefault(form, set()).update(lemmas)
 
@@ -194,6 +196,8 @@ def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
     for i, w in enumerate(words[:VARIANT_RANK]):
         k = normalize(w)
         if k not in rows or i == order[rows[k]] or w in extra or w.lower() == words[order[rows[k]]].lower():
+            continue
+        if w.isascii() and w.lower() not in orthos:
             continue
         if float(direction(i) @ direction(order[rows[k]])) < VARIANT_MAX:
             extra[w] = direction(i)
@@ -281,7 +285,7 @@ def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
         print(f"{name} : {len(content) / 1e6:.1f} Mo")
 
     print(f"{len(words)} mots dans le modèle, {len(order)} vecteurs gardés de {q.shape[1]} dimensions, {len(keys)} mots connus, {len(forms)} formes")
-    report(q, {**rows, **variant_rows}, cut)
+    report(q, rows, cut, {r: w for w, r in variant_rows.items()})
     variants(words, vectors)
 
 

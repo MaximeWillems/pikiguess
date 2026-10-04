@@ -422,6 +422,7 @@ export function closeness(g, e, lex) {
   if (gn && en && (gn === en || PARENT.get(gn) === en || PARENT.get(en) === gn)) return 0.9;
   if (RELATED_OF.has(g.plain) && RELATED_OF.get(g.plain) === RELATED_OF.get(e.plain)) return 0.9;
   let t = semantic(g, e, lex);
+  if (g.alt >= 0) t = Math.max(t, semantic({ ...g, row: g.alt }, e, lex));
   if (!t && (g.row < 0 || e.row < 0) && !g.stop && !e.stop) t = spelling(g.plain, e.plain);
   return gn && en ? Math.min(t, 0.35) : t;
 }
@@ -472,9 +473,8 @@ export function guess(page, keys, lex, run, input) {
     run.tried.add(k);
     const g = { ...describe(k, lex), num: guessNum(raw) };
 
-    // L'écriture tapée, si elle a son propre sens (« vénus » avec l'accent : la planète)
-    const own = g.stop || !lex?.variant ? -1 : lex.variant(w);
-    if (own >= 0) g.row = own;
+    // L'écriture tapée, si elle a son propre sens (« vénus » avec l'accent : la planète), en plus du sens le plus courant
+    g.alt = g.stop || !lex?.variant ? -1 : lex.variant(w);
 
     // Sans accent, « a » vaut aussi « à » : il en dévoile les formes (« au », « aux »).
     for (const a of ACCENTED) if (normalize(a) === plain) for (const grp of GROUP_OF.get(a) ?? []) g.lemmas.add(grp);

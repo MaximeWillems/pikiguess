@@ -38,6 +38,7 @@ jobs:
           sha256sum data-src/*
       - name: Préparer les données et mesurer les mots proches
         run: |
+          set -o pipefail
           {
             echo "===== Tous les mots du modèle, vecteurs réduits pour tenir en ligne (données en ligne)"
             python tools/prepare_data.py data-src/frwac.bin data-src/Lexique383.tsv public/data
