@@ -42,5 +42,9 @@
   "Albert Einstein": {
     "sujet": ["atome", "lumière", "mathématiques", "univers", "chercheur", "newton", "laboratoire", "savant", "professeur", "gravité"],
     "pièges": ["football", "cuisine", "voiture", "peinture", "chanson", "plage", "chat", "mariage"]
+  },
+  "Art rupestre": {
+    "sujet": ["dur", "image", "dessin", "préhistoire", "caverne", "pierre", "fresque", "lascaux", "ocre", "symbole"],
+    "pièges": ["football", "ordinateur", "voiture", "politique", "cuisine", "mariage", "banque", "télévision"]
   }
 }
