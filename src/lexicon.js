@@ -2,7 +2,7 @@
 const VALID = /^[a-z0-9]+$/;
 
 export class Lexicon {
-  constructor(words, vectors, wiki = null) {
+  constructor(words, vectors) {
     // words.bin : « PKW1 », ou « PKW2 » qui dit en plus, pour chaque mot, s'il vient du dictionnaire des formes
     const w = new DataView(words);
     const version = w.getUint32(0, true);
@@ -34,10 +34,6 @@ export class Lexicon {
     const start = magic === 0x33564b50 ? 16 : 12;
     this.vectors = new Int8Array(vectors, start, count * this.dims);
     this.cut = this.ncut ? new Int8Array(vectors, start + count * this.dims, count * this.ncut) : null;
-
-    // Deuxième avis, s'il va avec ce words.bin
-    const second = wiki && new Second(wiki);
-    this.wiki = second?.n === n ? second : null;
   }
 
   // Similarité du 10e, du 100e, du 500e et (données récentes) du 5 000e voisin le plus proche de ce mot.
@@ -84,43 +80,14 @@ export class Lexicon {
   }
 
   cosine(a, b) {
-    return cosine(this.vectors, this.dims, a, b);
-  }
-}
-
-function cosine(v, d, a, b) {
-  let ab = 0, aa = 0, bb = 0;
-  for (let j = 0, x = a * d, y = b * d; j < d; j++) {
-    const p = v[x + j], q = v[y + j];
-    ab += p * q;
-    aa += p * p;
-    bb += q * q;
-  }
-  return aa && bb ? ab / Math.sqrt(aa * bb) : 0;
-}
-
-// wiki.bin (« PKS1 »), le deuxième avis : pour chaque mot de words.bin, sa ligne dans un autre modèle (Wikipédia),
-// puis les vecteurs de ce modèle et leurs seuils de voisins, comme vectors.bin.
-export class Second {
-  constructor(buffer) {
-    const v = new DataView(buffer);
-    if (v.getUint32(0, true) !== 0x31534b50) throw new Error('wiki.bin invalide');
-    const [n, count, dims, ncut] = [4, 8, 12, 16].map(o => v.getUint32(o, true));
-    Object.assign(this, { n, dims, ncut });
-    this.keyRow = new Int32Array(buffer, 20, n);
-    this.vectors = new Int8Array(buffer, 20 + 4 * n, count * dims);
-    this.cut = new Int8Array(buffer, 20 + 4 * n + count * dims, count * ncut);
-  }
-
-  row(i) {
-    return this.keyRow[i];
-  }
-
-  cosine(a, b) {
-    return cosine(this.vectors, this.dims, a, b);
-  }
-
-  cutoffs(row) {
-    return Array.from(this.cut.subarray(row * this.ncut, (row + 1) * this.ncut), c => c / 127);
+    const d = this.dims, v = this.vectors;
+    let ab = 0, aa = 0, bb = 0;
+    for (let j = 0, x = a * d, y = b * d; j < d; j++) {
+      const p = v[x + j], q = v[y + j];
+      ab += p * q;
+      aa += p * p;
+      bb += q * q;
+    }
+    return aa && bb ? ab / Math.sqrt(aa * bb) : 0;
   }
 }

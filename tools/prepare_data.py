@@ -146,46 +146,7 @@ def report(q, rows, cut):
         print(f"{probe} : " + ", ".join(f"{by_row[t]} {s[t]:.2f}" for t in top))
 
 
-def second_opinion(model_path, keys, out_dir):
-    """Deuxième avis : les vecteurs d'un autre modèle (Wikipédia) pour les mots de words.bin, avec leurs seuils de voisins.
-
-    wiki.bin (« PKS1 ») : nombre de mots, de vecteurs, de dimensions et de seuils, puis la ligne de chaque mot de words.bin
-    dans ce modèle (-1 s'il n'y est pas), les vecteurs et les seuils, comme vectors.bin.
-    """
-    words, vectors = read_word2vec(model_path)
-    first = {}
-    for i, w in enumerate(words):
-        k = normalize(w)
-        if VALID.fullmatch(k) and k not in first:
-            first[k] = i
-    rows, order = {}, []
-    for k in keys:
-        if k in first:
-            rows[k] = len(order)
-            order.append(first[k])
-    key_row = np.array([rows.get(k, -1) for k in keys], dtype="<i4")
-    m = unit(vectors[order])
-    del vectors
-
-    # 200 dimensions au plus (le modèle en a 1 000), et pas plus que la limite de 25 Mio ne le permet
-    fit = (MAX_FILE - 20 - 4 * len(keys) - len(RANKS) * len(order)) // max(1, len(order))
-    dims = min(m.shape[1], fit, 200)
-    if dims < m.shape[1]:
-        m = unit(reduce_dims(m, dims))
-    q = np.clip(np.rint(m * 127), -127, 127).astype(np.int8)
-    cut = neighbour_cutoffs(q)
-    head = np.array([len(keys), len(order), q.shape[1], len(RANKS)], dtype="<u4").tobytes()
-    content = b"PKS1" + head + key_row.tobytes() + q.tobytes() + cut.tobytes()
-    if len(content) > MAX_FILE:
-        sys.exit(f"wiki.bin dépasse 25 Mio ({len(content)} octets)")
-    out = Path(out_dir)
-    out.mkdir(parents=True, exist_ok=True)
-    (out / "wiki.bin").write_bytes(content)
-    print(f"wiki.bin : {len(content) / 1e6:.1f} Mo, {len(words)} mots dans le modèle, {len(order)} mots du jeu gardés, {q.shape[1]} dimensions")
-    report(q, rows, cut)
-
-
-def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None, second=None, second_out=None):
+def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None):
     words, vectors = read_word2vec(model_path)
     forms, spelled = read_lexique(lexique_path)
     for form, lemmas in ELISIONS.items():
@@ -275,11 +236,6 @@ def main(model_path, lexique_path, out_dir, dims=None, max_vectors=None, second=
     print(f"{len(words)} mots dans le modèle, {len(order)} vecteurs gardés de {q.shape[1]} dimensions, {len(keys)} mots connus, {len(forms)} formes")
     report(q, rows, cut)
 
-    if second:
-        del words, vectors, m, q
-        print("===== Deuxième avis")
-        second_opinion(second, keys, second_out or out_dir)
-
 
 if __name__ == "__main__":
     args = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -288,7 +244,5 @@ if __name__ == "__main__":
     args.add_argument("out")
     args.add_argument("--dims", type=int, help="réduire les vecteurs à ce nombre de dimensions")
     args.add_argument("--max-vectors", type=int, help="ne garder que les N mots les plus fréquents (par défaut : tous)")
-    args.add_argument("--second", help="autre modèle word2vec (Wikipédia) : écrit wiki.bin, le deuxième avis")
-    args.add_argument("--second-out", help="dossier de wiki.bin (par défaut : celui des autres données)")
     a = args.parse_args()
-    main(a.model, a.lexique, a.out, a.dims, a.max_vectors, a.second, a.second_out)
+    main(a.model, a.lexique, a.out, a.dims, a.max_vectors)

@@ -28,23 +28,22 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: data-src
-          key: sources-v3
-      - name: Télécharger les vecteurs (Fauconnier, frWaC et Wikipédia) et Lexique 3.83
+          key: sources-v2
+      - name: Télécharger les vecteurs (Fauconnier, frWaC) et Lexique 3.83
         run: |
           mkdir -p data-src
           get() { [ -s "data-src/$1" ] || curl -fsSL -o "data-src/$1" "$2"; }
           get frwac.bin https://embeddings.net/embeddings/frWac_non_lem_no_postag_no_phrase_200_skip_cut100.bin
-          get frwiki.bin https://embeddings.net/embeddings/frWiki_no_lem_no_postag_no_phrase_1000_skip_cut100.bin
           get Lexique383.tsv http://www.lexique.org/databases/Lexique383/Lexique383.tsv
           sha256sum data-src/*
       - name: Préparer les données et mesurer les mots proches
         run: |
           {
             echo "===== Tous les mots du modèle, vecteurs réduits pour tenir en ligne (données en ligne)"
-            python tools/prepare_data.py data-src/frwac.bin data-src/Lexique383.tsv public/data --second data-src/frwiki.bin --second-out data-wiki
+            python tools/prepare_data.py data-src/frwac.bin data-src/Lexique383.tsv public/data
             echo "===== Aide à l'écriture"
             node tools/prepare_help.mjs public/data
-            node tools/evaluate.mjs public/data --wiki data-wiki
+            node tools/evaluate.mjs public/data
           } 2>&1 | tee rapport.txt
           mv rapport.txt public/data/rapport.txt
       - name: Ajouter les données au dépôt

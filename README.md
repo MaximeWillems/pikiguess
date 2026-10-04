@@ -95,8 +95,9 @@ Une case « Aide à l'écriture » sous la saisie, que chaque joueur coche pour 
 
 - Modèle retenu : `frWac_non_lem_no_postag_no_phrase_200_skip_cut100.bin` (126 Mo, entraîné sur frWaC, 1,6 milliard de mots). Non lemmatisé : il garde les nombres (« 1789 » reste proche de « révolution ») et ses 200 dimensions tiennent en ligne sans réduction.
 - Le script `tools/prepare_data.py` garde tous les mots du modèle (environ 155 000, mots rares compris comme « tyrannosaure ») et compresse les vecteurs : un octet par nombre, et autant de dimensions que la limite de 25 Mo par fichier de Cloudflare le permet (environ 165 au lieu de 200). Il calcule aussi, pour chaque mot, la similarité de son 10e, 100e, 500e et 5 000e voisin le plus proche : ce sont les seuils de brûlant, chaud, tiède et du lien plus lâche.
-- L'Action « Données » se relance seule quand `tools/` change. Elle écrit `public/data/rapport.txt` : pour des pages de test (`tools/evaluation.json`), le niveau atteint par des mots du sujet et par des mots pièges, avec les données en ligne et avec la version à 100 000 mots, pour comparer.
+- L'Action « Données » se relance seule quand `tools/` change. Elle écrit `public/data/rapport.txt` : pour des pages de test (`tools/evaluation.json`), le niveau atteint par des mots du sujet et par des mots pièges, et pour chaque essai (lignes `DETAIL`) le rang exact parmi les voisins des mots cachés les plus proches et la proximité avec le sujet de la page, de quoi comparer des règles sans relancer l'Action.
 - Comparé le 03/10/2026 : le modèle entraîné sur Wikipédia (`frWiki_no_lem_no_postag_no_phrase_1000_skip_cut100.bin`) allumait deux fois plus de pièges (36 % contre 18 %) pour autant de mots du sujet : on garde frWaC.
+- Essayé le 04/10/2026 en deuxième avis (en plus de frWaC) : il n'arrange pas les cas signalés (« dur » 6 973e voisin de « roche », « saga » 2 767e de « suite », « mangaka » loin de « peintre ») et allume plus de pièges (49 à 68 % au lieu de 45 %), pour presque aucun mot du sujet en plus. Écarté (code dans l'historique : commit `4f5ec30`).
 - Licence CC-BY 3.0 : auteur cité en bas de page, avec un lien.
 
 ### Dictionnaire des formes (Lexique 3.83)
@@ -132,7 +133,7 @@ Une case « Aide à l'écriture » sous la saisie, que chaque joueur coche pour 
 ### Mots proches : la suite
 
 - Lire `public/data/rapport.txt` : vérifier que garder tous les mots (vecteurs réduits) ne dégrade pas les indices par rapport à la version à 100 000 mots.
-- À décider : un deuxième avis du modèle Wikipédia pour les mots dont le sens web domine (« suite » est appris comme « Lire la suite » : « saga » n'est que son 6 513e voisin ; « dur » comme « disque dur », ses voisins sont disque, défragmenter, bootable : il n'est que le 22 715e voisin de « roche », aucun seuil ne le rattrape). Gagnerait ces cas, mais ce modèle allumait seul deux fois plus de pièges : à mesurer avec le rapport avant de le mettre en ligne.
+- Limite connue : les vecteurs rapprochent les mots employés dans les mêmes phrases, pas les liens d'idée. « suite » est appris comme « Lire la suite » (« saga » n'est que son 7 700e voisin), « dur » comme « disque dur » (22 488e voisin de « roche »), « mangaka » avec le vocabulaire des fans de manga. Le modèle Wikipédia n'y change rien (voir « Données »). Piste non essayée : un réseau d'associations d'idées fait par des humains (JeuxDeMots), où « roche » appelle « dur ».
 - Régler les seuils d'après le rapport et de vraies parties : rangs 10 / 100 / 500 (`RANKS` dans `tools/prepare_data.py`), plancher de similarité 0,25 (`semantic` dans `src/game.js`).
 - Pas fait, à décider : une flèche ↑/↓ dans la case d'un nombre (plus grand / plus petit). Les couleurs guident déjà ; la flèche rendrait les nombres très faciles.
 
