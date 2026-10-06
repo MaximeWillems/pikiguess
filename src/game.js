@@ -516,7 +516,9 @@ export function guess(page, keys, lex, run, input) {
   return res;
 }
 
-export const revealedCount = (page, run) => page.words.reduce((n, w) => n + run.revealed.has(w.key), 0);
+// Le texte dévoilé se compte en lettres (chiffres compris) : « tyrannosaure » pèse plus que « de ».
+const letters = w => [...w.text].length;
+const revealedLetters = (page, run) => page.words.reduce((n, w) => n + (run.revealed.has(w.key) ? letters(w) : 0), 0);
 
 export const isFound = (page, run) => page.titleWords.every(i => run.revealed.has(page.words[i].key));
 
@@ -527,7 +529,7 @@ export function playerView(page, run) {
     if (run.revealed.has(w.key)) revealed.push([i, w.text]);
     else if (h) hints.push([i, h.w, round(h.s)]);
   });
-  const lens = page.words.map(w => [...w.text].length);
+  const lens = page.words.map(letters);
   return { titleTokens: page.titleTokens, paragraphs: page.paragraphs, lens, revealed, hints };
 }
 
@@ -552,15 +554,16 @@ export const fullPage = page => ({
 
 // Ceux qui ont trouvé par ordre d'arrivée, puis les autres selon le nombre de mots dévoilés.
 export function ranking(page, runs, startedAt) {
+  const total = page.words.reduce((n, w) => n + letters(w), 0);
   const rows = Object.entries(runs).map(([id, r]) => {
-    const count = revealedCount(page, r);
+    const count = revealedLetters(page, r);
     return {
       id,
       found: r.foundAt != null,
       time: r.foundAt != null ? r.foundAt - startedAt : null,
       guesses: r.guesses.length,
       count,
-      pct: Math.round((100 * count) / page.words.length),
+      pct: Math.round((100 * count) / total),
     };
   });
   rows.sort((a, b) => b.found - a.found || (a.found ? a.time - b.time : b.count - a.count));

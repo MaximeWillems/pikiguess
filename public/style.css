@@ -298,6 +298,8 @@ button.sugg { padding: 2px 12px; margin: 2px 6px 2px 0; font-size: 15px; font-we
 /* Contour d'un essai cliqué dans la liste : mots trouvés comme mots proches */
 .w, .ok { outline: 3px solid transparent; outline-offset: 1px; }
 .ok { border-radius: 4px; transition: outline-color .5s var(--ease); }
+/* Le dernier mot proposé garde un contour vert jusqu'au suivant */
+.w.last, .ok.last { outline-color: var(--ok); }
 .w.spot, .ok.spot { outline-color: var(--spot); }
 
 /* Mot trouvé : la case passe au vert puis s'efface en fondu */

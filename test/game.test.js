@@ -315,6 +315,14 @@ test('pages populaires : sans pages techniques, listes ni pages pour adultes', (
   for (const t of [...out, 'XNXX', '.xxx', 'Sexe', 'XXXX (homonymie)', '2026', '-']) assert.ok(!playable(t), t);
 });
 
+test('le texte dévoilé se compte en lettres : un long mot compte plus que deux petits', () => {
+  const page = buildPage(TITLE, EXTRACT);
+  const run = words => ({ ...newRun(), foundAt: null, revealed: new Set(words) });
+  const rows = ranking(page, { petits: run(['le', 'en']), long: run(['revolution']) }, 1000);
+  assert.deepEqual(rows.map(r => r.id), ['long', 'petits']);
+  assert.ok(rows[0].pct > rows[1].pct);
+});
+
 test('classement et points', () => {
   const page = buildPage(TITLE, EXTRACT);
   const run = (foundAt, words) => ({ ...newRun(), foundAt, revealed: new Set(words) });

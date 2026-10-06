@@ -19,7 +19,8 @@ Sans ces données, le jeu marche quand même, mais sans mots grisés ni formes :
 - Sinon, il s'affiche dans les cases des mots proches par le sens : **tiède** (rouge) s'il fait partie des 500 mots les plus proches du mot caché, **chaud** des 100, **brûlant** (vert) des 10. Le calcul se fait mot par mot : un mot courant comme « guerre » ne s'allume plus partout. Si rien n'est proche, un lien plus lâche donne encore « tiède », sur un seul mot caché : le mot proposé est parmi ses 5 000 plus proches voisins et colle aussi au sujet de la page (moyenne des mots cachés). « image » s'allume ainsi sur « Art rupestre », alors que les mots sans rapport restent éteints (pages de test : 97 % des mots du sujet allumés au lieu de 91 %, pour 45 % des pièges au lieu de 42 %). Pour un mot inconnu des vecteurs (rare, nom savant), on compare l'orthographe : un morceau commun d'au moins 5 lettres donne un indice, au plus chaud (« tyrannosaure » ↔ « Spinosaurus »). Chaque case garde le mot le plus proche proposé jusque-là.
 - Un mot caché prend le sens de son écriture dans la page : « Vénus » la planète et non « venus » (venir). Le modèle est tout en minuscules : un nom propre qu'il ne connaît pas, écrit avec une majuscule en milieu de phrase, reçoit un sens fait de mots proches (« la planète Mars » : celui des planètes, pas du mois de mars, liste `PROPER` dans `tools/prepare_data.py`) ; un mois ou un jour écrit en nom propre sans autre sens (« Avril » le prénom) perd celui du mois.
 - Un mot qui n'existe ni dans le dictionnaire du jeu ni dans le texte est signalé « n'existe pas ». S'il ne réchauffe aucune case, il ne compte pas comme essai et revient dans la case pour être corrigé ; sinon il compte, comme « spinosaure » qui réchauffe « Spinosaurus ».
-- Un mot trouvé apparaît sur fond vert, qui s'efface en fondu.
+- Un mot trouvé apparaît sur fond vert, qui s'efface en fondu. Le dernier mot proposé garde un contour vert, sur les mots qu'il a dévoilés et les cases où il s'affiche, jusqu'au mot suivant.
+- La part du texte dévoilée se compte en lettres, pas en mots : « tyrannosaure » pèse plus que « de ».
 - Nombres et dates : entre deux nombres, seul l'écart compte, pour s'approcher petit à petit. Chaque nombre du texte est reconnu d'après les mots autour, avec son échelle :
   - année (« en 1889 », « 382 av. J.-C. ») : brûlant à 1 ou 2 ans près, visible jusqu'à ~120 ans ;
   - siècle (« XIXe siècle », « 19e siècle ») : une année du siècle est brûlante (1850 ↔ XIXe) ;
@@ -54,7 +55,7 @@ L'hôte règle la partie comme il veut :
 
 ## Points
 
-- Classement de chaque manche : d'abord ceux qui ont trouvé le titre, par ordre d'arrivée, puis les autres selon le nombre de mots dévoilés.
+- Classement de chaque manche : d'abord ceux qui ont trouvé le titre, par ordre d'arrivée, puis les autres selon la part du texte dévoilée (en lettres).
 - Points par place, qu'on ait trouvé ou non : 1000, 600, 300, 100, 50 (5e place possible quand tout le monde joue). Gros écarts, car une partie compte peu de manches.
 - Les manches « tout le monde joue » comptent comme les autres.
 - Le meneur ne marque rien pendant sa manche. Pour que ce soit équitable, ceux qui n'ont pas encore mené sont signalés quand le meneur choisit le suivant.

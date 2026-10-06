@@ -1,5 +1,5 @@
 import { DurableObject } from 'cloudflare:workers';
-import { analyze, buildPage, camView, fullPage, guess, isFound, newRun, playerView, ranking, reveal, revealedCount } from './game.js';
+import { analyze, buildPage, camView, fullPage, guess, isFound, newRun, playerView, ranking, reveal } from './game.js';
 import { Lexicon } from './lexicon.js';
 import { Help } from './spell.js';
 import { fetchPage, randomPopularPage, UserError } from './wikipedia.js';
@@ -323,7 +323,6 @@ export class Room extends DurableObject {
       t: 'live',
       id,
       items: res.items.filter(x => !x.unknown || x.s).map(({ sugg, ...x }) => x),
-      count: revealedCount(s.page, run),
       revealed: res.revealed.map(([i]) => i),
       hints: res.hints,
     };
@@ -480,7 +479,7 @@ export class Room extends DurableObject {
     const run = s.runs[id];
     // Les écrans des joueurs : leurs essais et ce qu'ils voient du texte
     const cams = () => {
-      v.live = Object.fromEntries(Object.entries(s.runs).map(([pid, r]) => [pid, { guesses: r.guesses, count: revealedCount(s.page, r) }]));
+      v.live = Object.fromEntries(Object.entries(s.runs).map(([pid, r]) => [pid, { guesses: r.guesses }]));
       v.cams = Object.fromEntries(Object.entries(s.runs).map(([pid, r]) => [pid, camView(s.page, r)]));
     };
     if (s.phase === 'playing' && id === s.meneurId) {

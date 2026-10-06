@@ -32,7 +32,7 @@ let pick = null, lastQuery = '', searchTimer, searchSeq = 0;
 let hinted = new Set(), glued = new Set(), pageKey = '';
 // Ce que regarde le meneur : sa vue (texte complet), tous les joueurs, ou l'écran d'un joueur (son id).
 let pov = 'me';
-const view = { revealed: new Map(), hints: new Map(), fresh: new Set(), freshHints: new Set(), guesses: [], added: 0, live: {}, liveNew: {}, cams: {}, last: null };
+const view = { revealed: new Map(), hints: new Map(), fresh: new Set(), freshHints: new Set(), guesses: [], added: 0, live: {}, liveNew: {}, cams: {}, last: null, lastSpots: new Set() };
 const seen = { ids: new Set(), found: new Set() };
 const livePct = new Map();
 
@@ -207,6 +207,7 @@ function onState(m) {
   );
   if (prev?.round !== m.round || prev?.phase !== m.phase || (pov !== 'me' && pov !== 'all' && !view.cams[pov])) pov = 'me';
   hinted = new Set(m.hinted || []);
+  view.lastSpots = lastSpots();
 
   // Mots collés sans séparateur (« 1 » et « er » dans « 1er ») : leurs cases sont un peu écartées pour rester distinctes
   glued = new Set();
@@ -260,6 +261,11 @@ function onGuess(m) {
   if (items.length) view.last = items[items.length - 1].w;
   feedback(m.items);
 
+  // Le contour vert passe du mot précédent au nouveau
+  for (const i of view.lastSpots) changed.add(i);
+  view.lastSpots = lastSpots();
+  for (const i of view.lastSpots) changed.add(i);
+
   // Un mot qui n'existe pas revient dans la case, pour le corriger
   const w = $('#word');
   if (m.items.every(x => x.unknown && !x.s) && !w.value) w.value = lastSent;
@@ -298,10 +304,9 @@ function onHint(m) {
 }
 
 function onLive(m) {
-  const l = (view.live[m.id] ||= { guesses: [], count: 0 });
+  const l = (view.live[m.id] ||= { guesses: [] });
   const items = m.items.filter(x => !x.dup);
   l.guesses.push(...items);
-  l.count = m.count;
 
   // Met à jour la caméra de ce joueur, et seulement ses cases qui ont changé si on la regarde
   const cam = view.cams[m.id];
@@ -580,18 +585,36 @@ function renderPlay() {
 function renderProgress() {
   const p = st.page;
   if (!p || p.texts || $('#play').hidden) return;
-  const total = p.lens.length;
   const titleWords = p.titleTokens.filter(t => typeof t === 'number');
   const titleFound = titleWords.filter(i => view.revealed.has(i)).length;
-  const pct = Math.round((100 * view.revealed.size) / total);
-  $('#progress').textContent = `Titre : ${titleFound}/${titleWords.length} · Texte : ${view.revealed.size}/${total} mots (${pct} %)`;
+  const pct = letterPct(view.revealed.keys());
+  $('#progress').textContent = `Titre : ${titleFound}/${titleWords.length} · Texte : ${pct} % des lettres (${view.revealed.size}/${p.lens.length} mots)`;
   $('#progressBar').style.width = `${pct}%`;
 }
 
+// Part du texte dévoilée, en lettres : « tyrannosaure » compte plus que « de ».
+function letterPct(positions) {
+  const p = st.page;
+  const len = i => (p.texts ? [...p.texts[i]].length : p.lens[i]);
+  let total = 0, found = 0;
+  for (let i = 0; i < (p.texts ?? p.lens).length; i++) total += len(i);
+  for (const i of positions) found += len(i);
+  return total ? Math.round((100 * found) / total) : 0;
+}
+
+// Où est le dernier mot proposé : les mots qu'il a dévoilés et les cases où il s'affiche. Contour vert jusqu'au suivant.
+function lastSpots() {
+  const g = view.guesses[view.guesses.length - 1];
+  if (!g || !st?.page || st.page.texts || st.phase !== 'playing') return new Set();
+  const spots = new Set(g.at ?? []);
+  for (const [i, h] of view.hints) if (h.w === g.w) spots.add(i);
+  return spots;
+}
+
 // Case d'un mot caché, vide ou avec le mot proche le plus proche ; « secret » : le vrai mot, montré au meneur au survol.
-function boxHtml(i, n, h, id, fresh, secret) {
+function boxHtml(i, n, h, id, fresh, secret, extra = '') {
   const tip = `${secret ? `${secret} · ` : ''}${plural(n, 'lettre')}${h ? ` · « ${h.w} » : ${temp(h.s)}` : ''}`;
-  const cls = `w${glued.has(i) ? ' glued' : ''}`;
+  const cls = `w${glued.has(i) ? ' glued' : ''}${extra}`;
   if (!h) return `<span id="${id}" class="${cls}" data-i="${i}" data-n="${n}" style="--n:${n}" title="${esc(tip)}"></span>`;
   return `<span id="${id}" class="${cls}${h.s >= 0.9 ? ' hot' : ''}" data-i="${i}" data-n="${n}" data-g="${esc(h.w)}" style="--n:${n};--h:${heat(h.s).toFixed(2)}" title="${esc(tip)}"><i${fresh ? ' class="pop"' : ''}>${esc(h.w)}</i></span>`;
 }
@@ -602,9 +625,9 @@ function wordHtml(i) {
     if (st.phase === 'playing' && isMeneur()) return `<span class="mw${hinted.has(i) ? ' hinted' : ''}" data-i="${i}">${esc(p.texts[i])}</span>`;
     return `<span id="w${i}" class="ok">${esc(p.texts[i])}</span>`;
   }
-  const r = view.revealed.get(i);
-  if (r != null) return `<span id="w${i}" class="ok${view.fresh.has(i) ? ' new' : ''}">${esc(r)}</span>`;
-  return boxHtml(i, p.lens[i], view.hints.get(i), `w${i}`, view.freshHints.has(i));
+  const r = view.revealed.get(i), last = view.lastSpots.has(i) ? ' last' : '';
+  if (r != null) return `<span id="w${i}" class="ok${view.fresh.has(i) ? ' new' : ''}${last}">${esc(r)}</span>`;
+  return boxHtml(i, p.lens[i], view.hints.get(i), `w${i}`, view.freshHints.has(i), undefined, last);
 }
 
 // Un mot vu par la caméra du meneur, tel que le joueur le voit.
@@ -624,7 +647,7 @@ function camStats(id) {
   const titleWords = p.titleTokens.filter(t => typeof t === 'number');
   const guesses = (view.live[id]?.guesses ?? []).length;
   if (cam.found) return `a trouvé · ${plural(guesses, 'essai')}`;
-  return `titre ${titleWords.filter(i => cam.revealed.has(i)).length}/${titleWords.length} · texte ${Math.round((100 * cam.revealed.size) / p.texts.length)} % · ${plural(guesses, 'essai')}`;
+  return `titre ${titleWords.filter(i => cam.revealed.has(i)).length}/${titleWords.length} · texte ${letterPct(cam.revealed)} % · ${plural(guesses, 'essai')}`;
 }
 
 function camHead(id) {
@@ -657,7 +680,7 @@ function renderPovs() {
     players
       .map(p => {
         const cam = view.cams[p.id];
-        return tab(p.id, `${esc(p.name)} <span class="pct">${cam.found ? '✓' : `${Math.round((100 * cam.revealed.size) / st.page.texts.length)} %`}</span>`);
+        return tab(p.id, `${esc(p.name)} <span class="pct">${cam.found ? '✓' : `${letterPct(cam.revealed)} %`}</span>`);
       })
       .join('');
 }
@@ -736,14 +759,13 @@ function renderSide() {
     const l = view.live[pov] || { guesses: [] };
     el.innerHTML = `<h3>Essais de ${esc(nameOf(pov))} (${l.guesses.length})</h3>${guessList(l.guesses, 0, false, false, view.liveNew[pov] || 0)}`;
   } else if (watcher() && (isMeneur() || pov === 'all')) {
-    const total = st.page.texts.length;
     el.innerHTML =
       '<h3>En direct</h3>' +
       st.players
         .filter(p => p.playing)
         .map(p => {
-          const l = view.live[p.id] || { guesses: [], count: 0 };
-          const pct = Math.round((100 * l.count) / total);
+          const l = view.live[p.id] || { guesses: [] };
+          const pct = view.cams[p.id] ? letterPct(view.cams[p.id].revealed) : 0;
           const from = livePct.get(p.id) ?? pct;
           livePct.set(p.id, pct);
           const shown = l.guesses.slice(-6);
